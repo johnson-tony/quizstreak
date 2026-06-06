@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { buttonVariants, Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { 
   CheckCircle2, 
   TrendingUp, 
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 export default function LandingPage() {
+  const { status } = useSession();
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -88,16 +89,18 @@ export default function LandingPage() {
                     className: "bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-12 text-sm font-bold shadow-lg shadow-primary/10" 
                   })}
                 >
-                  Start Challenge
+                  {status === "authenticated" ? "Go to Dashboard" : "Start Challenge"}
                 </Link>
-                <Button 
-                  onClick={() => signIn("google")}
-                  variant="outline" 
-                  size="lg" 
-                  className="bg-white/50 border-primary/10 text-foreground rounded-xl px-8 h-12 text-sm font-bold hover:bg-white transition-all"
-                >
-                  Continue with Google
-                </Button>
+                {status === "unauthenticated" && (
+                  <Button 
+                    onClick={() => signIn("google")}
+                    variant="outline" 
+                    size="lg" 
+                    className="bg-white/50 border-primary/10 text-foreground rounded-xl px-8 h-12 text-sm font-bold hover:bg-white transition-all"
+                  >
+                    Continue with Google
+                  </Button>
+                )}
               </motion.div>
             </motion.div>
 
