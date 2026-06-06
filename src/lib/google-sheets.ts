@@ -15,9 +15,10 @@ export interface Question {
   };
   correctAnswer: string;
   explanation: string;
+  rowIndex?: number;
 }
 
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
 export async function getGoogleSheetData() {
   try {
@@ -29,23 +30,17 @@ export async function getGoogleSheetData() {
 
     let credentials;
     try {
-      // 1. Remove any real carriage returns
-      // 2. Escape any real newlines so they don't break JSON.parse
-      // 3. Then parse the JSON
       const cleanedKey = serviceAccountKey
         .replace(/\r/g, '') 
         .replace(/\n/g, '\\n');
       
       credentials = JSON.parse(cleanedKey);
 
-      // 4. Finally, if the private_key still has literal '\n' strings, 
-      //    convert them to real newline characters for Google Auth
       if (credentials.private_key) {
         credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
       }
     } catch (parseError) {
       console.error('Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY JSON:', parseError);
-      console.error('Raw key length:', serviceAccountKey.length);
       return null;
     }
 
@@ -70,21 +65,11 @@ export async function getGoogleSheetData() {
   }
 }
 
-export async function getTodayQuestions(): Promise<Question[]> {
+export async function getAllQuestions(): Promise<Question[]> {
   const rows = await getGoogleSheetData();
   if (!rows) return [];
 
-  const today = new Date().toISOString().split('T')[0];
-  console.log('Searching for questions with date:', today);
-
-  const todayRows = rows.filter((row) => row[1] === today);
-
-  if (todayRows.length === 0) {
-    console.error(`No questions found for date: ${today}. Available dates:`, rows.map(r => r[1]));
-    return [];
-  }
-
-  return todayRows.map(row => ({
+  return rows.map((row, index) => ({
     day: row[0],
     date: row[1],
     category: row[2],
@@ -99,5 +84,103 @@ export async function getTodayQuestions(): Promise<Question[]> {
     },
     correctAnswer: row[9],
     explanation: row[10],
+    rowIndex: index + 2, // Row 2 is the first data row (A2)
   }));
+}
+
+export async function getTodayQuestions(): Promise<Question[]> {
+  const all = await getAllQuestions();
+  const today = new Date().toISOString().split('T')[0];
+  return all.filter(q => q.date === today);
+}
+
+export async function appendQuestions(questions: Question[]) {
+  try {
+    const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+    if (!serviceAccountKey) throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY is missing');
+
+    const cleanedKey = serviceAccountKey.replace(/\r/g, '').replace(/\n/g, '\\n');
+    const credentials = JSON.parse(cleanedKey);
+    if (credentials.private_key) credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+
+    const auth = new google.auth.GoogleAuth({ credentials, scopes: SCOPES });
+    const sheets = google.sheets({ version: 'v4', auth });
+    
+    const values = questions.map(q => [
+      q.day,
+      q.date,
+      q.category,
+      q.difficulty,
+      q.question,
+      q.options.A,
+      q.options.B,
+      q.options.C,
+      q.options.D,
+      q.correctAnswer,
+      q.explanation,
+      q.points || 10
+    ]);
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: 'Sheet1!A2:L',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error appending to Google Sheet:', error);
+    throw error;
+  }
+}
+
+export async function updateQuestion(rowIndex: number, q: Question) {
+  try {
+    const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+    const cleanedKey = serviceAccountKey!.replace(/\r/g, '').replace(/\n/g, '\\n');
+    const credentials = JSON.parse(cleanedKey);
+    if (credentials.private_key) credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+
+    const auth = new google.auth.GoogleAuth({ credentials, scopes: SCOPES });
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: `Sheet1!A${rowIndex}:L${rowIndex}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[
+          q.day, q.date, q.category, q.difficulty, q.question,
+          q.options.A, q.options.B, q.options.C, q.options.D,
+          q.correctAnswer, q.explanation, q.points || 10
+        ]]
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating row:', error);
+    throw error;
+  }
+}
+
+export async function deleteQuestion(rowIndex: number) {
+  try {
+    const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+    const cleanedKey = serviceAccountKey!.replace(/\r/g, '').replace(/\n/g, '\\n');
+    const credentials = JSON.parse(cleanedKey);
+    if (credentials.private_key) credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+
+    const auth = new google.auth.GoogleAuth({ credentials, scopes: SCOPES });
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    await sheets.spreadsheets.values.clear({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: `Sheet1!A${rowIndex}:L${rowIndex}`,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error clearing row:', error);
+    throw error;
+  }
 }

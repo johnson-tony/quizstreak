@@ -53,9 +53,15 @@ export default function AdminLayout({
               </Link>
               <Link 
                 href="/admin/users" 
-                className={`text-sm font-bold flex items-center gap-2 transition-colors ${pathname === '/admin/users' ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                className={`text-sm font-bold flex items-center gap-2 transition-colors ${pathname.startsWith('/admin/users') ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
               >
-                <Users className="w-4 h-4" /> User Management
+                <Users className="w-4 h-4" /> Users
+              </Link>
+              <Link 
+                href="/admin/questions" 
+                className={`text-sm font-bold flex items-center gap-2 transition-colors ${pathname === '/admin/questions' ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+              >
+                <Settings className="w-4 h-4" /> Curriculum
               </Link>
             </div>
           </div>
