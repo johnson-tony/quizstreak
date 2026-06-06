@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Question {
@@ -99,63 +99,68 @@ export default function QuestionCard() {
 
   if (loading) {
     return (
-      <Card className="rounded-[24px] border-none shadow-sm bg-white/70 backdrop-blur-md h-96 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm h-64 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 text-primary animate-spin" />
       </Card>
     );
   }
 
   if (!question && !result) {
     return (
-      <Card className="rounded-[24px] border-none shadow-sm bg-white/70 backdrop-blur-md p-12 text-center">
-        <p className="text-gray-500">No challenge available for today. Check back later!</p>
+      <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm p-8 text-center">
+        <p className="text-sm font-medium text-muted-foreground">Check back later for today&apos;s challenge!</p>
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-[24px] border-none shadow-lg bg-white/72 backdrop-blur-xl overflow-hidden">
-      <CardHeader className="border-b border-gray-100 bg-gray-50/50 pb-4">
+    <Card className="rounded-2xl border-primary/5 shadow-md bg-white overflow-hidden">
+      <CardHeader className="border-b border-primary/5 bg-primary/[0.02] p-4 md:p-5">
         <div className="flex justify-between items-center">
-          <div className="space-y-1">
-            <CardTitle className="text-xl font-bold">Today&apos;s Challenge</CardTitle>
-            <div className="flex gap-2">
-              <Badge variant="secondary" className="bg-blue-50 text-blue-600 border-none rounded-lg px-3">
-                {question?.category || result?.category || "General"}
-              </Badge>
-              <Badge variant="outline" className="border-gray-200 text-gray-500 rounded-lg px-3">
-                {question?.difficulty || result?.difficulty || "Medium"}
-              </Badge>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-primary" />
+            </div>
+            <div className="space-y-0.5">
+              <CardTitle className="text-sm md:text-base font-black text-foreground">Today&apos;s Challenge</CardTitle>
+              <div className="flex gap-2">
+                <Badge variant="secondary" className="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0 h-4 border-none">
+                  {question?.category || result?.category || "General"}
+                </Badge>
+                <Badge variant="outline" className="border-primary/10 text-muted-foreground text-[10px] font-bold px-2 py-0 h-4">
+                  {question?.difficulty || result?.difficulty || "Medium"}
+                </Badge>
+              </div>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-sm font-medium text-gray-400">Day {question?.day || "01"}</span>
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Day {question?.day || result?.day || "01"}</span>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-8 pb-10 px-8">
+      <CardContent className="p-4 md:p-6">
         {!result ? (
-          <div className="space-y-8">
-            <p className="text-lg text-gray-800 font-medium leading-relaxed">
+          <div className="space-y-6">
+            <p className="text-sm md:text-base text-foreground font-bold leading-relaxed px-1">
               {question?.question}
             </p>
 
             <RadioGroup 
               value={selectedOption} 
               onValueChange={setSelectedOption}
-              className="grid gap-4"
+              className="grid gap-2"
             >
               {question && Object.entries(question.options).map(([key, value]) => (
                 <div key={key}>
                   <RadioGroupItem value={key} id={key} className="peer sr-only" />
                   <Label
                     htmlFor={key}
-                    className="flex items-center p-4 border border-gray-200 rounded-2xl cursor-pointer hover:bg-blue-50/50 hover:border-blue-200 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:bg-blue-50/50 transition-all"
+                    className="flex items-center p-3 border border-primary/5 rounded-xl cursor-pointer hover:bg-primary/[0.02] peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/[0.03] transition-all group"
                   >
-                    <span className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mr-4 text-sm font-bold text-gray-500 peer-data-[state=checked]:bg-blue-600 peer-data-[state=checked]:text-white">
+                    <span className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center mr-3 text-xs font-black text-muted-foreground peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white transition-colors">
                       {key}
                     </span>
-                    <span className="text-gray-700 font-medium">{value}</span>
+                    <span className="text-xs md:text-sm text-foreground font-semibold group-hover:text-primary transition-colors">{value}</span>
                   </Label>
                 </div>
               ))}
@@ -164,39 +169,39 @@ export default function QuestionCard() {
             <Button 
               onClick={handleSubmit} 
               disabled={submitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 text-lg font-bold shadow-lg shadow-blue-100"
+              className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl h-12 text-sm font-bold shadow-lg shadow-primary/10 transition-all active:scale-[0.98]"
             >
-              {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Submit Answer"}
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Submit Answer"}
             </Button>
           </div>
         ) : (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-4"
+            className="text-center py-2"
           >
-            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 ${result.correct ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
-              {result.correct ? <CheckCircle2 className="w-10 h-10" /> : <XCircle className="w-10 h-10" />}
+            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${result.correct ? "bg-emerald-100 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
+              {result.correct ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {result.correct ? "Excellent Work!" : "Not quite right"}
+            <h3 className="text-lg font-black text-foreground mb-1">
+              {result.correct ? "Great Job!" : "Not quite, keep learning!"}
             </h3>
-            <p className="text-gray-500 mb-8 max-w-md mx-auto">
+            <p className="text-xs text-muted-foreground font-medium mb-6 px-4">
               {result.correct 
-                ? `You earned ${result.pointsEarned} points and kept your streak alive!` 
-                : "The correct answer was " + result.correctAnswer + ". Check the explanation below to learn."}
+                ? `You earned ${result.pointsEarned} points and secured your streak.` 
+                : "The correct answer was " + result.correctAnswer + ". Check the explanation below."}
             </p>
 
-            <div className="bg-gray-50 rounded-2xl p-6 text-left mb-8 border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-2">Explanation</h4>
-              <p className="text-gray-600 text-sm leading-relaxed">
+            <div className="bg-muted/50 rounded-xl p-4 text-left mb-6 border border-primary/5">
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Analysis</h4>
+              <p className="text-xs text-foreground font-medium leading-relaxed">
                 {result.explanation}
               </p>
             </div>
 
-            <Button disabled className="w-full bg-gray-100 text-gray-400 rounded-2xl h-14 font-bold border-none">
-              Come back tomorrow for a new challenge
-            </Button>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">
+              New challenge arrives in 24 hours
+            </p>
           </motion.div>
         )}
       </CardContent>

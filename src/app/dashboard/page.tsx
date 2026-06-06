@@ -11,6 +11,7 @@ import BadgesSection from "@/components/features/BadgesSection";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { Award, Zap, TrendingUp } from "lucide-react";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -43,13 +44,13 @@ export default function DashboardPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
-        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 w-full">
-          <Skeleton className="h-32 w-full rounded-3xl" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Skeleton className="h-96 lg:col-span-2 rounded-3xl" />
-            <Skeleton className="h-96 rounded-3xl" />
+        <main className="flex-grow max-w-7xl mx-auto px-4 py-8 space-y-6 w-full">
+          <Skeleton className="h-24 w-full rounded-2xl" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Skeleton className="h-64 lg:col-span-2 rounded-2xl" />
+            <Skeleton className="h-64 rounded-2xl" />
           </div>
         </main>
       </div>
@@ -57,39 +58,55 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 w-full">
-        {/* Welcome Section */}
-        <section className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/40 backdrop-blur-sm p-8 rounded-[32px] border border-white/60">
-          <div className="flex items-center gap-6">
-            <Avatar className="h-20 w-20 border-4 border-white shadow-xl">
-              <AvatarImage src={session?.user?.image || ""} />
-              <AvatarFallback>{session?.user?.name?.[0]}</AvatarFallback>
-            </Avatar>
+      <main className="flex-grow max-w-7xl mx-auto px-4 py-6 space-y-4 md:space-y-6 w-full">
+        {/* Compact Welcome & Quick Stats Section */}
+        <section className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-card p-5 md:p-6 rounded-2xl border-primary/5 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Avatar className="h-14 w-14 md:h-16 md:w-16 border-2 border-white shadow-md relative z-10">
+                <AvatarImage src={session?.user?.image || ""} />
+                <AvatarFallback className="bg-primary/5 text-primary text-lg font-bold">
+                  {session?.user?.name?.[0]}
+                </AvatarFallback>
+              </Avatar>
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Welcome back, {session?.user?.name?.split(' ')[0]}!</h1>
-              <p className="text-gray-500 mt-1">You&apos;re currently ranked <span className="font-bold text-blue-600">#{profile?.user?.rank}</span> globally.</p>
+              <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight">
+                Hey, {session?.user?.name?.split(' ')[0]}
+              </h1>
+              <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-1">
+                Global Rank <span className="text-primary font-bold">#{profile?.user?.rank}</span>
+              </p>
             </div>
           </div>
-          <div className="flex gap-4">
-            <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-sm border border-white">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Streak</div>
-              <div className="text-xl font-black text-orange-500 flex items-center">
-                {profile?.user?.currentStreak} Days
+          
+          <div className="flex gap-2">
+            <div className="flex-1 md:flex-none bg-primary/[0.03] border border-primary/5 px-4 py-2 rounded-xl flex items-center gap-3">
+              <Zap className="w-4 h-4 text-primary" />
+              <div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Streak</div>
+                <div className="text-sm font-black text-primary">
+                  {profile?.user?.currentStreak} Days
+                </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-sm border border-white">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Points</div>
-              <div className="text-xl font-black text-blue-600">
-                {profile?.user?.totalPoints}
+            <div className="flex-1 md:flex-none bg-secondary/[0.03] border border-secondary/5 px-4 py-2 rounded-xl flex items-center gap-3">
+              <TrendingUp className="w-4 h-4 text-secondary" />
+              <div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Points</div>
+                <div className="text-sm font-black text-secondary">
+                  {profile?.user?.totalPoints}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Stats Row */}
+        {/* Unified Stats Row */}
         <StatsSection stats={{
           totalPoints: profile?.user?.totalPoints || 0,
           accuracy: profile?.stats?.accuracy || 0,
@@ -98,26 +115,28 @@ export default function DashboardPage() {
           longestStreak: profile?.user?.longestStreak || 0,
         }} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content - Challenge */}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          {/* Main Content - Challenge & Calendar */}
+          <div className="lg:col-span-2 space-y-4 md:space-y-6">
             <QuestionCard />
             <StreakCalendar />
           </div>
 
           {/* Sidebar - Badges & Activity */}
-          <div className="space-y-8">
+          <div className="space-y-4 md:space-y-6">
             <BadgesSection userBadges={profile?.user?.badges || []} />
             
-            {/* Quick Activity Card or Tip */}
-            <div className="bg-blue-600 rounded-[24px] p-8 text-white shadow-xl shadow-blue-100 relative overflow-hidden">
+            <div className="bg-primary rounded-2xl p-6 text-white shadow-lg shadow-primary/10 relative overflow-hidden group">
               <div className="relative z-10">
-                <h3 className="text-lg font-bold mb-2">Pro Tip</h3>
-                <p className="text-blue-100 text-sm leading-relaxed">
-                  Consistency is key. Solving just one challenge a day keeps your skills sharp and your streak alive!
+                <div className="flex items-center gap-2 mb-3">
+                  <Award className="w-4 h-4 text-white/80" />
+                  <h3 className="text-xs font-black uppercase tracking-wider text-white/90">Daily Tip</h3>
+                </div>
+                <p className="text-sm font-medium leading-relaxed text-white/90 group-hover:text-white transition-colors duration-300">
+                  Consistency beats intensity. Solve one challenge daily to maintain your peak cognitive performance.
                 </p>
               </div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-2xl -mr-16 -mt-16 rounded-full" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-2xl -mr-12 -mt-12 rounded-full" />
             </div>
           </div>
         </div>

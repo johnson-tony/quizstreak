@@ -18,19 +18,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-[#F7F8FA] text-[#111827] min-h-screen relative`}>
-        {/* Subtle radial glow */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full" />
-          <div className="absolute top-[40%] -right-[5%] w-[30%] h-[30%] bg-blue-400/5 blur-[100px] rounded-full" />
+      <body className={`${inter.className} bg-background text-foreground min-h-screen relative safe-top safe-bottom overflow-x-hidden`}>
+        {/* Modern decorative backgrounds - reduced excessive glow */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+          <div className="absolute top-[-5%] left-[-5%] w-[30%] h-[30%] bg-primary/3 blur-[100px] rounded-full opacity-60" />
+          <div className="absolute bottom-[5%] right-[-5%] w-[25%] h-[25%] bg-secondary/3 blur-[80px] rounded-full opacity-60" />
         </div>
         
         <Providers>
-          <div className="relative z-10 flex flex-col min-h-screen">
+          <div className="relative flex flex-col min-h-screen">
             {children}
           </div>
         </Providers>
-        <Toaster position="top-center" />
+        <Toaster position="top-center" richColors closeButton />
       </body>
     </html>
   );

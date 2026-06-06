@@ -14,69 +14,77 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LayoutDashboard, LogOut, Trophy, User } from "lucide-react";
+import { LayoutDashboard, LogOut, Trophy, User, Menu } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-gray-200/50 bg-white/70 backdrop-blur-md sticky top-0 z-50">
+    <nav className="border-b border-primary/5 bg-white/80 backdrop-blur-xl sticky top-0 z-50 safe-top">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-blue-600 tracking-tight">
+        <div className="flex justify-between h-14 items-center">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="text-xl font-bold text-primary tracking-tight">
               QuizStreak
             </Link>
-            <div className="hidden md:ml-8 md:flex md:space-x-8">
+            <div className="hidden md:flex items-center space-x-6">
               <Link
                 href="/dashboard"
-                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                  pathname === "/dashboard" ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
+                className={`text-sm font-semibold transition-colors ${
+                  pathname === "/dashboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
                 }`}
               >
                 Dashboard
               </Link>
               <Link
                 href="/leaderboard"
-                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                  pathname === "/leaderboard" ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
+                className={`text-sm font-semibold transition-colors ${
+                  pathname === "/leaderboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
                 }`}
               >
                 Leaderboard
               </Link>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             {session ? (
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-10 w-10 rounded-full" />}>
-                  <Avatar className="h-10 w-10 border border-gray-200">
+                <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-primary/5 hover:ring-primary/20 transition-all p-0" />}>
+                  <Avatar className="h-full w-full">
                     <AvatarImage src={session.user?.image || ""} alt={session.user?.name || ""} />
-                    <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">{session.user?.name?.[0]}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuContent className="w-56 mt-2 glass-card rounded-xl border-primary/10" align="end">
                   <DropdownMenuGroup>
-                    <DropdownMenuLabel className="font-normal">
+                    <DropdownMenuLabel className="font-normal py-2.5">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-bold leading-none">{session.user?.name}</p>
-                        <p className="text-xs leading-none text-gray-500">{session.user?.email}</p>
+                        <p className="text-xs font-bold text-primary uppercase tracking-wider">Account</p>
+                        <p className="text-sm font-bold text-foreground leading-none truncate">{session.user?.name}</p>
+                        <p className="text-[10px] text-muted-foreground leading-none truncate">{session.user?.email}</p>
                       </div>
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} className="text-red-600 cursor-pointer font-medium">
+                  <DropdownMenuSeparator className="bg-primary/5" />
+                  <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive focus:bg-destructive/5 cursor-pointer font-semibold py-2">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={() => signIn("google")} className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6">
+              <Button onClick={() => signIn("google")} className="bg-primary hover:bg-primary/90 text-white rounded-lg px-4 h-9 text-xs font-bold shadow-sm shadow-primary/20">
                 Login
               </Button>
             )}
+            
+            {/* Mobile Menu Icon Placeholder (for future logic if needed) */}
+            <div className="md:hidden">
+              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
