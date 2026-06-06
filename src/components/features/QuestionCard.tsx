@@ -155,9 +155,9 @@ export default function QuestionCard() {
                   <RadioGroupItem value={key} id={key} className="peer sr-only" />
                   <Label
                     htmlFor={key}
-                    className="flex items-center p-3 border border-primary/5 rounded-xl cursor-pointer hover:bg-primary/[0.02] peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/[0.03] transition-all group"
+                    className="flex items-center p-3 border border-primary/5 rounded-xl cursor-pointer hover:bg-primary/[0.02] peer-data-checked:border-primary peer-data-checked:bg-primary/[0.03] transition-all group"
                   >
-                    <span className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center mr-3 text-xs font-black text-muted-foreground peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white transition-colors">
+                    <span className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center mr-3 text-xs font-black text-muted-foreground peer-data-checked:bg-primary peer-data-checked:text-white transition-colors">
                       {key}
                     </span>
                     <span className="text-xs md:text-sm text-foreground font-semibold group-hover:text-primary transition-colors">{value}</span>
