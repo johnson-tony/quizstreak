@@ -39,6 +39,7 @@ export default function QuestionCard() {
   }, []);
 
   const fetchStatus = async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/attempts");
       const data = await res.json();
@@ -122,9 +123,8 @@ export default function QuestionCard() {
     const doc = new jsPDF();
     const today = new Date().toLocaleDateString();
     
-    // Header
     doc.setFontSize(20);
-    doc.setTextColor(122, 31, 77); // Wine Maroon
+    doc.setTextColor(122, 31, 77); 
     doc.text("QuizStreak Daily Challenge Report", 14, 22);
     
     doc.setFontSize(10);
@@ -132,7 +132,6 @@ export default function QuestionCard() {
     doc.text(`Generated on: ${today}`, 14, 30);
     doc.text(`Overall Result: ${result.correct ? "PASSED" : "REVIEW NEEDED"}`, 14, 35);
 
-    // Table Data
     const tableData = result.results.map((res: any, index: number) => {
       const q = questions.find(quest => quest.day === res.day);
       return [
@@ -234,11 +233,7 @@ export default function QuestionCard() {
                 {currentQuestion?.question}
               </p>
 
-              <RadioGroup 
-                value={selectedOption} 
-                onValueChange={handleOptionSelect}
-                className="grid gap-2"
-              >
+              <RadioGroup value={selectedOption} onValueChange={handleOptionSelect} className="grid gap-2">
                 {currentQuestion && Object.entries(currentQuestion.options).map(([key, value]) => (
                   <div key={key}>
                     <RadioGroupItem value={key} id={key} className="peer sr-only" />
@@ -257,18 +252,14 @@ export default function QuestionCard() {
 
               <div className="flex gap-3">
                 {currentIndex > 0 && (
-                  <Button 
-                    variant="outline"
-                    onClick={() => setCurrentIndex(prev => prev - 1)}
-                    className="flex-1 border-primary/10 h-12 text-sm font-bold"
-                  >
+                  <Button variant="outline" onClick={() => setCurrentIndex(prev => prev - 1)} className="flex-1 border-primary/10 h-12 text-sm font-bold">
                     <ChevronLeft className="w-4 h-4 mr-1" /> Back
                   </Button>
                 )}
                 <Button 
                   onClick={handleNext} 
                   disabled={submitting || !selectedOption}
-                  className="flex-[2] bg-primary hover:bg-primary/90 text-white rounded-xl h-12 text-sm font-bold shadow-lg shadow-primary/10 transition-all active:scale-[0.98]"
+                  className="flex-[2] bg-primary hover:bg-primary/90 text-white rounded-xl h-12 text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                 >
                   {submitting ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -281,21 +272,13 @@ export default function QuestionCard() {
               </div>
             </motion.div>
           ) : (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-6"
-            >
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
               <div className="text-center py-2">
                 <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${result.correct ? "bg-emerald-100 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
                   {result.correct ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
                 </div>
-                <h3 className="text-lg font-black text-foreground mb-1">
-                  {result.correct ? "Challenge Completed!" : "Good effort, keep it up!"}
-                </h3>
-                <p className="text-xs text-muted-foreground font-medium px-4">
-                  You earned <span className="text-primary font-bold">+{result.totalPointsEarned}</span> points today.
-                </p>
+                <h3 className="text-lg font-black text-foreground mb-1">{result.correct ? "Excellent Work!" : "Set Complete!"}</h3>
+                <p className="text-xs text-muted-foreground font-medium">You earned <span className="text-primary font-bold">+{result.totalPointsEarned}</span> points today.</p>
               </div>
 
               <div className="space-y-4">
@@ -307,42 +290,19 @@ export default function QuestionCard() {
                         {res.correct ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <XCircle className="w-3.5 h-3.5 text-destructive" />}
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Question {i + 1}</h4>
                       </div>
-                      
-                      <p className="text-xs text-foreground font-bold mb-3 leading-relaxed">
-                        {q?.question}
-                      </p>
-
+                      <p className="text-xs text-foreground font-bold mb-3 leading-relaxed">{q?.question}</p>
                       <div className="flex flex-wrap gap-2 mb-4">
                         {q && Object.entries(q.options).map(([key, value]) => (
-                          <div 
-                            key={key} 
-                            className={`px-2 py-1 rounded-md border text-[10px] font-medium flex items-center gap-1.5 ${
-                              key === res.correctAnswer 
-                                ? "bg-emerald-50 border-emerald-200 text-emerald-700" 
-                                : key === res.selectedAnswer && !res.correct
-                                ? "bg-destructive/5 border-destructive/20 text-destructive"
-                                : "bg-white border-primary/5 text-muted-foreground opacity-60"
-                            }`}
-                          >
-                            <span className={`w-4 h-4 rounded flex items-center justify-center font-black ${
-                              key === res.correctAnswer ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground"
-                            }`}>
-                              {key}
-                            </span>
+                          <div key={key} className={`px-2 py-1 rounded-md border text-[10px] font-medium flex items-center gap-1.5 ${key === res.correctAnswer ? "bg-emerald-50 border-emerald-200 text-emerald-700" : key === res.selectedAnswer && !res.correct ? "bg-destructive/5 border-destructive/20 text-destructive" : "bg-white border-primary/5 text-muted-foreground opacity-60"}`}>
+                            <span className={`w-4 h-4 rounded flex items-center justify-center font-black ${key === res.correctAnswer ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground"}`}>{key}</span>
                             {value}
                           </div>
                         ))}
                       </div>
-
                       <div className="bg-white/50 rounded-lg p-3 border border-primary/5">
                         <h5 className="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1.5">Analysis</h5>
-                        <p className="text-[11px] text-foreground font-medium leading-relaxed">
-                          {res.explanation}
-                        </p>
-                        <div className="mt-2 text-[10px] font-bold">
-                          <span className="text-muted-foreground">Correct Answer: </span>
-                          <span className="text-emerald-600 font-black">{res.correctAnswer}</span>
-                        </div>
+                        <p className="text-[11px] text-foreground font-medium leading-relaxed">{res.explanation}</p>
+                        <div className="mt-2 text-[10px] font-bold"><span className="text-muted-foreground">Correct Answer: </span><span className="text-emerald-600 font-black">{res.correctAnswer}</span></div>
                       </div>
                     </div>
                   );

@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import Attempt from '@/models/Attempt';
-import { getQuestionsBySet } from '@/lib/google-sheets';
+import { getQuestionsBySet, getAllQuestions } from '@/lib/google-sheets';
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { answers } = await req.json(); // answers: { day: string, selectedAnswer: string }[]
+  const { answers, type } = await req.json(); // answers: { day: string, selectedAnswer: string }[], type: 'daily' | 'practice'
 
   await dbConnect();
 
@@ -23,17 +23,23 @@ export async function POST(req: Request) {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  // Check if already attempted today
-  const existingAttempt = await Attempt.findOne({
-    userId: user._id,
-    date: today,
-  });
+  // Only check for existing attempts if it's a 'daily' set
+  if (type === 'daily') {
+    const existingAttempt = await Attempt.findOne({
+      userId: user._id,
+      date: today,
+      type: 'daily' // We should add this field to the model
+    });
 
-  if (existingAttempt) {
-    return NextResponse.json({ error: 'Already attempted today' }, { status: 400 });
+    if (existingAttempt) {
+      return NextResponse.json({ error: 'Already attempted today' }, { status: 400 });
+    }
   }
 
-  const questions = await getQuestionsBySet(user.currentSet);
+  const questions = type === 'practice' 
+    ? await getAllQuestions() 
+    : await getQuestionsBySet(user.currentSet);
+
   if (!questions || questions.length === 0) {
     return NextResponse.json({ error: 'Questions not found' }, { status: 404 });
   }
@@ -52,13 +58,14 @@ export async function POST(req: Request) {
     let points = 0;
     if (isCorrect) {
       const basePoints = question.points || { Easy: 5, Medium: 10, Hard: 15 }[question.difficulty] || 10;
-      const streakBonusMultiplier = 1 + Math.floor(user.currentStreak / 7) * 0.1;
+      // Streak bonus only applies to daily challenges
+      const streakBonusMultiplier = type === 'daily' ? (1 + Math.floor(user.currentStreak / 7) * 0.1) : 1;
       points = Math.round(basePoints * streakBonusMultiplier);
     }
 
     totalPointsEarned += points;
 
-    // Create attempt record for each
+    // Create attempt record
     await Attempt.create({
       userId: user._id,
       questionId: question.day,
@@ -66,6 +73,7 @@ export async function POST(req: Request) {
       selectedAnswer: answer.selectedAnswer,
       correct: isCorrect,
       pointsEarned: points,
+      type: type || 'daily'
     });
 
     results.push({
@@ -76,10 +84,8 @@ export async function POST(req: Request) {
     });
   }
 
-  // Update set and streak if they completed it
-  if (answers.length === questions.length) {
-    // Increment set for tomorrow regardless of allCorrect (as they tried all)
-    // Actually, usually users only move to next set if they finish the previous one.
+  // Update set and streak ONLY for daily challenges
+  if (type === 'daily' && answers.length === questions.length) {
     user.currentSet += 1;
 
     if (allCorrect) {
@@ -137,10 +143,8 @@ export async function GET() {
 
   if (attempts.length === 0) return NextResponse.json({ attempted: false });
 
-  // For GET, we need the questions of the set they attempted TODAY
-  // Since we increment set in POST, the set they did is actually user.currentSet - 1
-  const attemptedSet = user.currentSet - 1;
-  const questions = await getQuestionsBySet(attemptedSet);
+  // For GET, we need the questions for the specific set/category they attempted TODAY
+  const questions = await getAllQuestions();
 
   return NextResponse.json({
     attempted: true,

@@ -9,17 +9,14 @@ import { toast } from "sonner";
 import { 
   Sparkles, 
   Plus,
-  Trash2, 
   Save, 
   Loader2, 
   Wand2,
   RefreshCcw,
-  CheckCircle2,
-  AlertCircle,
   ArrowLeft,
-  Filter,
-  CheckCircle,
-  XCircle
+  Library,
+  ChevronRight,
+  Database
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -30,32 +27,24 @@ export default function AdminQuestionsPage() {
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   
-  // Generation Settings
   const [category, setCategory] = useState("JavaScript");
   const [count, setCount] = useState(5);
   const [difficulty, setDifficulty] = useState("Medium");
   const [targetSet, setTargetSet] = useState("");
   const [aiQuestions, setAiQuestions] = useState<any[]>([]);
 
-  // Filtering
-  const [selectedSetFilter, setSelectedSetFilter] = useState<string>("all");
-
   useEffect(() => {
     fetchQuestions();
   }, []);
 
-  // Update targetSet when questions load
   useEffect(() => {
     if (questions.length > 0 && !targetSet) {
       const uniqueSetNumbers = Array.from(new Set(questions.map(q => parseInt(q.set) || 0))).sort((a,b) => a-b);
       const lastSet = uniqueSetNumbers[uniqueSetNumbers.length - 1] || 1;
       const questionsInLast = questions.filter(q => parseInt(q.set) === lastSet).length;
       
-      if (questionsInLast < 15) {
-        setTargetSet(lastSet.toString());
-      } else {
-        setTargetSet((lastSet + 1).toString());
-      }
+      if (questionsInLast < 15) setTargetSet(lastSet.toString());
+      else setTargetSet((lastSet + 1).toString());
     } else if (questions.length === 0) {
       setTargetSet("1");
     }
@@ -75,17 +64,16 @@ export default function AdminQuestionsPage() {
   };
 
   const generateAI = async () => {
-    // Capacity Check Before Generating
     const existingInTarget = questions.filter(q => q.set === targetSet).length;
     const remaining = 15 - existingInTarget;
 
     if (remaining <= 0) {
-      toast.error(`Set #${targetSet} is already full (15/15). Please choose another set.`);
+      toast.error(`Set #${targetSet} is already full (15/15).`);
       return;
     }
 
     if (count > remaining) {
-      toast.error(`Set #${targetSet} only has space for ${remaining} more questions. Please reduce the quantity.`);
+      toast.error(`Set #${targetSet} only has space for ${remaining} more.`);
       return;
     }
 
@@ -106,7 +94,7 @@ export default function AdminQuestionsPage() {
       }));
       
       setAiQuestions(formatted);
-      toast.success(`Generated ${count} questions for Set ${targetSet}`);
+      toast.success(`AI Drafted ${count} questions for Set ${targetSet}`);
     } catch (error: any) {
       toast.error(error.message || "AI Generation failed");
     } finally {
@@ -115,24 +103,6 @@ export default function AdminQuestionsPage() {
   };
 
   const saveToSheet = async () => {
-    // 1. Duplicate Check
-    const duplicates = aiQuestions.filter(newQ => 
-      questions.some(oldQ => oldQ.question.toLowerCase().trim() === newQ.question.toLowerCase().trim())
-    );
-    if (duplicates.length > 0) {
-      if (!confirm(`${duplicates.length} duplicate questions detected. Save anyway?`)) return;
-    }
-
-    // 2. Set Limit Check (15 questions per set)
-    const setToSave = aiQuestions[0]?.set;
-    const existingInSet = questions.filter(q => q.set === setToSave).length;
-    const totalAfterSave = existingInSet + aiQuestions.length;
-
-    if (totalAfterSave > 15) {
-      toast.error(`Cannot save. Set ${setToSave} would have ${totalAfterSave} questions (Limit: 15).`);
-      return;
-    }
-
     setSaving(true);
     try {
       const res = await fetch("/api/admin/questions", {
@@ -143,285 +113,214 @@ export default function AdminQuestionsPage() {
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       
-      toast.success("Spreadsheet updated successfully!");
+      toast.success("Questions synced with Google Sheets!");
       setAiQuestions([]);
       fetchQuestions();
     } catch (error: any) {
-      toast.error(error.message || "Failed to save questions");
+      toast.error(error.message || "Failed to save");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (rowIndex: number) => {
-    if (!confirm("Are you sure? This row will be cleared from Google Sheets.")) return;
-    
-    try {
-      const res = await fetch("/api/admin/questions/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rowIndex }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      
-      toast.success("Question cleared");
-      fetchQuestions();
-    } catch (error: any) {
-      toast.error("Delete failed");
-    }
-  };
-
-  // Logic for filtering by set
   const uniqueSets = Array.from(new Set(questions.map(q => q.set))).sort((a,b) => parseInt(a)-parseInt(b));
-  const filteredQuestions = selectedSetFilter === "all" 
-    ? questions 
-    : questions.filter(q => q.set === selectedSetFilter);
 
   return (
-    <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <Link href="/admin/dashboard">
-            <Button variant="ghost" size="sm" className="mb-2 -ml-2 text-muted-foreground hover:text-primary">
-              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Console
-            </Button>
-          </Link>
+    <div className="p-4 md:p-8 space-y-8 max-w-6xl mx-auto animate-in fade-in duration-700">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
           <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
-            <Sparkles className="text-primary w-8 h-8" /> Curriculum Manager
+            <Wand2 className="text-primary w-8 h-8" /> Curriculum Architect
           </h1>
-          <p className="text-sm text-muted-foreground font-medium mt-1">Design daily sets and manage AI-powered content.</p>
+          <p className="text-sm text-muted-foreground font-medium">Design challenge sets and generate AI-powered curriculum.</p>
         </div>
+        
+        <Link href="/admin/questions/bank">
+          <Button variant="outline" className="rounded-2xl h-12 px-6 border-primary/10 bg-white hover:bg-primary/5 text-primary font-bold shadow-sm transition-all">
+            <Library className="w-4 h-4 mr-2" /> View Question Bank <ChevronRight className="w-4 h-4 ml-1 opacity-50" />
+          </Button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="space-y-6">
-          <Card className="rounded-[2rem] border-primary/5 shadow-xl bg-white overflow-hidden sticky top-24 border-t-4 border-t-primary">
-            <CardHeader className="bg-primary/[0.01] border-b border-primary/5 pb-4">
-              <div className="flex items-center gap-2">
-                <Wand2 className="w-4 h-4 text-primary" />
-                <CardTitle className="text-xs font-black uppercase tracking-widest text-primary">Content Architect</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6 space-y-5">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Target Skill</label>
-                <select 
-                  value={category} 
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-                >
-                  {["JavaScript", "SQL", "AWS", "Aptitude", "Debugging", "Interviews"].map(c => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Set Configuration Form */}
+        <Card className="rounded-[2rem] border-primary/5 shadow-2xl bg-white overflow-hidden border-t-8 border-t-primary lg:col-span-2">
+          <CardHeader className="bg-primary/[0.01] border-b border-primary/5 p-6">
+            <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-primary">Set Configuration</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Complexity</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Target Skill</label>
                   <select 
-                    value={difficulty} 
-                    onChange={(e) => setDifficulty(e.target.value)}
-                    className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-primary/20"
+                    value={category} 
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
                   >
-                    {["Easy", "Medium", "Hard"].map(d => <option key={d}>{d}</option>)}
+                    {["JavaScript", "React", "Angular", "Python", "SQL", "AWS", "AI", ".NET", "Laravel", "Aptitude", "Debugging", "Interviews"].map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Quantity</label>
-                  <input 
-                    type="number" 
-                    min="1" 
-                    max="15" 
-                    value={isNaN(count) ? "" : count} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setCount(isNaN(val) ? 0 : val);
-                    }}
-                    className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary/20"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Difficulty</label>
+                    <select 
+                      value={difficulty} 
+                      onChange={(e) => setDifficulty(e.target.value)}
+                      className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-primary/10"
+                    >
+                      {["Easy", "Medium", "Hard"].map(d => <option key={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Quantity</label>
+                    <input 
+                      type="number" 
+                      min="1" 
+                      max="15" 
+                      value={isNaN(count) ? "" : count} 
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        setCount(isNaN(val) ? 0 : val);
+                      }}
+                      className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-primary/10"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Target Set</label>
-                <div className="relative">
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Target Set</label>
                   <select 
                     value={targetSet} 
                     onChange={(e) => setTargetSet(e.target.value)}
-                    className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-primary/20"
+                    className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-primary/10"
                   >
-                    {/* Only show incomplete sets (less than 15 questions) */}
                     {uniqueSets
                       .filter(s => questions.filter(q => q.set === s).length < 15)
                       .map(s => {
                         const c = questions.filter(q => q.set === s).length;
-                        return <option key={s} value={s}>Set #{s} ({c}/15 full)</option>
+                        return <option key={s} value={s}>Set #{s} ({c}/15 slots)</option>
                       })
                     }
                     <option value={(Math.max(...questions.map(q => parseInt(q.set) || 0)) + 1).toString()}>
-                      New Set #{(Math.max(...questions.map(q => parseInt(q.set) || 0)) + 1)}
+                      Create New Set #{(Math.max(...questions.map(q => parseInt(q.set) || 0)) + 1)}
                     </option>
                   </select>
                 </div>
+
+                <Button 
+                  onClick={generateAI} 
+                  disabled={generating}
+                  className="w-full h-11 bg-primary hover:bg-primary/90 text-white rounded-xl font-black shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-auto"
+                >
+                  {generating ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <><Sparkles className="w-4 h-4 mr-3 fill-white" /> Generate AI Questions</>}
+                </Button>
               </div>
+            </div>
+          </CardContent>
+        </Card>
 
-              <Button 
-                onClick={generateAI} 
-                disabled={generating}
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-2"
-              >
-                {generating ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Sparkles className="w-4 h-4 mr-2" /> Build Challenge</>}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-primary/5 shadow-sm bg-muted/10">
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Set Health Check</h3>
-                {uniqueSets.slice(-3).map(setNum => {
-                  const setQuestions = questions.filter(q => q.set === setNum);
-                  const isFull = setQuestions.length >= 15;
-                  return (
-                    <div key={setNum} className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-foreground">Set #{setNum}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full transition-all ${isFull ? 'bg-emerald-500' : 'bg-primary'}`} 
-                            style={{ width: `${(setQuestions.length / 15) * 100}%` }} 
-                          />
-                        </div>
-                        <span className={`text-[10px] font-black ${isFull ? 'text-emerald-600' : 'text-primary'}`}>{setQuestions.length}/15</span>
-                      </div>
+        {/* Sheet Health / Stats Card */}
+        <Card className="rounded-[2rem] border-primary/5 shadow-2xl bg-white overflow-hidden flex flex-col">
+          <CardHeader className="bg-primary/[0.01] border-b border-primary/5 p-6 flex-shrink-0">
+             <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                  <Database className="w-5 h-5 text-emerald-600" />
+                </div>
+                <CardTitle className="text-xs font-black uppercase tracking-widest text-emerald-700">Database Status</CardTitle>
+             </div>
+          </CardHeader>
+          <CardContent className="p-6 flex-grow flex flex-col justify-center gap-6">
+            <div>
+               <div className="text-3xl font-black text-foreground">{questions.length}</div>
+               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Total Challenges in Sheet</p>
+            </div>
+            
+            <div className="space-y-4">
+              {uniqueSets.slice(-3).map(setNum => {
+                const setQuestions = questions.filter(q => q.set === setNum);
+                const isFull = setQuestions.length >= 15;
+                return (
+                  <div key={setNum} className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] font-black uppercase">
+                      <span className="text-muted-foreground tracking-tighter">Set #{setNum}</span>
+                      <span className={isFull ? 'text-emerald-600' : 'text-primary'}>{setQuestions.length}/15</span>
                     </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="lg:col-span-2 space-y-6">
-          <AnimatePresence mode="wait">
-            {aiQuestions.length > 0 ? (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center justify-between bg-primary/5 p-4 rounded-2xl border border-primary/10">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                      <Plus className="text-primary w-5 h-5" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-black text-foreground leading-none">Drafting Set #{aiQuestions[0].set}</h2>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Reviewing {aiQuestions.length} AI generated items</p>
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(setQuestions.length / 15) * 100}%` }}
+                        className={`h-full ${isFull ? 'bg-emerald-500' : 'bg-primary'}`}
+                      />
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => setAiQuestions([])} className="text-xs font-black text-muted-foreground hover:bg-white">DISCARD</Button>
-                    <Button size="sm" onClick={saveToSheet} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black px-4 rounded-xl h-10">
-                      {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />} DEPLOY TO SHEET
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="grid gap-4">
-                  {aiQuestions.map((q, i) => (
-                    <Card key={i} className="rounded-2xl border-primary/5 shadow-md bg-white p-5 border-l-4 border-l-primary">
-                      <div className="flex justify-between items-start mb-2">
-                        <Badge variant="secondary" className="bg-primary/5 text-primary text-[10px] font-black">{q.category}</Badge>
-                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-tighter">Draft Item {i+1}</span>
-                      </div>
-                      <p className="text-sm font-bold text-foreground mb-4">{q.question}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {Object.entries(q.options).map(([key, val]) => (
-                          <div key={key} className={`p-2 rounded-lg text-[10px] font-bold ${key === q.correctAnswer ? "bg-emerald-50 text-emerald-700" : "bg-muted/30 text-muted-foreground"}`}>
-                            {key}: {val as string}
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </motion.div>
-            ) : (
-              <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <h2 className="text-xl font-black text-foreground flex items-center gap-2">
-                    Live Curriculum
-                    <span className="text-[10px] font-black text-muted-foreground uppercase bg-muted px-2 py-0.5 rounded tracking-widest">{filteredQuestions.length} total</span>
-                  </h2>
-                  
-                  <div className="flex items-center gap-2">
-                    <div className="relative">
-                      <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
-                      <select 
-                        value={selectedSetFilter}
-                        onChange={(e) => setSelectedSetFilter(e.target.value)}
-                        className="h-9 pl-8 pr-8 bg-white border border-primary/5 rounded-xl text-[10px] font-black uppercase tracking-widest appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/20"
-                      >
-                        <option value="all">All Sets</option>
-                        {uniqueSets.map(s => <option key={s} value={s}>Set #{s}</option>)}
-                      </select>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={fetchQuestions} className="text-primary font-bold text-xs h-9 hover:bg-primary/5 px-2">
-                      <RefreshCcw className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="grid gap-3">
-                  {loading ? (
-                    Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />)
-                  ) : filteredQuestions.length > 0 ? (
-                    filteredQuestions.slice().reverse().map((q, i) => (
-                      <Card key={i} className="rounded-2xl border-primary/5 shadow-sm bg-white hover:shadow-md transition-all group">
-                        <CardContent className="p-4 flex items-center justify-between gap-4">
-                          <div className="min-w-0 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary flex-shrink-0 flex items-center justify-center font-black text-xs">
-                              {q.set}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge className="text-[8px] h-4 bg-muted text-muted-foreground border-none font-bold uppercase tracking-widest">{q.category}</Badge>
-                                <span className="text-[9px] font-black text-primary/40 uppercase">ID: {q.day}</span>
-                              </div>
-                              <p className="text-xs font-bold text-foreground truncate">{q.question}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="text-right flex-shrink-0 hidden sm:block">
-                              <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1">ANS</p>
-                              <p className="text-xs font-black text-emerald-600">{q.correctAnswer}</p>
-                            </div>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              onClick={() => handleDelete(q.rowIndex)}
-                              className="text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl h-9 w-9"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  ) : (
-                    <div className="text-center py-20 bg-muted/10 rounded-3xl border-2 border-dashed border-primary/5">
-                      <AlertCircle className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-                      <p className="text-sm font-bold text-muted-foreground">No questions found for this set.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </AnimatePresence>
-        </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* AI Draft Preview - Appears below when generating */}
+      <AnimatePresence>
+        {aiQuestions.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="space-y-6 pt-4"
+          >
+            <div className="flex items-center justify-between bg-primary p-6 rounded-[2rem] text-white shadow-xl shadow-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
+                  <RefreshCcw className="w-6 h-6 text-white animate-spin-slow" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black leading-none tracking-tight">Drafting Set #{aiQuestions[0].set}</h2>
+                  <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest mt-1.5">{aiQuestions.length} AI generated challenges</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="ghost" size="sm" onClick={() => setAiQuestions([])} className="text-xs font-black text-white hover:bg-white/10 px-4 rounded-xl">DISCARD</Button>
+                <Button size="sm" onClick={saveToSheet} disabled={saving} className="bg-white text-primary hover:bg-white/90 text-xs font-black px-6 rounded-xl h-11 transition-all active:scale-95 shadow-lg">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />} SYNC TO SHEET
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {aiQuestions.map((q, i) => (
+                <Card key={i} className="rounded-3xl border-primary/5 shadow-md bg-white p-6 border-l-8 border-l-primary hover:border-l-secondary transition-all">
+                  <div className="flex justify-between items-start mb-4">
+                    <Badge className="bg-primary/5 text-primary border-none text-[9px] font-black uppercase px-2 py-0.5">{q.category}</Badge>
+                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-50">Draft Q{i+1}</span>
+                  </div>
+                  <p className="text-sm font-bold text-foreground mb-6 leading-relaxed">{q.question}</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {Object.entries(q.options).map(([key, val]) => (
+                      <div key={key} className={`p-2.5 rounded-xl text-xs font-bold border transition-all ${key === q.correctAnswer ? "bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm" : "bg-muted/30 border-transparent text-muted-foreground"}`}>
+                        <span className={`w-5 h-5 rounded-lg flex items-center justify-center font-black mr-2 inline-flex ${key === q.correctAnswer ? "bg-emerald-600 text-white" : "bg-white text-muted-foreground"}`}>{key}</span>
+                        {val as string}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Footer Hint */}
+      {aiQuestions.length === 0 && (
+        <div className="text-center pt-10">
+           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">Ready for Generation</p>
+        </div>
+      )}
     </div>
   );
 }

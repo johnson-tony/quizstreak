@@ -64,7 +64,7 @@ export default function AdminUsersPage() {
             </Button>
           </Link>
           <h1 className="text-3xl font-black text-foreground tracking-tight">User Directory</h1>
-          <p className="text-sm text-muted-foreground font-medium mt-1">Total {users.length} students enrolled.</p>
+          <p className="text-sm text-muted-foreground font-medium mt-1">Total {users.length} users enrolled.</p>
         </div>
       </div>
 

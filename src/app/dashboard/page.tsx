@@ -106,15 +106,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Unified Stats Row */}
-        <StatsSection stats={{
-          totalPoints: profile?.user?.totalPoints || 0,
-          accuracy: profile?.stats?.accuracy || 0,
-          totalSolved: profile?.stats?.totalSolved || 0,
-          currentStreak: profile?.user?.currentStreak || 0,
-          longestStreak: profile?.user?.longestStreak || 0,
-        }} />
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Main Content - Challenge & Calendar */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
@@ -124,6 +115,14 @@ export default function DashboardPage() {
 
           {/* Sidebar - Badges & Activity */}
           <div className="space-y-4 md:space-y-6">
+            <StatsSection stats={{
+              totalPoints: profile?.user?.totalPoints || 0,
+              accuracy: profile?.stats?.accuracy || 0,
+              totalSolved: profile?.stats?.totalSolved || 0,
+              currentStreak: profile?.user?.currentStreak || 0,
+              longestStreak: profile?.user?.longestStreak || 0,
+            }} />
+            
             <BadgesSection userBadges={profile?.user?.badges || []} />
             
             <div className="bg-primary rounded-2xl p-6 text-white shadow-lg shadow-primary/10 relative overflow-hidden group">
