@@ -71,6 +71,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (dbUser) {
           session.user.id = dbUser._id.toString();
           (session.user as any).totalPoints = dbUser.totalPoints;
+          (session.user as any).currentSet = dbUser.currentSet;
           (session.user as any).currentStreak = dbUser.currentStreak;
           (session.user as any).badges = dbUser.badges;
         }

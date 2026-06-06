@@ -14,6 +14,7 @@ import autoTable from "jspdf-autotable";
 
 interface Question {
   day: string;
+  set: string;
   category: string;
   difficulty: string;
   question: string;
@@ -48,7 +49,7 @@ export default function QuestionCard() {
         fetchQuestions();
       }
     } catch (error) {
-      toast.error("Failed to load today's challenge");
+      toast.error("Failed to load your progress");
       setLoading(false);
     }
   };
@@ -105,9 +106,9 @@ export default function QuestionCard() {
       } else {
         setResult(data);
         if (data.correct) {
-          toast.success(`Excellent! +${data.totalPointsEarned} points`);
+          toast.success(`Excellent! Challenge Set #${data.newSet - 1} Complete`);
         } else {
-          toast.error("Some answers were incorrect. Keep learning!");
+          toast.error("Some answers were incorrect. Set complete!");
         }
       }
     } catch (error) {
@@ -133,8 +134,7 @@ export default function QuestionCard() {
 
     // Table Data
     const tableData = result.results.map((res: any, index: number) => {
-      // Find original question for full text
-      const q = questions.find(q => q.day === res.day);
+      const q = questions.find(quest => quest.day === res.day);
       return [
         index + 1,
         q?.question || "Question " + res.day,
@@ -151,13 +151,13 @@ export default function QuestionCard() {
       body: tableData,
       headStyles: { fillColor: [122, 31, 77] },
       columnStyles: {
-        1: { cellWidth: 50 }, // Question width
-        5: { cellWidth: 60 }, // Explanation width
+        1: { cellWidth: 50 },
+        5: { cellWidth: 60 },
       },
       theme: 'grid'
     });
 
-    doc.save(`QuizStreak_Result_${today}.pdf`);
+    doc.save(`QuizStreak_Result_Set_${questions[0]?.set || "Unknown"}.pdf`);
     toast.success("Result PDF downloaded!");
   };
 
@@ -172,7 +172,7 @@ export default function QuestionCard() {
   if (questions.length === 0 && !result) {
     return (
       <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm p-8 text-center">
-        <p className="text-sm font-medium text-muted-foreground">Check back later for today&apos;s challenge!</p>
+        <p className="text-sm font-medium text-muted-foreground">Check back tomorrow for the next challenge set!</p>
       </Card>
     );
   }
@@ -187,8 +187,8 @@ export default function QuestionCard() {
             </div>
             <div className="space-y-0.5">
               <CardTitle className="text-sm md:text-base font-black text-foreground">
-                Daily Challenge {questions.length > 1 && !result && `(${currentIndex + 1}/${questions.length})`}
-                {result && "Results"}
+                Challenge Set #{result ? (result.newSet - 1 || questions[0]?.set) : (questions[0]?.set || "1")}
+                {!result && questions.length > 1 && ` (${currentIndex + 1}/${questions.length})`}
               </CardTitle>
               {!result && (
                 <div className="flex gap-2">
@@ -214,7 +214,7 @@ export default function QuestionCard() {
               </Button>
             )}
             <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-              Day {currentQuestion?.day || result?.results?.[0]?.day || "01"}
+              {currentQuestion?.day || "Review"}
             </span>
           </div>
         </div>
@@ -294,7 +294,7 @@ export default function QuestionCard() {
                   {result.correct ? "Challenge Completed!" : "Good effort, keep it up!"}
                 </h3>
                 <p className="text-xs text-muted-foreground font-medium px-4">
-                  You earned <span className="text-primary font-bold">+{result.pointsEarned || result.totalPointsEarned}</span> points today.
+                  You earned <span className="text-primary font-bold">+{result.totalPointsEarned}</span> points today.
                 </p>
               </div>
 
@@ -312,7 +312,6 @@ export default function QuestionCard() {
                         {q?.question}
                       </p>
 
-                      {/* Small Flex Options */}
                       <div className="flex flex-wrap gap-2 mb-4">
                         {q && Object.entries(q.options).map(([key, value]) => (
                           <div 
@@ -351,7 +350,7 @@ export default function QuestionCard() {
               </div>
 
               <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic pt-2">
-                New challenge arrives in 24 hours
+                Come back tomorrow for Set #{result.newSet || (questions[0]?.set ? parseInt(questions[0]?.set) + 1 : 2)}
               </p>
             </motion.div>
           )}

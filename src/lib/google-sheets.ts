@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 export interface Question {
   day: string;
-  date: string;
+  set: string; // Column B: Which set this question belongs to (1, 2, 3...)
   category: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   points?: number;
@@ -71,7 +71,7 @@ export async function getAllQuestions(): Promise<Question[]> {
 
   return rows.map((row, index) => ({
     day: row[0],
-    date: row[1],
+    set: row[1], // Column B
     category: row[2],
     difficulty: row[3] as any,
     points: row[11] ? parseInt(row[11]) : undefined,
@@ -84,14 +84,14 @@ export async function getAllQuestions(): Promise<Question[]> {
     },
     correctAnswer: row[9],
     explanation: row[10],
-    rowIndex: index + 2, // Row 2 is the first data row (A2)
+    rowIndex: index + 2,
   }));
 }
 
-export async function getTodayQuestions(): Promise<Question[]> {
+export async function getQuestionsBySet(setNumber: number): Promise<Question[]> {
   const all = await getAllQuestions();
-  const today = new Date().toISOString().split('T')[0];
-  return all.filter(q => q.date === today);
+  // Filter by set number (matching as string)
+  return all.filter(q => q.set === setNumber.toString());
 }
 
 export async function appendQuestions(questions: Question[]) {
@@ -108,7 +108,7 @@ export async function appendQuestions(questions: Question[]) {
     
     const values = questions.map(q => [
       q.day,
-      q.date,
+      q.set,
       q.category,
       q.difficulty,
       q.question,
@@ -151,7 +151,7 @@ export async function updateQuestion(rowIndex: number, q: Question) {
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          q.day, q.date, q.category, q.difficulty, q.question,
+          q.day, q.set, q.category, q.difficulty, q.question,
           q.options.A, q.options.B, q.options.C, q.options.D,
           q.correctAnswer, q.explanation, q.points || 10
         ]]

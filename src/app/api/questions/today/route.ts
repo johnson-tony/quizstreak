@@ -1,20 +1,26 @@
 import { NextResponse } from 'next/server';
-import { getTodayQuestions } from '@/lib/google-sheets';
+import { getQuestionsBySet } from '@/lib/google-sheets';
 import { auth } from '@/auth';
+import dbConnect from '@/lib/db';
+import User from '@/models/User';
 
 export async function GET() {
   const session = await auth();
-  if (!session) {
+  if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const questions = await getTodayQuestions();
+  await dbConnect();
+  const user = await User.findOne({ email: session.user.email });
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+  const questions = await getQuestionsBySet(user.currentSet);
 
   if (!questions || questions.length === 0) {
-    return NextResponse.json({ error: 'Questions not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Questions for this set not found' }, { status: 404 });
   }
 
-  // Omit correct answers and explanations for all questions
+  // Omit correct answers and explanations
   const publicQuestions = questions.map(({ correctAnswer, explanation, ...publicQ }) => publicQ);
 
   return NextResponse.json(publicQuestions);

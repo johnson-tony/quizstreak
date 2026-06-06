@@ -59,18 +59,18 @@ export default function AdminQuestionsPage() {
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       
-      // Auto-fill day and date for preview
-      const today = new Date().toISOString().split('T')[0];
-      const nextDay = questions.length > 0 ? (parseInt(questions[questions.length-1].day) + 1).toString() : "1";
+      // Suggest the next set number based on the highest set in the current list
+      const highestSet = questions.length > 0 ? Math.max(...questions.map(q => parseInt(q.set) || 0)) : 0;
+      const nextSet = (highestSet + 1).toString();
       
-      const formatted = data.map((q: any) => ({
+      const formatted = data.map((q: any, i: number) => ({
         ...q,
-        day: nextDay,
-        date: today
+        day: `Q${(questions.length + i + 1).toString().padStart(3, '0')}`,
+        set: nextSet
       }));
       
       setAiQuestions(formatted);
-      toast.success(`Generated ${count} questions successfully!`);
+      toast.success(`Generated ${count} questions for Set ${nextSet}`);
     } catch (error: any) {
       toast.error(error.message || "Failed to generate questions");
     } finally {
@@ -79,6 +79,15 @@ export default function AdminQuestionsPage() {
   };
 
   const saveToSheet = async () => {
+    // Duplicate Checker: Check if these questions already exist in the recent curriculum
+    const duplicates = aiQuestions.filter(newQ => 
+      questions.some(oldQ => oldQ.question.toLowerCase().trim() === newQ.question.toLowerCase().trim())
+    );
+
+    if (duplicates.length > 0) {
+      if (!confirm(`${duplicates.length} duplicate questions detected. Save anyway?`)) return;
+    }
+
     setSaving(true);
     try {
       const res = await fetch("/api/admin/questions", {

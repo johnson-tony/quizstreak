@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import Attempt from '@/models/Attempt';
-import { getTodayQuestions } from '@/lib/google-sheets';
+import { getQuestionsBySet } from '@/lib/google-sheets';
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Already attempted today' }, { status: 400 });
   }
 
-  const questions = await getTodayQuestions();
+  const questions = await getQuestionsBySet(user.currentSet);
   if (!questions || questions.length === 0) {
     return NextResponse.json({ error: 'Questions not found' }, { status: 404 });
   }
@@ -76,26 +76,31 @@ export async function POST(req: Request) {
     });
   }
 
-  // Update streak if they got everything right (or just if they attempted? 
-  // Let's say allCorrect for streak increment)
-  if (allCorrect && answers.length === questions.length) {
-    const yesterday = new Date(today);
-    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  // Update set and streak if they completed it
+  if (answers.length === questions.length) {
+    // Increment set for tomorrow regardless of allCorrect (as they tried all)
+    // Actually, usually users only move to next set if they finish the previous one.
+    user.currentSet += 1;
 
-    if (user.lastAttemptDate && user.lastAttemptDate.getTime() === yesterday.getTime()) {
-      user.currentStreak += 1;
-    } else {
-      user.currentStreak = 1;
-    }
+    if (allCorrect) {
+      const yesterday = new Date(today);
+      yesterday.setUTCDate(yesterday.getUTCDate() - 1);
 
-    if (user.currentStreak > user.longestStreak) {
-      user.longestStreak = user.currentStreak;
+      if (user.lastAttemptDate && user.lastAttemptDate.getTime() === yesterday.getTime()) {
+        user.currentStreak += 1;
+      } else {
+        user.currentStreak = 1;
+      }
+
+      if (user.currentStreak > user.longestStreak) {
+        user.longestStreak = user.currentStreak;
+      }
+      
+      // Badge logic
+      if (user.currentStreak === 1 && !user.badges.includes('First Challenge')) user.badges.push('First Challenge');
+      if (user.currentStreak === 7 && !user.badges.includes('7-Day Streak')) user.badges.push('7-Day Streak');
+      if (user.currentStreak === 30 && !user.badges.includes('30-Day Streak')) user.badges.push('30-Day Streak');
     }
-    
-    // Badge logic
-    if (user.currentStreak === 1 && !user.badges.includes('First Challenge')) user.badges.push('First Challenge');
-    if (user.currentStreak === 7 && !user.badges.includes('7-Day Streak')) user.badges.push('7-Day Streak');
-    if (user.currentStreak === 30 && !user.badges.includes('30-Day Streak')) user.badges.push('30-Day Streak');
   }
 
   user.totalPoints += totalPointsEarned;
@@ -108,6 +113,7 @@ export async function POST(req: Request) {
     results,
     newStreak: user.currentStreak,
     newTotalPoints: user.totalPoints,
+    newSet: user.currentSet
   });
 }
 
@@ -131,7 +137,10 @@ export async function GET() {
 
   if (attempts.length === 0) return NextResponse.json({ attempted: false });
 
-  const questions = await getTodayQuestions();
+  // For GET, we need the questions of the set they attempted TODAY
+  // Since we increment set in POST, the set they did is actually user.currentSet - 1
+  const attemptedSet = user.currentSet - 1;
+  const questions = await getQuestionsBySet(attemptedSet);
 
   return NextResponse.json({
     attempted: true,

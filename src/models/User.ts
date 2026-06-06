@@ -19,6 +19,7 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   image: { type: String },
   totalPoints: { type: Number, default: 0 },
+  currentSet: { type: Number, default: 1 },
   currentStreak: { type: Number, default: 0 },
   longestStreak: { type: Number, default: 0 },
   badges: { type: [String], default: [] },
