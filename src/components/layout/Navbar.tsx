@@ -32,14 +32,16 @@ export default function Navbar() {
               </span>
             </Link>
             <div className="hidden md:flex items-center space-x-6">
-              <Link
-                href="/dashboard"
-                className={`text-sm font-semibold transition-colors ${
-                  pathname === "/dashboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
-                }`}
-              >
-                Dashboard
-              </Link>
+              {session && (
+                <Link
+                  href="/dashboard"
+                  className={`text-sm font-semibold transition-colors ${
+                    pathname === "/dashboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
+                  }`}
+                >
+                  Dashboard
+                </Link>
+              )}
               <Link
                 href="/leaderboard"
                 className={`text-sm font-semibold transition-colors ${

@@ -5,6 +5,8 @@ import { motion, Variants } from "framer-motion";
 import { buttonVariants, Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { 
   CheckCircle2, 
   TrendingUp, 
@@ -21,6 +23,14 @@ import {
 
 export default function LandingPage() {
   const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [status, router]);
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -74,8 +84,8 @@ export default function LandingPage() {
                 variants={itemVariants}
                 className="max-w-xl mx-auto text-base text-muted-foreground mb-8 leading-relaxed px-2"
               >
-                Build your engineering career through focused daily challenges. 
-                JavaScript, SQL, AWS, and more.
+                Master the skills that matter. Daily professional challenges in Software Engineering, 
+                Data Science, Cloud Architecture, and Analytical Aptitude.
               </motion.p>
               
               <motion.div 
@@ -91,60 +101,11 @@ export default function LandingPage() {
                 >
                   {status === "authenticated" ? "Go to Dashboard" : "Start Challenge"}
                 </Link>
-                {status === "unauthenticated" && (
-                  <Button 
-                    onClick={() => signIn("google")}
-                    variant="outline" 
-                    size="lg" 
-                    className="bg-white/50 border-primary/10 text-foreground rounded-xl px-8 h-12 text-sm font-bold hover:bg-white transition-all"
-                  >
-                    Continue with Google
-                  </Button>
-                )}
               </motion.div>
             </motion.div>
-
-            {/* Mockup - More compact and premium */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="mt-16 relative max-w-4xl mx-auto"
-            >
-              <div className="bg-white/80 backdrop-blur-xl border border-primary/10 rounded-2xl shadow-2xl overflow-hidden aspect-[16/10] flex items-center justify-center p-4">
-                <div className="w-full h-full bg-primary/[0.02] rounded-xl border border-primary/5 flex items-center justify-center relative group">
-                  <div className="absolute inset-0 bg-radial-gradient(circle,rgba(122,31,77,0.03),transparent)" />
-                  <Code2 className="w-16 h-16 text-primary/10 group-hover:text-primary/20 transition-colors duration-700" />
-                </div>
-              </div>
-            </motion.div>
           </div>
         </section>
 
-        {/* CTA Section - Premium & Focused */}
-        <section className="py-20 px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-primary rounded-2xl p-8 md:p-12 text-center text-white shadow-xl shadow-primary/20 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 blur-3xl -mr-24 -mt-24 rounded-full" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 blur-3xl -ml-24 -mb-24 rounded-full" />
-              
-              <h2 className="text-3xl font-black mb-4 relative z-10">Start your streak today</h2>
-              <p className="text-primary-foreground/70 text-sm mb-8 max-w-sm mx-auto relative z-10 leading-relaxed">
-                Join 10K+ engineers sharpening their skills one day at a time. 
-              </p>
-              
-              <Link 
-                href="/dashboard" 
-                className={buttonVariants({ 
-                  size: "lg", 
-                  className: "bg-white text-primary hover:bg-white/90 rounded-xl px-8 h-12 text-sm font-bold relative z-10 transition-transform active:scale-95 inline-flex items-center" 
-                })}
-              >
-                Join Now <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Compact Footer */}

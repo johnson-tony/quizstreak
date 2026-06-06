@@ -50,14 +50,11 @@ export default function AdminLoginPage() {
       <Card className="w-full max-w-md glass-card rounded-2xl border-primary/10 shadow-2xl overflow-hidden relative">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
         
-        <CardHeader className="pt-10 pb-6 text-center">
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+        <CardHeader className="pt-8 pb-6 text-center">
+          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-3">
             <Lock className="w-6 h-6 text-primary" />
           </div>
           <CardTitle className="text-2xl font-black text-foreground tracking-tight">Admin Portal</CardTitle>
-          <CardDescription className="text-sm font-medium text-muted-foreground mt-2">
-            Secure access for QuizStreak administrators only.
-          </CardDescription>
         </CardHeader>
 
         <CardContent className="pb-10 px-8">
@@ -102,13 +99,6 @@ export default function AdminLoginPage() {
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Access Dashboard"}
             </Button>
           </form>
-
-          <div className="mt-8 pt-6 border-t border-primary/5 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-destructive/5 rounded-lg border border-destructive/10 text-destructive text-[10px] font-black uppercase tracking-widest">
-              <ShieldAlert className="w-3 h-3" />
-              Unauthorized attempts are logged
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

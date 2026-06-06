@@ -67,8 +67,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-      
       <main className="flex-grow max-w-7xl mx-auto px-4 py-6 space-y-6 w-full animate-in fade-in duration-700">
         {/* Compact Welcome & Quick Stats Section */}
         <section className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-card p-5 md:p-6 rounded-3xl border-primary/5 shadow-xl bg-white relative overflow-hidden">
