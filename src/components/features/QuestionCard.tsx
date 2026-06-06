@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { CheckCircle2, XCircle, Loader2, Sparkles, ChevronRight, ChevronLeft } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Sparkles, ChevronRight, ChevronLeft, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Question {
   day: string;
@@ -115,6 +117,50 @@ export default function QuestionCard() {
     }
   };
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const today = new Date().toLocaleDateString();
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setTextColor(122, 31, 77); // Wine Maroon
+    doc.text("QuizStreak Daily Challenge Report", 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${today}`, 14, 30);
+    doc.text(`Overall Result: ${result.correct ? "PASSED" : "REVIEW NEEDED"}`, 14, 35);
+
+    // Table Data
+    const tableData = result.results.map((res: any, index: number) => {
+      // Find original question for full text
+      const q = questions.find(q => q.day === res.day);
+      return [
+        index + 1,
+        q?.question || "Question " + res.day,
+        res.selectedAnswer,
+        res.correctAnswer,
+        res.correct ? "Correct" : "Incorrect",
+        res.explanation
+      ];
+    });
+
+    autoTable(doc, {
+      startY: 45,
+      head: [['#', 'Question', 'Your Answer', 'Correct', 'Status', 'Explanation']],
+      body: tableData,
+      headStyles: { fillColor: [122, 31, 77] },
+      columnStyles: {
+        1: { cellWidth: 50 }, // Question width
+        5: { cellWidth: 60 }, // Explanation width
+      },
+      theme: 'grid'
+    });
+
+    doc.save(`QuizStreak_Result_${today}.pdf`);
+    toast.success("Result PDF downloaded!");
+  };
+
   if (loading) {
     return (
       <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm h-64 flex items-center justify-center">
@@ -141,19 +187,32 @@ export default function QuestionCard() {
             </div>
             <div className="space-y-0.5">
               <CardTitle className="text-sm md:text-base font-black text-foreground">
-                Daily Challenge {questions.length > 1 && `(${currentIndex + 1}/${questions.length})`}
+                Daily Challenge {questions.length > 1 && !result && `(${currentIndex + 1}/${questions.length})`}
+                {result && "Results"}
               </CardTitle>
-              <div className="flex gap-2">
-                <Badge variant="secondary" className="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0 h-4 border-none">
-                  {currentQuestion?.category || result?.results?.[0]?.category || "General"}
-                </Badge>
-                <Badge variant="outline" className="border-primary/10 text-muted-foreground text-[10px] font-bold px-2 py-0 h-4">
-                  {currentQuestion?.difficulty || "Medium"}
-                </Badge>
-              </div>
+              {!result && (
+                <div className="flex gap-2">
+                  <Badge variant="secondary" className="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0 h-4 border-none">
+                    {currentQuestion?.category || "General"}
+                  </Badge>
+                  <Badge variant="outline" className="border-primary/10 text-muted-foreground text-[10px] font-bold px-2 py-0 h-4">
+                    {currentQuestion?.difficulty || "Medium"}
+                  </Badge>
+                </div>
+              )}
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex items-center gap-3">
+            {result && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={downloadPDF}
+                className="h-8 px-2 text-primary hover:bg-primary/5 font-bold text-[10px]"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" /> EXPORT PDF
+              </Button>
+            )}
             <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
               Day {currentQuestion?.day || result?.results?.[0]?.day || "01"}
             </span>
@@ -240,17 +299,55 @@ export default function QuestionCard() {
               </div>
 
               <div className="space-y-4">
-                {result.results?.map((res: any, i: number) => (
-                  <div key={i} className="bg-muted/50 rounded-xl p-4 border border-primary/5">
-                    <div className="flex items-center gap-2 mb-2">
-                      {res.correct ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <XCircle className="w-3.5 h-3.5 text-destructive" />}
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Question {i + 1} Analysis</h4>
+                {result.results?.map((res: any, i: number) => {
+                  const q = questions.find(quest => quest.day === res.day);
+                  return (
+                    <div key={i} className="bg-muted/50 rounded-xl p-4 border border-primary/5">
+                      <div className="flex items-center gap-2 mb-3">
+                        {res.correct ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <XCircle className="w-3.5 h-3.5 text-destructive" />}
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Question {i + 1}</h4>
+                      </div>
+                      
+                      <p className="text-xs text-foreground font-bold mb-3 leading-relaxed">
+                        {q?.question}
+                      </p>
+
+                      {/* Small Flex Options */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {q && Object.entries(q.options).map(([key, value]) => (
+                          <div 
+                            key={key} 
+                            className={`px-2 py-1 rounded-md border text-[10px] font-medium flex items-center gap-1.5 ${
+                              key === res.correctAnswer 
+                                ? "bg-emerald-50 border-emerald-200 text-emerald-700" 
+                                : key === res.selectedAnswer && !res.correct
+                                ? "bg-destructive/5 border-destructive/20 text-destructive"
+                                : "bg-white border-primary/5 text-muted-foreground opacity-60"
+                            }`}
+                          >
+                            <span className={`w-4 h-4 rounded flex items-center justify-center font-black ${
+                              key === res.correctAnswer ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground"
+                            }`}>
+                              {key}
+                            </span>
+                            {value}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-white/50 rounded-lg p-3 border border-primary/5">
+                        <h5 className="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1.5">Analysis</h5>
+                        <p className="text-[11px] text-foreground font-medium leading-relaxed">
+                          {res.explanation}
+                        </p>
+                        <div className="mt-2 text-[10px] font-bold">
+                          <span className="text-muted-foreground">Correct Answer: </span>
+                          <span className="text-emerald-600 font-black">{res.correctAnswer}</span>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-foreground font-medium leading-relaxed">
-                      {res.explanation}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic pt-2">
