@@ -90,8 +90,9 @@ export async function getAllQuestions(): Promise<Question[]> {
 
 export async function getQuestionsBySet(setNumber: number): Promise<Question[]> {
   const all = await getAllQuestions();
-  // Filter by set number (matching as string)
-  return all.filter(q => q.set === setNumber.toString());
+  // Fallback to set 1 if setNumber is missing or invalid
+  const targetSet = (setNumber || 1).toString();
+  return all.filter(q => q.set === targetSet);
 }
 
 export async function appendQuestions(questions: Question[]) {
