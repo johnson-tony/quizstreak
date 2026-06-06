@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { 
   Sparkles, 
+  Plus,
   Trash2, 
   Save, 
   Loader2, 
@@ -33,6 +34,7 @@ export default function AdminQuestionsPage() {
   const [category, setCategory] = useState("JavaScript");
   const [count, setCount] = useState(5);
   const [difficulty, setDifficulty] = useState("Medium");
+  const [targetSet, setTargetSet] = useState("");
   const [aiQuestions, setAiQuestions] = useState<any[]>([]);
 
   // Filtering
@@ -41,6 +43,23 @@ export default function AdminQuestionsPage() {
   useEffect(() => {
     fetchQuestions();
   }, []);
+
+  // Update targetSet when questions load
+  useEffect(() => {
+    if (questions.length > 0 && !targetSet) {
+      const uniqueSetNumbers = Array.from(new Set(questions.map(q => parseInt(q.set) || 0))).sort((a,b) => a-b);
+      const lastSet = uniqueSetNumbers[uniqueSetNumbers.length - 1] || 1;
+      const questionsInLast = questions.filter(q => parseInt(q.set) === lastSet).length;
+      
+      if (questionsInLast < 15) {
+        setTargetSet(lastSet.toString());
+      } else {
+        setTargetSet((lastSet + 1).toString());
+      }
+    } else if (questions.length === 0) {
+      setTargetSet("1");
+    }
+  }, [questions]);
 
   const fetchQuestions = async () => {
     setLoading(true);
@@ -56,6 +75,20 @@ export default function AdminQuestionsPage() {
   };
 
   const generateAI = async () => {
+    // Capacity Check Before Generating
+    const existingInTarget = questions.filter(q => q.set === targetSet).length;
+    const remaining = 15 - existingInTarget;
+
+    if (remaining <= 0) {
+      toast.error(`Set #${targetSet} is already full (15/15). Please choose another set.`);
+      return;
+    }
+
+    if (count > remaining) {
+      toast.error(`Set #${targetSet} only has space for ${remaining} more questions. Please reduce the quantity.`);
+      return;
+    }
+
     setGenerating(true);
     try {
       const res = await fetch("/api/admin/ai/generate", {
@@ -66,18 +99,14 @@ export default function AdminQuestionsPage() {
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       
-      // Auto-calculate next Set number
-      const highestSet = questions.length > 0 ? Math.max(...questions.map(q => parseInt(q.set) || 0)) : 0;
-      const nextSet = (highestSet + 1).toString();
-      
       const formatted = data.map((q: any, i: number) => ({
         ...q,
         day: `Q${(questions.length + i + 1).toString().padStart(3, '0')}`,
-        set: nextSet
+        set: targetSet
       }));
       
       setAiQuestions(formatted);
-      toast.success(`Gemini created ${count} questions for Set ${nextSet}`);
+      toast.success(`Generated ${count} questions for Set ${targetSet}`);
     } catch (error: any) {
       toast.error(error.message || "AI Generation failed");
     } finally {
@@ -198,15 +227,41 @@ export default function AdminQuestionsPage() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Questions</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Quantity</label>
                   <input 
                     type="number" 
                     min="1" 
                     max="15" 
-                    value={count} 
-                    onChange={(e) => setCount(parseInt(e.target.value))}
+                    value={isNaN(count) ? "" : count} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setCount(isNaN(val) ? 0 : val);
+                    }}
                     className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary/20"
                   />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Target Set</label>
+                <div className="relative">
+                  <select 
+                    value={targetSet} 
+                    onChange={(e) => setTargetSet(e.target.value)}
+                    className="w-full h-11 px-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-bold appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-primary/20"
+                  >
+                    {/* Only show incomplete sets (less than 15 questions) */}
+                    {uniqueSets
+                      .filter(s => questions.filter(q => q.set === s).length < 15)
+                      .map(s => {
+                        const c = questions.filter(q => q.set === s).length;
+                        return <option key={s} value={s}>Set #{s} ({c}/15 full)</option>
+                      })
+                    }
+                    <option value={(Math.max(...questions.map(q => parseInt(q.set) || 0)) + 1).toString()}>
+                      New Set #{(Math.max(...questions.map(q => parseInt(q.set) || 0)) + 1)}
+                    </option>
+                  </select>
                 </div>
               </div>
 
