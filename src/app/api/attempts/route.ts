@@ -46,12 +46,12 @@ export async function POST(req: Request) {
     const question = questions.find(q => q.day === answer.day);
     if (!question) continue;
 
-    const isCorrect = answer.selectedAnswer === question.correctAnswer;
+    const isCorrect = answer.selectedAnswer.trim().toUpperCase() === question.correctAnswer.trim().toUpperCase();
     if (!isCorrect) allCorrect = false;
 
     let points = 0;
     if (isCorrect) {
-      const basePoints = { Easy: 5, Medium: 10, Hard: 15 }[question.difficulty] || 10;
+      const basePoints = question.points || { Easy: 5, Medium: 10, Hard: 15 }[question.difficulty] || 10;
       const streakBonusMultiplier = 1 + Math.floor(user.currentStreak / 7) * 0.1;
       points = Math.round(basePoints * streakBonusMultiplier);
     }

@@ -5,6 +5,7 @@ export interface Question {
   date: string;
   category: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
+  points?: number;
   question: string;
   options: {
     A: string;
@@ -55,7 +56,7 @@ export async function getGoogleSheetData() {
 
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
-    const range = 'Sheet1!A2:K';
+    const range = 'Sheet1!A2:L';
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -88,6 +89,7 @@ export async function getTodayQuestions(): Promise<Question[]> {
     date: row[1],
     category: row[2],
     difficulty: row[3] as any,
+    points: row[11] ? parseInt(row[11]) : undefined,
     question: row[4],
     options: {
       A: row[5],
