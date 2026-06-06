@@ -121,41 +121,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Categories Section - Compact & Scrollable */}
-        <section className="py-12 bg-white/30 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-end justify-between mb-8 gap-4 px-2">
-              <div className="max-w-md">
-                <h2 className="text-xl font-black text-foreground mb-1">Skill Categories</h2>
-                <p className="text-xs text-muted-foreground">Expertly curated challenges for modern engineering teams.</p>
-              </div>
-            </div>
-            
-            <div className="flex overflow-x-auto pb-4 gap-3 md:grid md:grid-cols-3 lg:grid-cols-6 md:pb-0 scrollbar-hide -mx-2 px-2">
-              {[
-                { title: "JavaScript", icon: Code2, desc: "ES6+, Async" },
-                { title: "SQL", icon: Database, desc: "Queries, Indexes" },
-                { title: "AWS", icon: Cloud, desc: "Serverless, Arch" },
-                { title: "Aptitude", icon: Brain, desc: "Logic, Problems" },
-                { title: "Debugging", icon: Bug, desc: "Fix Scenarios" },
-                { title: "Interviews", icon: MessageSquare, desc: "Company Prep" },
-              ].map((cat, i) => (
-                <motion.div 
-                  key={i}
-                  whileHover={{ y: -2, borderColor: "rgba(122,31,77,0.2)" }}
-                  className="flex-shrink-0 w-[140px] md:w-auto p-4 bg-white/50 backdrop-blur-sm border border-primary/5 rounded-xl shadow-sm transition-all cursor-pointer group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                    <cat.icon className="w-3.5 h-3.5" />
-                  </div>
-                  <h3 className="text-xs font-bold text-foreground mb-0.5">{cat.title}</h3>
-                  <p className="text-[10px] text-muted-foreground leading-tight line-clamp-1">{cat.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section - Premium & Focused */}
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto">
