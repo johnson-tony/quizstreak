@@ -61,11 +61,11 @@ export default function UserLayout({
           </Link>
         </div>
         
-        <nav className="flex-grow p-4 space-y-2 mt-4">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-4">Navigation</p>
+        <nav className="flex-grow p-4 flex flex-col gap-2 mt-4">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-2">Navigation</p>
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <div className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+              <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                 pathname === item.href 
                   ? "bg-primary text-white shadow-lg shadow-primary/20" 
                   : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
