@@ -43,7 +43,7 @@ export default function PublicLeaderboardPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
-      <main className="flex-grow max-w-4xl mx-auto px-3 sm:px-4 py-8 md:py-20 w-full space-y-8 md:space-y-12">
+      <main className="flex-grow max-w-2xl mx-auto px-3 sm:px-4 py-8 md:py-20 w-full space-y-8 md:space-y-12">
         <div className="text-center space-y-3 md:space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-1 md:mb-2">
             <Trophy className="w-3 h-3" />

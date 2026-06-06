@@ -8,8 +8,9 @@ export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  // 1. If logged in and trying to access the landing page, go to dashboard
-  if (nextUrl.pathname === "/" && isLoggedIn) {
+  // 1. If logged in, strictly prevent access to landing page and login page
+  const isPublicAuthPage = ["/", "/login"].includes(nextUrl.pathname);
+  if (isPublicAuthPage && isLoggedIn) {
     return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
