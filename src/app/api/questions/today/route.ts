@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTodayQuestion } from '@/lib/google-sheets';
+import { getTodayQuestions } from '@/lib/google-sheets';
 import { auth } from '@/auth';
 
 export async function GET() {
@@ -8,17 +8,14 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const question = await getTodayQuestion();
+  const questions = await getTodayQuestions();
 
-  if (!question) {
-    return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+  if (!questions || questions.length === 0) {
+    return NextResponse.json({ error: 'Questions not found' }, { status: 404 });
   }
 
-  // Omit the correct answer and explanation if the user hasn't attempted it yet?
-  // Actually, the requirements say "After submission: Show correct answer, explanation"
-  // So we should probably hide it initially.
-  
-  const { correctAnswer, explanation, ...publicQuestion } = question;
+  // Omit correct answers and explanations for all questions
+  const publicQuestions = questions.map(({ correctAnswer, explanation, ...publicQ }) => publicQ);
 
-  return NextResponse.json(publicQuestion);
+  return NextResponse.json(publicQuestions);
 }

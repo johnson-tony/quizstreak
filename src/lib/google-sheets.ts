@@ -69,36 +69,33 @@ export async function getGoogleSheetData() {
   }
 }
 
-export async function getTodayQuestion(): Promise<Question | null> {
+export async function getTodayQuestions(): Promise<Question[]> {
   const rows = await getGoogleSheetData();
-  if (!rows) {
-    console.error('No rows returned from Google Sheet');
-    return null;
-  }
+  if (!rows) return [];
 
   const today = new Date().toISOString().split('T')[0];
-  console.log('Searching for question with date:', today);
+  console.log('Searching for questions with date:', today);
 
-  const todayRow = rows.find((row) => row[1] === today);
+  const todayRows = rows.filter((row) => row[1] === today);
 
-  if (!todayRow) {
-    console.error(`No question found for date: ${today}. Available dates:`, rows.map(r => r[1]));
-    return null;
+  if (todayRows.length === 0) {
+    console.error(`No questions found for date: ${today}. Available dates:`, rows.map(r => r[1]));
+    return [];
   }
 
-  return {
-    day: todayRow[0],
-    date: todayRow[1],
-    category: todayRow[2],
-    difficulty: todayRow[3] as any,
-    question: todayRow[4],
+  return todayRows.map(row => ({
+    day: row[0],
+    date: row[1],
+    category: row[2],
+    difficulty: row[3] as any,
+    question: row[4],
     options: {
-      A: todayRow[5],
-      B: todayRow[6],
-      C: todayRow[7],
-      D: todayRow[8],
+      A: row[5],
+      B: row[6],
+      C: row[7],
+      D: row[8],
     },
-    correctAnswer: todayRow[9],
-    explanation: todayRow[10],
-  };
+    correctAnswer: row[9],
+    explanation: row[10],
+  }));
 }
