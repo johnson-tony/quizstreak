@@ -1,23 +1,8 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/db";
 import User from "./models/User";
-
-if (process.env.NEXTAUTH_DEBUG === "true") {
-  // Temporary debug: shows whether env values are loaded (do not commit)
-  // Enable by setting NEXTAUTH_DEBUG=true in .env.local and restarting dev server
-  // This helps confirm the client secret isn't truncated or missing at runtime.
-  // Remove these logs once troubleshooting is complete.
-  // eslint-disable-next-line no-console
-  console.log("GOOGLE_CLIENT_ID=", process.env.GOOGLE_CLIENT_ID);
-  // eslint-disable-next-line no-console
-  console.log(
-    "GOOGLE_CLIENT_SECRET present:",
-    !!process.env.GOOGLE_CLIENT_SECRET,
-    "len=",
-    process.env.GOOGLE_CLIENT_SECRET?.length
-  );
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -25,8 +10,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+    Credentials({
+      name: "Admin Login",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
+        if (
+          credentials?.email === adminEmail &&
+          credentials?.password === adminPassword
+        ) {
+          return {
+            id: "admin-system",
+            name: "Administrator",
+            email: adminEmail,
+            role: "admin",
+          };
+        }
+        return null;
+      },
+    }),
   ],
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role || "user";
+      }
+      return token;
+    },
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         await dbConnect();
@@ -45,6 +60,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
+        (session.user as any).role = token.role;
+        
+        if (token.role === "admin") {
+          return session;
+        }
+
         await dbConnect();
         const dbUser = await User.findOne({ email: session.user.email });
         if (dbUser) {
