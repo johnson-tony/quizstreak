@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants, Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
+import { signIn } from "next-auth/react";
 import { 
   CheckCircle2, 
   TrendingUp, 
@@ -79,16 +80,14 @@ export default function LandingPage() {
                 >
                   Start Today's Challenge
                 </Link>
-                <Link 
-                  href="/dashboard" 
-                  className={buttonVariants({ 
-                    variant: "outline", 
-                    size: "lg", 
-                    className: "bg-white border-gray-200 text-gray-700 rounded-2xl px-8 h-14 text-lg font-semibold hover:bg-gray-50" 
-                  })}
+                <Button 
+                  onClick={() => signIn("google")}
+                  variant="outline" 
+                  size="lg" 
+                  className="bg-white border-gray-200 text-gray-700 rounded-2xl px-8 h-14 text-lg font-semibold hover:bg-gray-50"
                 >
                   Continue with Google
-                </Link>
+                </Button>
               </motion.div>
             </motion.div>
 

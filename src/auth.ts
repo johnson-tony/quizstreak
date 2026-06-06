@@ -3,6 +3,22 @@ import Google from "next-auth/providers/google";
 import dbConnect from "./lib/db";
 import User from "./models/User";
 
+if (process.env.NEXTAUTH_DEBUG === "true") {
+  // Temporary debug: shows whether env values are loaded (do not commit)
+  // Enable by setting NEXTAUTH_DEBUG=true in .env.local and restarting dev server
+  // This helps confirm the client secret isn't truncated or missing at runtime.
+  // Remove these logs once troubleshooting is complete.
+  // eslint-disable-next-line no-console
+  console.log("GOOGLE_CLIENT_ID=", process.env.GOOGLE_CLIENT_ID);
+  // eslint-disable-next-line no-console
+  console.log(
+    "GOOGLE_CLIENT_SECRET present:",
+    !!process.env.GOOGLE_CLIENT_SECRET,
+    "len=",
+    process.env.GOOGLE_CLIENT_SECRET?.length
+  );
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Google({
