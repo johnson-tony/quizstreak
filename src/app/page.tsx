@@ -27,7 +27,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }, [status, router]);
 
@@ -56,7 +56,7 @@ export default function LandingPage() {
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative pt-12 pb-20 overflow-hidden px-4">
+        <section className="relative pt-8 pb-16 md:pt-12 md:pb-20 overflow-hidden px-4">
           <div className="max-w-7xl mx-auto relative z-10">
             <motion.div 
               initial="hidden"
@@ -66,7 +66,7 @@ export default function LandingPage() {
             >
               <motion.div
                 variants={itemVariants}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-xs font-bold mb-6"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black mb-4 md:mb-6"
               >
                 <Trophy className="w-3 h-3" />
                 <span>2026 Season Now Live</span>
@@ -74,7 +74,7 @@ export default function LandingPage() {
               
               <motion.h1 
                 variants={itemVariants}
-                className="text-4xl md:text-6xl font-black text-foreground tracking-tight mb-4 leading-[1.1]"
+                className="text-[28px] sm:text-4xl md:text-6xl font-black text-foreground tracking-tight mb-4 leading-[1.2] md:leading-[1.1]"
               >
                 Master One Challenge <br />
                 <span className="text-primary italic">Every Single Day</span>
@@ -82,7 +82,7 @@ export default function LandingPage() {
               
               <motion.p 
                 variants={itemVariants}
-                className="max-w-xl mx-auto text-base text-muted-foreground mb-8 leading-relaxed px-2"
+                className="max-w-lg mx-auto text-xs sm:text-sm md:text-base text-muted-foreground mb-6 md:mb-8 leading-relaxed px-4"
               >
                 Master the skills that matter. Daily professional challenges in Software Engineering, 
                 Data Science, Cloud Architecture, and Analytical Aptitude.
@@ -96,7 +96,7 @@ export default function LandingPage() {
                   href="/dashboard" 
                   className={buttonVariants({ 
                     size: "lg", 
-                    className: "bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-12 text-sm font-bold shadow-lg shadow-primary/10" 
+                    className: "bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-11 md:h-12 text-sm font-bold shadow-lg shadow-primary/10" 
                   })}
                 >
                   {status === "authenticated" ? "Go to Dashboard" : "Start Challenge"}

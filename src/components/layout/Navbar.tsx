@@ -79,9 +79,11 @@ export default function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={() => signIn("google")} className="bg-primary hover:bg-primary/90 text-white rounded-lg px-4 h-9 text-xs font-bold shadow-sm shadow-primary/20">
-                Login
-              </Button>
+              <Link href="/login">
+                <Button className="bg-primary hover:bg-primary/90 text-white rounded-lg px-4 h-9 text-xs font-bold shadow-sm shadow-primary/20">
+                  Login
+                </Button>
+              </Link>
             )}
             
             {/* Mobile Menu Icon Placeholder (for future logic if needed) */}

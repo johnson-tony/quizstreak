@@ -41,35 +41,35 @@ export default function RankingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-grow max-w-4xl mx-auto px-4 py-8 md:py-12 w-full space-y-8">
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black uppercase tracking-widest mb-2">
+      <main className="flex-grow max-w-4xl mx-auto px-3 sm:px-4 py-6 md:py-12 w-full space-y-6 md:space-y-8 animate-in fade-in duration-700">
+        <div className="text-center space-y-1.5 md:space-y-2 px-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-1">
             <Trophy className="w-3 h-3" />
             Global Rankings
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight leading-none">Elite Leaderboard</h1>
-          <p className="text-sm text-muted-foreground font-medium">The world&apos;s most consistent engineers.</p>
+          <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight leading-none">Elite Leaderboard</h1>
+          <p className="text-xs md:text-sm text-muted-foreground font-medium">The world&apos;s most consistent engineers.</p>
         </div>
 
         <Tabs defaultValue="allTime" className="w-full" onValueChange={setType}>
-          <div className="flex justify-center mb-6">
-            <TabsList className="bg-primary/5 border border-primary/10 p-1 rounded-xl h-11">
-              <TabsTrigger value="weekly" className="rounded-lg px-6 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Weekly</TabsTrigger>
-              <TabsTrigger value="monthly" className="rounded-lg px-6 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Monthly</TabsTrigger>
-              <TabsTrigger value="allTime" className="rounded-lg px-6 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">All Time</TabsTrigger>
+          <div className="flex justify-center mb-4 md:mb-6">
+            <TabsList className="bg-primary/5 border border-primary/10 p-1 rounded-xl h-10 md:h-11">
+              <TabsTrigger value="weekly" className="rounded-lg px-4 md:px-6 text-[10px] md:text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Weekly</TabsTrigger>
+              <TabsTrigger value="monthly" className="rounded-lg px-4 md:px-6 text-[10px] md:text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Monthly</TabsTrigger>
+              <TabsTrigger value="allTime" className="rounded-lg px-4 md:px-6 text-[10px] md:text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">All Time</TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value={type} className="mt-0 space-y-3">
+          <TabsContent value={type} className="mt-0 space-y-2 md:space-y-3">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="glass-card p-4 rounded-xl border border-primary/5 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Skeleton className="h-6 w-6 rounded-md" />
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <Skeleton className="h-4 w-32" />
+                <div key={i} className="glass-card p-3 md:p-4 rounded-xl border border-primary/5 flex items-center justify-between">
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <Skeleton className="h-5 w-5 md:h-6 md:w-6 rounded-md" />
+                    <Skeleton className="h-9 w-9 md:h-10 md:h-10 rounded-full" />
+                    <Skeleton className="h-4 w-24 md:w-32" />
                   </div>
-                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-4 w-10 md:w-12" />
                 </div>
               ))
             ) : (
@@ -83,29 +83,29 @@ export default function RankingsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
                     key={user._id} 
-                    className={`group glass-card p-3 md:p-4 rounded-xl border transition-all duration-300 hover:shadow-md hover:shadow-primary/5 ${i < 3 ? `border-primary/20 bg-white` : "border-primary/5 bg-white/50"}`}
+                    className={`group glass-card p-2.5 md:p-4 rounded-xl border transition-all duration-300 hover:shadow-md hover:shadow-primary/5 ${i < 3 ? `border-primary/20 bg-white` : "border-primary/5 bg-white/50"}`}
                   >
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center justify-between gap-3 md:gap-4">
                       <div className="flex items-center gap-3 md:gap-5 min-w-0">
-                        <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-black text-xs md:text-sm ${style.bg} ${style.color} ${style.border} border`}>
+                        <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-black text-xs md:text-sm ${style.bg} ${style.color} ${style.border} border shadow-sm`}>
                           {RankIcon ? <RankIcon className="w-4 h-4 md:w-5 md:h-5" /> : i + 1}
                         </div>
                         
-                        <div className="flex items-center gap-3 min-w-0">
-                          <Avatar className="h-9 w-9 md:h-11 md:w-11 border-2 border-white shadow-sm ring-1 ring-primary/5 flex-shrink-0">
+                        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                          <Avatar className="h-8 w-8 md:h-11 md:w-11 border-2 border-white shadow-sm ring-1 ring-primary/5 flex-shrink-0">
                             <AvatarImage src={user.image} />
-                            <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">{user.name[0]}</AvatarFallback>
+                            <AvatarFallback className="bg-primary/5 text-primary text-[10px] md:text-xs font-bold">{user.name[0]}</AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
-                            <h3 className="font-bold text-sm md:text-base text-foreground truncate group-hover:text-primary transition-colors">{user.name}</h3>
-                            <div className="flex items-center gap-1.5 mt-0.5">
+                            <h3 className="font-bold text-xs md:text-base text-foreground truncate group-hover:text-primary transition-colors">{user.name}</h3>
+                            <div className="flex items-center gap-1 mt-0.5">
                               {user.badges.slice(0, 3).map((badge: string, j: number) => (
-                                <div key={j} className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-primary/5 flex items-center justify-center" title={badge}>
+                                <div key={j} className="w-3 md:w-4 h-3 md:h-4 rounded-full bg-primary/5 flex items-center justify-center" title={badge}>
                                   <Star className="w-2 md:w-2.5 h-2 md:h-2.5 text-primary fill-primary" />
                                 </div>
                               ))}
                               {user.badges.length > 3 && (
-                                <span className="text-[9px] font-black text-muted-foreground">+{user.badges.length - 3}</span>
+                                <span className="text-[8px] md:text-[9px] font-black text-muted-foreground">+{user.badges.length - 3}</span>
                               )}
                             </div>
                           </div>
@@ -114,7 +114,7 @@ export default function RankingsPage() {
                       
                       <div className="text-right flex-shrink-0">
                         <div className="text-sm md:text-lg font-black text-primary leading-none">{user.totalPoints}</div>
-                        <div className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">Points</div>
+                        <div className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-0.5 md:mt-1">Points</div>
                       </div>
                     </div>
                   </motion.div>
