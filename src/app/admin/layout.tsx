@@ -15,7 +15,8 @@ import {
   X,
   ShieldCheck,
   Sparkles,
-  BookOpen
+  BookOpen,
+  AlertCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,6 +44,7 @@ export default function AdminLayout({
     { name: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Users", href: "/admin/users", icon: Users },
     { name: "Curriculum", href: "/admin/questions", icon: BookOpen },
+    { name: "System Health", href: "/admin/errors", icon: AlertCircle },
   ];
 
   return (

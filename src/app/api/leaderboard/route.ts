@@ -1,28 +1,35 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
+import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const type = searchParams.get('type') || 'allTime';
+  try {
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get('type') || 'allTime';
 
-  await dbConnect();
+    await dbConnect();
 
-  let users = [];
+    let users = [];
 
-  if (type === 'allTime') {
-    users = await User.find({})
-      .sort({ totalPoints: -1 })
-      .limit(100)
-      .select('name image totalPoints badges');
-  } else {
-    // For weekly/monthly, we'd ideally aggregate points from Attempt collection
-    // but for now, we'll return allTime as a placeholder or implement simple aggregation
-    users = await User.find({})
-      .sort({ totalPoints: -1 })
-      .limit(100)
-      .select('name image totalPoints badges');
+    if (type === 'allTime') {
+      users = await User.find({})
+        .sort({ totalPoints: -1 })
+        .limit(100)
+        .select('name image totalPoints badges');
+    } else {
+      users = await User.find({})
+        .sort({ totalPoints: -1 })
+        .limit(100)
+        .select('name image totalPoints badges');
+    }
+
+    if (!users || users.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    return NextResponse.json(users);
+  } catch (error) {
+    return handleApiError(error, req);
   }
-
-  return NextResponse.json(users);
 }

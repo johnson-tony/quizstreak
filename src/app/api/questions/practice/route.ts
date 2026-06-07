@@ -1,21 +1,23 @@
 import { NextResponse } from 'next/server';
 import { getAllQuestions } from '@/lib/google-sheets';
 import { auth } from '@/auth';
+import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(req: Request) {
-  const session = await auth(req);
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const { searchParams } = new URL(req.url);
-  const category = searchParams.get('category');
-
-  if (!category) {
-    return NextResponse.json({ error: 'Category is required' }, { status: 400 });
-  }
-
+  let session;
   try {
+    session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get('category');
+
+    if (!category) {
+      return NextResponse.json({ error: 'Category is required' }, { status: 400 });
+    }
+
     const allQuestions = await getAllQuestions();
     
     // Filter by category and shuffle
@@ -33,6 +35,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(publicQuestions);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch practice questions' }, { status: 500 });
+    return handleApiError(error, req, session?.user?.id);
   }
 }

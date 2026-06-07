@@ -25,11 +25,8 @@ export default function LandingPage() {
   const { status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [status, router]);
+  // Remove automatic redirect to allow seeing landing page
+  // The Start Challenge button will handle the navigation
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },

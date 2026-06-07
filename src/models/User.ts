@@ -6,6 +6,7 @@ export interface IUser {
   email: string;
   image: string;
   totalPoints: number;
+  currentSet: number;
   currentStreak: number;
   longestStreak: number;
   badges: string[];

@@ -22,6 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preload" href="/quickstreak.svg" as="image" />
+      </head>
       <body className={`${inter.className} bg-background text-foreground min-h-screen relative safe-top safe-bottom overflow-x-hidden`}>
         {/* Modern decorative backgrounds - reduced excessive glow */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
