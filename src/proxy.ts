@@ -1,12 +1,9 @@
 import NextAuth from "next-auth";
-import { authConfig } from "@/auth.config";
+import { authConfig } from "./auth.config";
 
-const { auth } = NextAuth(authConfig);
+export default NextAuth(authConfig).auth;
 
-export const proxy = auth;
-export default auth;
-
-// Configure which paths the middleware should run on
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|quickstreak.svg).*)"],
+  // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.svg$|.*\\.png$).*)'],
 };

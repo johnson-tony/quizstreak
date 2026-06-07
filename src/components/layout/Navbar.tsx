@@ -22,19 +22,13 @@ export default function Navbar() {
           </div>
           
           <div className="flex items-center gap-3">
-            {session ? (
-              <Link href="/dashboard">
-                <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-5 h-9 text-xs font-bold shadow-lg shadow-primary/10">
-                  Go to Dashboard
-                </Button>
-              </Link>
-            ) : (
+           
               <Link href="/login">
                 <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-6 h-9 text-xs font-bold shadow-lg shadow-primary/10">
                   Login
                 </Button>
               </Link>
-            )}
+          
             
             <div className="md:hidden">
               <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary">
