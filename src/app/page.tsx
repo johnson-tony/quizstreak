@@ -26,9 +26,6 @@ export default function LandingPage() {
   const { status } = useSession();
   const router = useRouter();
 
-  // Remove automatic redirect to allow seeing landing page
-  // The Start Challenge button will handle the navigation
-
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {

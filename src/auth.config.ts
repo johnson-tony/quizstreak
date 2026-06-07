@@ -35,6 +35,26 @@ export const authConfig = {
     }),
   ],
   callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isPublicPage = ["/", "/login"].includes(nextUrl.pathname);
+      const isProtectedRoute = ["/dashboard", "/challenge", "/rankings"].some(path => 
+        nextUrl.pathname.startsWith(path)
+      );
+
+      // 1. If it's a protected route and not logged in, redirect to login
+      if (isProtectedRoute && !isLoggedIn) {
+        return false; // NextAuth handles redirect to signIn page
+      }
+
+      // 2. If logged in and trying to access landing or login page, go to dashboard
+      if (isLoggedIn && isPublicPage) {
+        return Response.redirect(new URL("/dashboard", nextUrl));
+      }
+
+      // 3. Otherwise, allow access
+      return true;
+    },
     // Basic JWT logic that doesn't need DB
     async jwt({ token, user }) {
       if (user) {
