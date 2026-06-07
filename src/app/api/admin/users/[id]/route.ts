@@ -8,7 +8,7 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
+  const session = await auth(req);
   const { id } = await params;
   
   if (!session || (session.user as any)?.role !== 'admin') {

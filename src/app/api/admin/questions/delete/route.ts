@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import { deleteQuestion } from '@/lib/google-sheets';
 
 export async function DELETE(req: Request) {
-  const session = await auth();
+  const session = await auth(req);
   if (!session || (session.user as any)?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

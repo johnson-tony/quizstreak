@@ -103,31 +103,6 @@ export default function PublicLeaderboardPage() {
             })
           )}
         </div>
-
-        {/* Restricted Area CTA */}
-        <div className="max-w-2xl mx-auto pt-4 md:pt-8 px-1">
-           <Card className="rounded-2xl md:rounded-[2.5rem] border-primary/5 bg-primary overflow-hidden shadow-2xl shadow-primary/20 relative">
-             <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 blur-3xl -mr-24 -mt-24 rounded-full" />
-             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 blur-2xl -ml-16 -mb-16 rounded-full" />
-             <CardContent className="p-8 md:p-10 text-center space-y-4 md:space-y-6 relative z-10">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto border border-white/20">
-                  <Lock className="w-6 h-6 md:w-7 md:h-7 text-white" />
-                </div>
-                <div className="space-y-1.5 md:space-y-2">
-                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">Full Leaderboard Locked</h2>
-                  <p className="text-primary-foreground/70 text-xs md:text-sm font-medium px-4">
-                    Log in with Google to view all 1,000+ ranked engineers and track your own progress.
-                  </p>
-                </div>
-                <Button 
-                  onClick={() => signIn("google")}
-                  className="bg-white text-primary hover:bg-white/90 rounded-xl md:rounded-2xl h-12 md:h-14 px-8 md:px-10 font-black text-sm md:text-base shadow-xl shadow-black/10 transition-all active:scale-95"
-                >
-                  Join the Community
-                </Button>
-             </CardContent>
-           </Card>
-        </div>
       </main>
     </div>
   );

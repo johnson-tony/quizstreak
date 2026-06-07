@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       
-      <main className="flex-grow flex flex-col items-center px-4 py-12 md:py-4 animate-in fade-in duration-700">
+      <main className="flex-grow flex flex-col items-center px-4 py-4 animate-in fade-in duration-700">
         <div className="w-full max-w-4xl space-y-6">
           <header className="space-y-2 text-center md:text-left">
             <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Privacy Policy</h1>

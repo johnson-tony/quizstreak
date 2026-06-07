@@ -1,1 +1,1 @@
-import { handlers } from "@/auth"; export const { GET, POST } = handlers;
+import { handlers, auth } from "@/auth"; import { NextResponse } from "next/server"; export async function GET(req, context) { const params = await context.params; if (params.nextauth && params.nextauth[0] === "session") { const session = await auth(req); return NextResponse.json(session || {}); } return handlers.GET(req, { params }); } export async function POST(req, context) { const params = await context.params; return handlers.POST(req, { params }); }

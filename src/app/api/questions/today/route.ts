@@ -4,8 +4,8 @@ import { auth } from '@/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 
-export async function GET() {
-  const session = await auth();
+export async function GET(req: Request) {
+  const session = await auth(req);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

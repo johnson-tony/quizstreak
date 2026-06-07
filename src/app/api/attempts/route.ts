@@ -6,7 +6,7 @@ import Attempt from '@/models/Attempt';
 import { getQuestionsBySet, getAllQuestions } from '@/lib/google-sheets';
 
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await auth(req);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -123,8 +123,8 @@ export async function POST(req: Request) {
   });
 }
 
-export async function GET() {
-  const session = await auth();
+export async function GET(req: Request) {
+  const session = await auth(req);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
