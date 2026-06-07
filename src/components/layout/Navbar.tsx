@@ -33,23 +33,25 @@ export default function Navbar() {
             </Link>
             <div className="hidden md:flex items-center space-x-6">
               {session && (
-                <Link
-                  href="/dashboard"
-                  className={`text-sm font-semibold transition-colors ${
-                    pathname === "/dashboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
-                  }`}
-                >
-                  Dashboard
-                </Link>
+                <>
+                  <Link
+                    href="/dashboard"
+                    className={`text-sm font-semibold transition-colors ${
+                      pathname === "/dashboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/rankings"
+                    className={`text-sm font-semibold transition-colors ${
+                      pathname === "/rankings" ? "text-primary" : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    Rankings
+                  </Link>
+                </>
               )}
-              <Link
-                href="/leaderboard"
-                className={`text-sm font-semibold transition-colors ${
-                  pathname === "/leaderboard" ? "text-primary" : "text-muted-foreground hover:text-primary"
-                }`}
-              >
-                Leaderboard
-              </Link>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -72,7 +74,7 @@ export default function Navbar() {
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator className="bg-primary/5" />
-                  <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive focus:bg-destructive/5 cursor-pointer font-semibold py-2">
+                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })} className="text-destructive focus:text-destructive focus:bg-destructive/5 cursor-pointer font-semibold py-2">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>

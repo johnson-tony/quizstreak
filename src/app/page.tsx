@@ -90,7 +90,7 @@ export default function LandingPage() {
                 className="flex flex-col sm:flex-row justify-center gap-3"
               >
                 <Link 
-                  href="/dashboard" 
+                  href={status === "authenticated" ? "/dashboard" : "/login"} 
                   className={buttonVariants({ 
                     size: "lg", 
                     className: "bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-11 md:h-12 text-sm font-bold shadow-lg shadow-primary/10" 

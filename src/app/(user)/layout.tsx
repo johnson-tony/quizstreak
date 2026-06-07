@@ -46,7 +46,7 @@ export default function UserLayout({
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Leaderboard", href: "/leaderboard", icon: Trophy },
+    { name: "Rankings", href: "/rankings", icon: Trophy },
     { name: "Daily Task", href: "/challenge", icon: Zap },
   ];
 

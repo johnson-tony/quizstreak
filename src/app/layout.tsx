@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "QuizStreak | Master One Challenge Every Day",
-  description: "Build your JavaScript, SQL, AWS, Aptitude and Interview skills through daily challenges, streaks and leaderboards.",
+  description: "Build your JavaScript, SQL, AWS, Aptitude and Interview skills through daily challenges, streaks and rankings.",
   icons: {
     icon: "/quickstreak.svg",
     apple: "/quickstreak.svg",
