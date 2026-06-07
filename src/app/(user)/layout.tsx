@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Footer from "@/components/layout/Footer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -156,6 +157,7 @@ export default function UserLayout({
         <main className="flex-grow pb-10">
           {children}
         </main>
+        <Footer />
       </div>
 
       {/* Mobile Drawer Overlay */}
