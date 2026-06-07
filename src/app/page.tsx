@@ -2,30 +2,14 @@
 
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { buttonVariants, Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { 
-  CheckCircle2, 
-  TrendingUp, 
-  Trophy, 
-  Users, 
-  Code2, 
-  Database, 
-  Cloud, 
-  Brain, 
-  Bug, 
-  MessageSquare,
-  ArrowRight
+  Trophy
 } from "lucide-react";
 
 export default function LandingPage() {
-  const { status } = useSession();
-  const router = useRouter();
-
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -88,13 +72,13 @@ export default function LandingPage() {
                 className="flex flex-col sm:flex-row justify-center gap-3"
               >
                 <Link 
-                  href={status === "authenticated" ? "/dashboard" : "/login"} 
+                  href="/login" 
                   className={buttonVariants({ 
                     size: "lg", 
                     className: "bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-11 md:h-12 text-sm font-bold shadow-lg shadow-primary/10" 
                   })}
                 >
-                  {status === "authenticated" ? "Go to Dashboard" : "Start Your Streak"}
+                  Start Your Streak
                 </Link>
               </motion.div>
             </motion.div>
