@@ -206,7 +206,7 @@ export default function QuestionCard() {
           </p>
         </div>
 
-        <div className="pt-4 space-y-4">
+        <div className="pt-3 space-y-2">
           <Button 
             onClick={() => window.open(paywall.upiLink, '_blank')}
             className="w-full h-16 rounded-2xl text-xl font-black shadow-xl shadow-amber-200 bg-amber-500 hover:bg-amber-600 gap-3 group"
@@ -220,7 +220,7 @@ export default function QuestionCard() {
         </div>
 
         <div className="p-4 bg-muted/50 rounded-2xl text-xs font-bold text-muted-foreground leading-relaxed">
-          Note: After payment, please allow up to 24 hours for our team to verify and unlock your account.
+          Note: After payment, please allow up to  10 mins for our team to verify and unlock your account.
         </div>
       </Card>
     );
@@ -236,7 +236,7 @@ export default function QuestionCard() {
 
   return (
     <Card className="rounded-2xl border-primary/5 shadow-md bg-white overflow-hidden">
-      <CardHeader className="border-b border-primary/5 bg-primary/[0.02] p-4 md:p-5">
+      <CardHeader className="border-b border-primary/5 bg-primary/[0.02] p-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -277,7 +277,7 @@ export default function QuestionCard() {
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 md:p-6">
+      <CardContent className="px-4">
         <AnimatePresence mode="wait">
           {!result ? (
             <motion.div 
@@ -285,7 +285,6 @@ export default function QuestionCard() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
             >
               <p className="text-sm md:text-base text-foreground font-bold leading-relaxed px-1">
                 {currentQuestion?.question}
@@ -339,7 +338,7 @@ export default function QuestionCard() {
                 <p className="text-xs text-muted-foreground font-medium">You earned <span className="text-primary font-bold">+{result.totalPointsEarned}</span> points today.</p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {result.results?.map((res: any, i: number) => {
                   const q = questions.find(quest => quest.day === res.day);
                   return (

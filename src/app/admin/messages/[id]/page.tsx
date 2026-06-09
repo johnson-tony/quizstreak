@@ -13,7 +13,8 @@ import {
   Loader2,
   CheckCircle2,
   User,
-  Calendar
+  Calendar,
+  Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -42,6 +43,7 @@ export default function MessageDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchMessage = async () => {
@@ -63,6 +65,26 @@ export default function MessageDetailsPage() {
 
     if (id) fetchMessage();
   }, [id, router]);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this message? This action cannot be undone.")) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/contact/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete message");
+
+      toast.success("Message deleted successfully");
+      router.push("/admin/messages");
+    } catch (error) {
+      toast.error("Failed to delete message");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleReply = async () => {
     if (!message || !replyText.trim()) return;
@@ -105,7 +127,7 @@ export default function MessageDetailsPage() {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between gap-4">
         <Button 
           variant="ghost" 
           size="sm" 
@@ -116,6 +138,23 @@ export default function MessageDetailsPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Inbox
           </Link>
+        </Button>
+
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="rounded-xl font-bold gap-2 px-4 h-9 text-[10px] uppercase tracking-widest shadow-lg shadow-destructive/20"
+        >
+          {isDeleting ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <>
+              <Trash2 className="w-3.5 h-3.5" />
+              Delete Message
+            </>
+          )}
         </Button>
       </div>
 

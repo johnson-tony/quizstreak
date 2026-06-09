@@ -13,6 +13,7 @@ export interface IUser {
   isSubscribed: boolean;
   joinedAt: Date;
   lastAttemptDate?: Date;
+  status: 'active' | 'suspended' | 'deleted';
 }
 
 const UserSchema = new Schema<IUser>({
@@ -28,6 +29,12 @@ const UserSchema = new Schema<IUser>({
   isSubscribed: { type: Boolean, default: false },
   joinedAt: { type: Date, default: Date.now },
   lastAttemptDate: { type: Date },
+  status: { 
+    type: String, 
+    enum: ['active', 'suspended', 'deleted'], 
+    default: 'active',
+    index: true 
+  },
 });
 
 const User = models.User || model<IUser>('User', UserSchema);

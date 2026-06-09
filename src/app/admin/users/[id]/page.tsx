@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,24 +10,27 @@ import { toast } from "sonner";
 import { 
   ChevronLeft, 
   Calendar, 
-  Trophy, 
-  Zap, 
   CheckCircle2, 
   XCircle,
   Mail,
   History,
   CreditCard,
   Crown,
-  Loader2
+  Loader2,
+  Trash2,
+  Ban,
+  UserCheck
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function UserDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -42,6 +46,50 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       toast.error("Failed to load user details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateStatus = async (newStatus: string) => {
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const result = await res.json();
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setData((prev: any) => ({ ...prev, user: result.user }));
+        toast.success(`User marked as ${newStatus}`);
+      }
+    } catch (error) {
+      toast.error("Failed to update status");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const deleteUser = async () => {
+    if (!confirm("Are you sure you want to delete this user? They will be marked as 'deleted' and won't be able to sign in.")) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: "DELETE",
+      });
+      const result = await res.json();
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("User successfully marked as deleted");
+        router.push("/admin/users");
+      }
+    } catch (error) {
+      toast.error("Failed to delete user");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -81,14 +129,39 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <Link href="/admin/users">
           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary group">
             <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Directory
           </Button>
         </Link>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {user?.status !== 'deleted' && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => updateStatus(user?.status === 'suspended' ? 'active' : 'suspended')}
+                disabled={isUpdating}
+                className="rounded-xl font-bold gap-2 text-[10px] uppercase tracking-widest border-primary/10"
+              >
+                {isUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : user?.status === 'suspended' ? <UserCheck className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
+                {user?.status === 'suspended' ? 'Activate' : 'Suspend'}
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={deleteUser}
+                disabled={isDeleting}
+                className="rounded-xl font-bold gap-2 text-[10px] uppercase tracking-widest shadow-lg shadow-destructive/10"
+              >
+                {isDeleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                Delete
+              </Button>
+            </>
+          )}
+
           <Button 
             variant={user?.isSubscribed ? "default" : "outline"}
             size="sm"
@@ -113,7 +186,14 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
           </Avatar>
           
           <div className="flex-grow text-center md:text-left space-y-2">
-            <h1 className="text-3xl font-black text-foreground tracking-tight">{user?.name}</h1>
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-2">
+              <h1 className="text-3xl font-black text-foreground tracking-tight">{user?.name}</h1>
+              {user?.status !== 'active' && (
+                <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${user?.status === 'suspended' ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-destructive/5 text-destructive border-destructive/20'}`}>
+                  {user?.status}
+                </div>
+              )}
+            </div>
             <div className="flex flex-wrap justify-center md:justify-start gap-4">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4" />

@@ -11,7 +11,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account?.provider === "google") {
         await dbConnect();
         const existingUser = await User.findOne({ email: user.email });
-        if (!existingUser) {
+        
+        if (existingUser) {
+          if (existingUser.status === "suspended" || existingUser.status === "deleted") {
+            return false;
+          }
+        } else {
           await User.create({
             googleId: profile?.sub,
             name: user.name,
@@ -33,13 +38,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         await dbConnect();
         const dbUser = await User.findOne({ email: session.user.email });
-        if (dbUser) {
-          session.user.id = dbUser._id.toString();
-          (session.user as any).totalPoints = dbUser.totalPoints;
-          (session.user as any).currentSet = dbUser.currentSet;
-          (session.user as any).currentStreak = dbUser.currentStreak;
-          (session.user as any).badges = dbUser.badges;
+        
+        if (!dbUser || dbUser.status !== "active") {
+          return null;
         }
+
+        session.user.id = dbUser._id.toString();
+        (session.user as any).totalPoints = dbUser.totalPoints;
+        (session.user as any).currentSet = dbUser.currentSet;
+        (session.user as any).currentStreak = dbUser.currentStreak;
+        (session.user as any).badges = dbUser.badges;
       }
       return session;
     },

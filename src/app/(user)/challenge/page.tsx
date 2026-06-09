@@ -18,7 +18,7 @@ export default function ChallengePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-grow max-w-3xl mx-auto px-3 sm:px-4 py-6 md:py-12 w-full space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <main className="flex-grow mx-auto px-3 sm:px-4 py-2 w-full space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <Link href="/dashboard">
           <Button variant="ghost" size="sm" className="mb-2 md:mb-4 -ml-2 text-muted-foreground hover:text-primary transition-colors h-9 text-xs">
             <ChevronLeft className="w-4 h-4 mr-1" /> Back to Dashboard
