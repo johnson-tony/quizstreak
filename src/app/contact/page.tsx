@@ -73,20 +73,20 @@ export default function ContactPage() {
     return (
       <div className="flex flex-col min-h-screen bg-background">
         <Navbar />
-        <main className="flex-grow flex items-center justify-center p-4">
-          <Card className="w-full max-w-md p-8 text-center space-y-6 border-primary/10 shadow-2xl shadow-primary/5 rounded-[2.5rem] animate-in zoom-in duration-500">
-            <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-2">
-              <CheckCircle2 className="w-10 h-10 text-primary" />
+        <main className="flex-grow flex items-center justify-center p-3 sm:p-4">
+          <Card className="w-full max-w-sm p-6 text-center space-y-4 border-primary/5 shadow-xl bg-white rounded-2xl md:rounded-[2rem] animate-in zoom-in duration-500">
+            <div className="mx-auto w-12 h-12 md:w-16 md:h-16 bg-primary/10 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8 text-primary" />
             </div>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-black text-foreground tracking-tight">Thank You!</h2>
-              <p className="text-muted-foreground font-medium">
-                Your message has been received. Our team will get back to you shortly via email.
+            <div className="space-y-1">
+              <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">Message Received</h2>
+              <p className="text-[10px] md:text-xs text-muted-foreground font-medium">
+                Thank you! Our experts will review your request and get back to you shortly via email.
               </p>
             </div>
             <Link 
               href="/dashboard"
-              className={cn(buttonVariants(), "w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20")}
+              className={cn(buttonVariants(), "w-full h-10 md:h-12 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-primary/10 uppercase tracking-widest")}
             >
               Return to Dashboard
             </Link>
@@ -100,26 +100,26 @@ export default function ContactPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
       
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="w-full max-w-xl space-y-8">
-          <div className="text-center space-y-3">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-primary text-xs font-black uppercase tracking-widest mb-4">
-              <Mail className="w-3.5 h-3.5" />
-              Contact Support
+      <main className="flex-grow flex flex-col items-center justify-center px-2 sm:px-4 py-4 md:py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="w-full max-w-lg space-y-4 md:space-y-6">
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[9px] md:text-[10px] font-black uppercase tracking-widest">
+              <Mail className="w-3 h-3" />
+              Support
             </div>
-            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight leading-[1.1]">
-              How can we <span className="text-primary">help?</span>
+            <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight leading-none uppercase">
+              How can we <span className="text-primary italic">help?</span>
             </h1>
-            <p className="text-muted-foreground font-medium max-w-sm mx-auto">
-              Send us a message and we&apos;ll get back to you as soon as possible.
+            <p className="text-[10px] md:text-xs text-muted-foreground font-medium max-w-[240px] md:max-w-sm mx-auto">
+              Direct connection to our engineering and support team.
             </p>
           </div>
 
-          <Card className="p-1 border-primary/5 shadow-2xl shadow-primary/5 rounded-[2.5rem] overflow-hidden bg-white/50 backdrop-blur-sm">
-            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1 flex items-center gap-2">
+          <Card className="p-0.5 border-primary/5 shadow-xl bg-white/50 backdrop-blur-sm rounded-2xl md:rounded-[2rem] overflow-hidden">
+            <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1 flex items-center gap-1.5">
                     <User className="w-3 h-3" /> Full Name
                   </label>
                   <input
@@ -127,12 +127,12 @@ export default function ContactPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full h-12 bg-primary/5 border-none rounded-2xl px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    className="w-full h-10 md:h-11 bg-primary/5 border-none rounded-xl px-3 text-[11px] md:text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none"
                     placeholder="Enter your name"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1 flex items-center gap-2">
+                <div className="space-y-1.5">
+                  <label className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1 flex items-center gap-1.5">
                     <Mail className="w-3 h-3" /> Email Address
                   </label>
                   <input
@@ -140,14 +140,14 @@ export default function ContactPage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full h-12 bg-primary/5 border-none rounded-2xl px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    className="w-full h-10 md:h-11 bg-primary/5 border-none rounded-xl px-3 text-[11px] md:text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none"
                     placeholder="name@example.com"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1 flex items-center gap-2">
+              <div className="space-y-1.5">
+                <label className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1 flex items-center gap-1.5">
                   <Type className="w-3 h-3" /> Subject
                 </label>
                 <input
@@ -155,13 +155,13 @@ export default function ContactPage() {
                   type="text"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full h-12 bg-primary/5 border-none rounded-2xl px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                  className="w-full h-10 md:h-11 bg-primary/5 border-none rounded-xl px-3 text-[11px] md:text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none"
                   placeholder="What is this regarding?"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1 flex items-center gap-2">
+              <div className="space-y-1.5">
+                <label className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1 flex items-center gap-1.5">
                   <MessageSquare className="w-3 h-3" /> Message
                 </label>
                 <textarea
@@ -169,7 +169,7 @@ export default function ContactPage() {
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-primary/5 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none"
+                  className="w-full bg-primary/5 border-none rounded-xl p-3 text-[11px] md:text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none resize-none"
                   placeholder="Tell us more about your request..."
                 />
               </div>
@@ -177,21 +177,21 @@ export default function ContactPage() {
               <Button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-14 rounded-2xl text-lg font-black shadow-lg shadow-primary/20 transition-all active:scale-[0.98] group"
+                className="w-full h-11 md:h-13 rounded-xl md:rounded-2xl text-xs md:text-sm font-black shadow-lg shadow-primary/10 transition-all active:scale-[0.98] group uppercase tracking-widest"
               >
                 {isSubmitting ? (
-                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>
                     Send Message
-                    <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </>
                 )}
               </Button>
             </form>
           </Card>
 
-          <p className="text-center text-xs font-bold text-muted-foreground">
+          <p className="text-center text-[9px] font-black text-muted-foreground uppercase tracking-widest">
             Typically responds within 1 hour.
           </p>
         </div>
