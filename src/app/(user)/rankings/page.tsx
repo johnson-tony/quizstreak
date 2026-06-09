@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Medal, Crown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 export default function RankingsPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -54,66 +55,67 @@ export default function RankingsPage() {
   }
 
   return (
-    <div className="p-3 sm:p-4 md:p-8 space-y-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="p-2 sm:p-4 md:p-6 space-y-4 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
         <div>
-          <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">Global Rankings</h1>
-          <p className="text-muted-foreground font-medium text-sm md:text-base">Top performing experts in Software Engineering.</p>
+          <h1 className="text-xl md:text-3xl font-black text-foreground tracking-tight uppercase">Global Rankings</h1>
+          <p className="text-muted-foreground font-medium text-[10px] md:text-xs">Top performing experts in Software Engineering.</p>
         </div>
         
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full md:w-auto">
-          <TabsList className="grid grid-cols-2 w-full md:w-[200px] bg-primary/5 p-1 rounded-xl">
-            <TabsTrigger value="allTime" className="rounded-lg font-bold text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm">All Time</TabsTrigger>
-            <TabsTrigger value="weekly" className="rounded-lg font-bold text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm">Weekly</TabsTrigger>
+          <TabsList className="grid grid-cols-2 w-full md:w-[180px] bg-primary/5 p-0.5 rounded-lg">
+            <TabsTrigger value="allTime" className="rounded-md font-bold text-[10px] data-[state=active]:bg-white data-[state=active]:shadow-xs">All Time</TabsTrigger>
+            <TabsTrigger value="weekly" className="rounded-md font-bold text-[10px] data-[state=active]:bg-white data-[state=active]:shadow-xs">Weekly</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
 
-      <div className="grid gap-3 md:gap-4">
+      <div className="grid gap-2 md:gap-3">
         {users.map((user, i) => {
           const style = getRankStyle(i);
           const RankIcon = style.icon;
           
           return (
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              key={user._id} 
-              className={`glass-card p-4 md:p-6 rounded-2xl md:rounded-[2.5rem] border-2 transition-all hover:scale-[1.01] ${i === 0 ? "border-amber-500/20 shadow-xl shadow-amber-500/10" : "border-primary/5 shadow-lg"}`}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 md:gap-8 min-w-0">
-                  <div className={`flex-shrink-0 w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center font-black text-base md:text-xl ${style.bg} ${style.color} ${style.border} border shadow-inner`}>
-                    {RankIcon ? <RankIcon className="w-5 h-5 md:w-8 md:h-8" /> : i + 1}
-                  </div>
-                  
-                  <div className="flex items-center gap-3 md:gap-5 min-w-0">
-                    <Avatar className="h-10 w-10 md:h-16 md:w-16 border-[3px] md:border-4 border-white shadow-xl ring-1 ring-primary/5">
-                      <AvatarImage src={user.image} />
-                      <AvatarFallback className="bg-primary/5 text-primary font-bold">{user.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <h3 className="font-black text-base md:text-2xl text-foreground truncate">{user.name}</h3>
-                      <div className="flex flex-wrap items-center gap-2 mt-1">
-                        {user.badges?.slice(0, 2).map((badge: string) => (
-                          <span key={badge} className="px-2 py-0.5 bg-primary/5 text-primary text-[8px] md:text-[9px] font-black rounded-full border border-primary/10 uppercase tracking-widest">
-                            {badge}
-                          </span>
-                        ))}
+            <Link href={`/users/${user._id}`} key={user._id}>
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className={`glass-card p-3 md:p-4 rounded-xl md:rounded-[1.5rem] border-2 transition-all hover:scale-[1.005] cursor-pointer ${i === 0 ? "border-amber-500/20 shadow-lg shadow-amber-500/5" : "border-primary/5 shadow-md"}`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 md:gap-6 min-w-0">
+                    <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center font-black text-xs md:text-lg ${style.bg} ${style.color} ${style.border} border shadow-inner`}>
+                      {RankIcon ? <RankIcon className="w-4 h-4 md:w-6 md:h-6" /> : i + 1}
+                    </div>
+                    
+                    <div className="flex items-center gap-2 md:gap-4 min-w-0">
+                      <Avatar className="h-10 w-10 md:h-12 md:w-12 border-2 md:border-[3px] border-white shadow-lg ring-1 ring-primary/5">
+                        <AvatarImage src={user.image} />
+                        <AvatarFallback className="bg-primary/5 text-primary font-bold text-xs">{user.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <h3 className="font-black text-sm md:text-xl text-foreground truncate uppercase">{user.name}</h3>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                          {user.badges?.slice(0, 2).map((badge: string) => (
+                            <span key={badge} className="px-1.5 py-0.5 bg-primary/5 text-primary text-[7px] md:text-[8px] font-black rounded-full border border-primary/10 uppercase tracking-tighter">
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="text-right">
-                  <div className="text-xl md:text-3xl font-black text-primary tracking-tighter tabular-nums leading-none">
-                    {user.totalPoints.toLocaleString()}
+                  
+                  <div className="text-right">
+                    <div className="text-lg md:text-2xl font-black text-primary tracking-tighter tabular-nums leading-none">
+                      {user.totalPoints.toLocaleString()}
+                    </div>
+                    <div className="text-[7px] md:text-[8px] font-black text-muted-foreground uppercase tracking-widest mt-1">Points</div>
                   </div>
-                  <div className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 md:mt-2">Total Points</div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           );
         })}
       </div>
