@@ -205,33 +205,17 @@ export default function MessageDetailsPage() {
                   {message.message}
                 </p>
               </div>
-            </div>
-          </Card>
 
-          <Card className="p-4 md:p-6 border-primary/10 rounded-xl md:rounded-2xl bg-white shadow-sm space-y-3">
-            <div className="text-[9px] font-black text-primary uppercase tracking-widest">Send a Reply</div>
-            <div className="space-y-3">
-              <textarea 
-                className="w-full h-24 md:h-32 bg-primary/5 border-none rounded-xl p-3 text-[11px] md:text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none resize-none placeholder:text-muted-foreground/40"
-                placeholder="Type your response here..."
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-              />
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-2">
                 <Button 
-                  onClick={handleReply}
-                  disabled={isSending || !replyText.trim()}
+                  asChild
                   size="sm"
                   className="w-full md:w-auto px-6 h-9 rounded-lg text-[10px] md:text-xs font-black shadow-md shadow-primary/10 gap-2 uppercase tracking-widest"
                 >
-                  {isSending ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <>
-                      Send Email Reply
-                      <Send className="w-3.5 h-3.5" />
-                    </>
-                  )}
+                  <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`}>
+                    Reply
+                    <Send className="w-3.5 h-3.5" />
+                  </a>
                 </Button>
               </div>
             </div>
