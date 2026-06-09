@@ -235,140 +235,146 @@ export default function QuestionCard() {
   }
 
   return (
-    <Card className="rounded-2xl border-primary/5 shadow-md bg-white overflow-hidden">
-      <CardHeader className="border-b border-primary/5 bg-primary/[0.02] p-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary" />
+    <Card className="rounded-xl border border-primary/5 shadow-sm bg-white overflow-hidden">
+      <CardHeader className="border-b border-primary/5 bg-primary/[0.01] p-3 md:p-4">
+        <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-primary/60" />
             </div>
-            <div className="space-y-0.5">
-              <CardTitle className="text-sm md:text-base font-black text-foreground">
-                Challenge Set #{result ? (result.newSet - 1 || questions[0]?.set) : (questions[0]?.set || "1")}
-                {!result && questions.length > 1 && ` (${currentIndex + 1}/${questions.length})`}
+            <div className="space-y-0">
+              <CardTitle className="text-sm font-black text-foreground">
+                Set #{result ? (result.newSet - 1 || questions[0]?.set) : (questions[0]?.set || "1")}
+                {!result && questions.length > 1 && (
+                  <span className="text-primary/40 ml-1.5 text-xs font-bold">[{currentIndex + 1}/{questions.length}]</span>
+                )}
               </CardTitle>
-              {!result && (
-                <div className="flex gap-2">
-                  <Badge variant="secondary" className="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0 h-4 border-none">
-                    {currentQuestion?.category || "General"}
-                  </Badge>
-                  <Badge variant="outline" className="border-primary/10 text-muted-foreground text-[10px] font-bold px-2 py-0 h-4">
-                    {currentQuestion?.difficulty || "Medium"}
-                  </Badge>
-                </div>
-              )}
             </div>
           </div>
-          <div className="text-right flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {result && (
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={downloadPDF}
-                className="h-8 px-2 text-primary hover:bg-primary/5 font-bold text-[10px]"
+                className="h-7 px-2 text-primary/60 hover:bg-primary/5 font-black text-[8px] uppercase tracking-widest"
               >
-                <Download className="w-3.5 h-3.5 mr-1.5" /> EXPORT PDF
+                <Download className="w-3 h-3 mr-1" /> PDF
               </Button>
             )}
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-              {currentQuestion?.day || "Review"}
-            </span>
+            <Badge variant="secondary" className="bg-primary/5 text-primary/60 text-[8px] font-black uppercase tracking-tighter px-1.5 py-0 h-4 border-none">
+              {currentQuestion?.category || "General"}
+            </Badge>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="px-4">
+      <CardContent className="p-4 md:p-6">
         <AnimatePresence mode="wait">
           {!result ? (
             <motion.div 
               key={currentIndex}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4 md:space-y-6"
             >
-              <p className="text-sm md:text-base text-foreground font-bold leading-relaxed px-1">
+              <h2 className="text-sm md:text-base font-bold text-foreground leading-snug tracking-tight">
                 {currentQuestion?.question}
-              </p>
+              </h2>
 
-              <RadioGroup value={selectedOption} onValueChange={handleOptionSelect} className="grid gap-2">
+              <RadioGroup value={selectedOption} onValueChange={handleOptionSelect} className="grid grid-cols-1 gap-1.5">
                 {currentQuestion && Object.entries(currentQuestion.options).map(([key, value]) => (
-                  <div key={key}>
+                  <div key={key} className="relative">
                     <RadioGroupItem value={key} id={key} className="peer sr-only" />
                     <Label
                       htmlFor={key}
-                      className="flex items-center p-3 border border-primary/5 rounded-xl cursor-pointer hover:bg-primary/[0.02] peer-data-checked:border-primary peer-data-checked:bg-primary/[0.03] transition-all group"
+                      className="flex items-center p-2.5 md:p-3 border border-primary/5 rounded-lg cursor-pointer bg-slate-50/50 hover:bg-primary/[0.02] hover:border-primary/20 peer-data-checked:border-primary peer-data-checked:bg-primary/[0.03] transition-all group"
                     >
-                      <span className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center mr-3 text-xs font-black text-muted-foreground peer-data-checked:bg-primary peer-data-checked:text-white transition-colors">
+                      <span className="w-6 h-6 rounded bg-white border border-primary/5 flex items-center justify-center mr-3 text-[10px] font-black text-muted-foreground peer-data-checked:bg-primary peer-data-checked:text-white peer-data-checked:border-primary transition-all shadow-xs">
                         {key}
                       </span>
-                      <span className="text-xs md:text-sm text-foreground font-semibold group-hover:text-primary transition-colors">{value}</span>
+                      <span className="text-xs md:text-sm text-foreground font-semibold group-hover:text-primary transition-colors leading-tight flex-grow">{value}</span>
                     </Label>
                   </div>
                 ))}
               </RadioGroup>
 
-              <div className="flex gap-3">
+              <div className="flex gap-2 pt-1">
                 {currentIndex > 0 && (
-                  <Button variant="outline" onClick={() => setCurrentIndex(prev => prev - 1)} className="flex-1 border-primary/10 h-12 text-sm font-bold">
-                    <ChevronLeft className="w-4 h-4 mr-1" /> Back
+                  <Button variant="ghost" onClick={() => setCurrentIndex(prev => prev - 1)} className="flex-1 h-9 rounded-lg text-[10px] font-black border border-transparent hover:bg-primary/5 hover:text-primary transition-all uppercase tracking-widest">
+                    <ChevronLeft className="w-3.5 h-3.5 mr-1" /> Back
                   </Button>
                 )}
                 <Button 
                   onClick={handleNext} 
                   disabled={submitting || !selectedOption}
-                  className="flex-[2] bg-primary hover:bg-primary/90 text-white rounded-xl h-12 text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                  className="flex-[2] bg-primary hover:bg-primary/90 text-white rounded-lg h-9 md:h-10 text-[10px] md:text-xs font-black shadow-lg shadow-primary/10 transition-all active:scale-[0.98] uppercase tracking-widest gap-2"
                 >
                   {submitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : currentIndex < questions.length - 1 ? (
-                    <>Next Question <ChevronRight className="w-4 h-4 ml-1" /></>
+                    <>Next Step <ChevronRight className="w-3.5 h-3.5" /></>
                   ) : (
-                    "Submit Final Answers"
+                    <>Complete Challenge</>
                   )}
                 </Button>
               </div>
             </motion.div>
           ) : (
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
-              <div className="text-center py-2">
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${result.correct ? "bg-emerald-100 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
-                  {result.correct ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="text-center space-y-2 py-1">
+                <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${result.correct ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-destructive/5 text-destructive border border-destructive/10"}`}>
+                  {result.correct ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
                 </div>
-                <h3 className="text-lg font-black text-foreground mb-1">{result.correct ? "Excellent Work!" : "Set Complete!"}</h3>
-                <p className="text-xs text-muted-foreground font-medium">You earned <span className="text-primary font-bold">+{result.totalPointsEarned}</span> points today.</p>
+                <div className="space-y-0">
+                  <h3 className="text-sm font-black text-foreground tracking-tight">Mission Success</h3>
+                  <p className="text-[10px] text-muted-foreground font-bold">
+                    Earned <span className="text-primary">+{result.totalPointsEarned} XP</span>
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                 {result.results?.map((res: any, i: number) => {
                   const q = questions.find(quest => quest.day === res.day);
                   return (
-                    <div key={i} className="bg-muted/50 rounded-xl p-4 border border-primary/5">
-                      <div className="flex items-center gap-2 mb-3">
-                        {res.correct ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <XCircle className="w-3.5 h-3.5 text-destructive" />}
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Question {i + 1}</h4>
+                    <div key={i} className="bg-slate-50/50 rounded-lg p-3 md:p-4 border border-primary/5">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        {res.correct ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <XCircle className="w-3 h-3 text-destructive" />}
+                        <h4 className="text-[8px] font-black uppercase tracking-widest text-primary/40">Step {i + 1}</h4>
                       </div>
-                      <p className="text-xs text-foreground font-bold mb-3 leading-relaxed">{q?.question}</p>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {q && Object.entries(q.options).map(([key, value]) => (
-                          <div key={key} className={`px-2 py-1 rounded-md border text-[10px] font-medium flex items-center gap-1.5 ${key === res.correctAnswer ? "bg-emerald-50 border-emerald-200 text-emerald-700" : key === res.selectedAnswer && !res.correct ? "bg-destructive/5 border-destructive/20 text-destructive" : "bg-white border-primary/5 text-muted-foreground opacity-60"}`}>
-                            <span className={`w-4 h-4 rounded flex items-center justify-center font-black ${key === res.correctAnswer ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground"}`}>{key}</span>
-                            {value}
-                          </div>
-                        ))}
+
+                      <p className="text-xs font-bold text-foreground mb-3 leading-tight tracking-tight">{q?.question}</p>
+                      
+                      <div className="grid grid-cols-1 gap-1.5 mb-3">
+                        {q && Object.entries(q.options).map(([key, value]) => {
+                          const isCorrect = key === res.correctAnswer;
+                          const isSelected = key === res.selectedAnswer;
+                          const isError = isSelected && !res.correct;
+
+                          return (
+                            <div key={key} className={`p-2 rounded-lg border flex items-center gap-2.5 transition-all ${isCorrect ? "bg-emerald-50/50 border-emerald-500/20 text-emerald-900" : isError ? "bg-destructive/5 border-destructive/20 text-destructive" : "bg-white border-primary/5 text-muted-foreground/50 opacity-60"}`}>
+                              <span className={`w-5 h-5 rounded flex items-center justify-center font-black text-[10px] ${isCorrect ? "bg-emerald-500 text-white" : isError ? "bg-destructive text-white" : "bg-muted text-muted-foreground"}`}>{key}</span>
+                              <span className="text-[10px] font-bold leading-tight">{value}</span>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <div className="bg-white/50 rounded-lg p-3 border border-primary/5">
-                        <h5 className="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1.5">Analysis</h5>
-                        <p className="text-[11px] text-foreground font-medium leading-relaxed">{res.explanation}</p>
-                        <div className="mt-2 text-[10px] font-bold"><span className="text-muted-foreground">Correct Answer: </span><span className="text-emerald-600 font-black">{res.correctAnswer}</span></div>
+
+                      <div className="bg-white/50 rounded-lg p-2.5 border border-primary/5">
+                        <p className="text-[10px] text-foreground/70 font-medium leading-tight">{res.explanation}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic pt-2">
-                Come back tomorrow for Set #{result.newSet || (questions[0]?.set ? parseInt(questions[0]?.set) + 1 : 2)}
-              </p>
+              <div className="text-center opacity-30">
+                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">
+                  Cycle Complete • Next Set in 24h
+                </p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
