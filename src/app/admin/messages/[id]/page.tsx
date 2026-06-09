@@ -127,17 +127,16 @@ export default function MessageDetailsPage() {
   return (
     <div className="p-2 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between gap-3">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          asChild
-          className="rounded-lg font-bold gap-1.5 text-muted-foreground hover:text-foreground h-8 px-2"
-        >
-          <Link href="/admin/messages">
+        <Link href="/admin/messages" className="inline-flex">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="rounded-lg font-bold gap-1.5 text-muted-foreground hover:text-foreground h-8 px-2"
+          >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="text-[10px] md:text-xs">Inbox</span>
-          </Link>
-        </Button>
+          </Button>
+        </Link>
 
         <Button
           variant="destructive"
@@ -207,16 +206,15 @@ export default function MessageDetailsPage() {
               </div>
 
               <div className="flex justify-end pt-2">
-                <Button 
-                  asChild
-                  size="sm"
-                  className="w-full md:w-auto px-6 h-9 rounded-lg text-[10px] md:text-xs font-black shadow-md shadow-primary/10 gap-2 uppercase tracking-widest"
-                >
-                  <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`}>
+                <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`} className="w-full md:w-auto">
+                  <Button 
+                    size="sm"
+                    className="w-full px-6 h-9 rounded-lg text-[10px] md:text-xs font-black shadow-md shadow-primary/10 gap-2 uppercase tracking-widest"
+                  >
                     Reply
                     <Send className="w-3.5 h-3.5" />
-                  </a>
-                </Button>
+                  </Button>
+                </a>
               </div>
             </div>
           </Card>

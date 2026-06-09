@@ -16,6 +16,14 @@ export async function POST(req: Request) {
 
     const { answers, type } = await req.json(); // answers: { day: string, selectedAnswer: string }[], type: 'daily' | 'practice'
 
+    if (!Array.isArray(answers)) {
+      return NextResponse.json({ error: 'Invalid payload structure' }, { status: 400 });
+    }
+
+    if (type !== 'daily' && type !== 'practice') {
+      return NextResponse.json({ error: 'Invalid attempt type' }, { status: 400 });
+    }
+
     await dbConnect();
 
     const user = await User.findOne({ email: session.user.email });

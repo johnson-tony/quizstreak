@@ -7,11 +7,20 @@ export async function POST(req: Request) {
   try {
     const session = await auth();
     const body = await req.json();
-    const { name, email, subject, message } = body;
+    let { name, email, subject, message } = body;
 
-    if (!name || !email || !subject || !message) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!name || typeof name !== 'string' || 
+        !email || typeof email !== 'string' || 
+        !subject || typeof subject !== 'string' || 
+        !message || typeof message !== 'string') {
+      return NextResponse.json({ error: "Invalid or missing fields" }, { status: 400 });
     }
+
+    // Basic sanitization
+    name = name.trim().substring(0, 100);
+    email = email.trim().substring(0, 100);
+    subject = subject.trim().substring(0, 200);
+    message = message.trim().substring(0, 2000);
 
     await dbConnect();
 

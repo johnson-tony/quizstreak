@@ -40,7 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const dbUser = await User.findOne({ email: session.user.email });
         
         if (!dbUser || dbUser.status !== "active") {
-          return null;
+          return session; // Returning the default session without our custom properties if they are inactive
         }
 
         session.user.id = dbUser._id.toString();
