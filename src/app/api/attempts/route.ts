@@ -101,6 +101,11 @@ export async function POST(req: Request) {
     // Update set and streak ONLY for daily challenges
     if (type === 'daily' && answers.length === questions.length) {
       user.currentSet += 1;
+      
+      // Award "First Challenge" badge if not already awarded
+      if (!user.badges.includes('First Challenge')) {
+        user.badges.push('First Challenge');
+      }
 
       if (allCorrect) {
         const yesterday = new Date(today);
@@ -116,12 +121,31 @@ export async function POST(req: Request) {
           user.longestStreak = user.currentStreak;
         }
         
-        // Badge logic
-        if (user.currentStreak === 1 && !user.badges.includes('First Challenge')) user.badges.push('First Challenge');
-        if (user.currentStreak === 7 && !user.badges.includes('7-Day Streak')) user.badges.push('7-Day Streak');
-        if (user.currentStreak === 30 && !user.badges.includes('30-Day Streak')) user.badges.push('30-Day Streak');
+        // Streak badges
+        if (user.currentStreak >= 7 && !user.badges.includes('7-Day Streak')) user.badges.push('7-Day Streak');
+        if (user.currentStreak >= 30 && !user.badges.includes('30-Day Streak')) user.badges.push('30-Day Streak');
       }
     }
+
+    // Category badges logic - check total correct answers per category
+    const allUserCorrectAttempts = await Attempt.find({ userId: user._id, correct: true });
+    
+    // We need to fetch all questions to map attempt questionId to category
+    // This is a bit expensive, but for now it's okay. 
+    // In a real app, we'd store category in the Attempt model.
+    const allQuestions = await getAllQuestions();
+    const categoryCounts: Record<string, number> = {};
+    
+    allUserCorrectAttempts.forEach(att => {
+      const q = allQuestions.find(quest => quest.day === att.questionId);
+      if (q && q.category) {
+        categoryCounts[q.category] = (categoryCounts[q.category] || 0) + 1;
+      }
+    });
+
+    if ((categoryCounts['JavaScript'] || 0) >= 10 && !user.badges.includes('JavaScript Expert')) user.badges.push('JavaScript Expert');
+    if ((categoryCounts['SQL'] || 0) >= 10 && !user.badges.includes('SQL Expert')) user.badges.push('SQL Expert');
+    if ((categoryCounts['AWS'] || 0) >= 10 && !user.badges.includes('AWS Explorer')) user.badges.push('AWS Explorer');
 
     user.totalPoints += totalPointsEarned;
     user.lastAttemptDate = today;

@@ -121,7 +121,7 @@ export default function DashboardPage() {
           {attemptStatus?.attempted ? (
             <motion.div 
               whileHover={{ scale: 1.002 }}
-              className="relative rounded-xl md:rounded-[2rem] overflow-hidden group shadow-xl shadow-primary/20 bg-primary"
+              className="relative rounded-xl md:rounded-[2rem] overflow-hidden group shadow-xl shadow-primary/20 bg-primary border-4 border-primary/30"
             >
               <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 blur-3xl -mr-24 -mt-24 rounded-full" />
               
@@ -148,6 +148,40 @@ export default function DashboardPage() {
                 </Link>
               </div>
             </motion.div>
+          ) : (
+            <Link href="/challenge">
+              <motion.div 
+                whileHover={{ scale: 1.002 }}
+                whileTap={{ scale: 0.998 }}
+                className="relative rounded-xl md:rounded-[2rem] overflow-hidden group shadow-xl shadow-primary/20 bg-primary border-4 border-primary/30"
+              >
+                <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 blur-3xl -mr-24 -mt-24 rounded-full" />
+                
+                <div className="relative z-10 p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
+                  <div className="text-center md:text-left space-y-1 md:space-y-3">
+                    <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-white/10 rounded-full border border-white/20 text-white text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em]">
+                      <Sparkles className="w-2 h-2" /> New Mission Available
+                    </div>
+                    <h2 className="text-lg sm:text-2xl md:text-4xl font-black text-white tracking-tight leading-[1.1] uppercase">
+                      Daily Challenge <br className="hidden sm:block" />
+                      <span className="text-white/60 font-medium italic text-xs md:text-2xl">Ready to Start?</span>
+                    </h2>
+                    <p className="text-primary-foreground/70 text-[9px] md:text-xs max-w-xs md:max-w-md font-medium leading-tight">
+                      Test your knowledge with today's curated set. Earn points and maintain your streak!
+                    </p>
+                  </div>
+                  
+                  <div className="w-full sm:w-auto">
+                    <motion.div whileHover={{ x: 2 }} whileTap={{ scale: 0.98 }}>
+                      <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 h-10 md:h-16 px-5 md:px-10 rounded-lg md:rounded-2xl font-black text-xs md:text-base shadow-lg group transition-all uppercase tracking-widest">
+                        Start Now <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
+                      </Button>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </Link>
+          )}
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-5">
