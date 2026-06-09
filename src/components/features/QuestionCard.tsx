@@ -269,7 +269,7 @@ export default function QuestionCard() {
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 md:p-6">
+      <CardContent className="p-3 md:p-5">
         <AnimatePresence mode="wait">
           {!result ? (
             <motion.div 
@@ -277,7 +277,7 @@ export default function QuestionCard() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-4 md:space-y-6"
+              className="space-y-3"
             >
               <h2 className="text-sm md:text-base font-bold text-foreground leading-snug tracking-tight">
                 {currentQuestion?.question}
@@ -289,32 +289,32 @@ export default function QuestionCard() {
                     <RadioGroupItem value={key} id={key} className="peer sr-only" />
                     <Label
                       htmlFor={key}
-                      className="flex items-center p-2.5 md:p-3 border border-primary/5 rounded-lg cursor-pointer bg-slate-50/50 hover:bg-primary/[0.02] hover:border-primary/20 peer-data-checked:border-primary peer-data-checked:bg-primary/[0.03] transition-all group"
+                      className="flex items-center p-2 md:p-2.5 border border-primary/5 rounded-lg cursor-pointer bg-slate-50/50 hover:bg-primary/[0.02] hover:border-primary/20 peer-data-checked:border-primary peer-data-checked:bg-primary/[0.03] transition-all group"
                     >
-                      <span className="w-6 h-6 rounded bg-white border border-primary/5 flex items-center justify-center mr-3 text-[10px] font-black text-muted-foreground peer-data-checked:bg-primary peer-data-checked:text-white peer-data-checked:border-primary transition-all shadow-xs">
+                      <span className="w-5 h-5 rounded bg-white border border-primary/5 flex items-center justify-center mr-3 text-[9px] font-black text-muted-foreground peer-data-checked:bg-primary peer-data-checked:text-white peer-data-checked:border-primary transition-all shadow-xs shrink-0">
                         {key}
                       </span>
-                      <span className="text-xs md:text-sm text-foreground font-semibold group-hover:text-primary transition-colors leading-tight flex-grow">{value}</span>
+                      <span className="text-[11px] md:text-sm text-foreground font-semibold group-hover:text-primary transition-colors leading-tight flex-grow">{value}</span>
                     </Label>
                   </div>
                 ))}
               </RadioGroup>
 
-              <div className="flex gap-2 pt-1">
+              <div className="flex gap-2 pt-0.5">
                 {currentIndex > 0 && (
-                  <Button variant="ghost" onClick={() => setCurrentIndex(prev => prev - 1)} className="flex-1 h-9 rounded-lg text-[10px] font-black border border-transparent hover:bg-primary/5 hover:text-primary transition-all uppercase tracking-widest">
-                    <ChevronLeft className="w-3.5 h-3.5 mr-1" /> Back
+                  <Button variant="ghost" onClick={() => setCurrentIndex(prev => prev - 1)} className="flex-1 h-8 rounded-lg text-[9px] font-black border border-transparent hover:bg-primary/5 hover:text-primary transition-all uppercase tracking-widest">
+                    <ChevronLeft className="w-3 h-3 mr-1" /> Back
                   </Button>
                 )}
                 <Button 
                   onClick={handleNext} 
                   disabled={submitting || !selectedOption}
-                  className="flex-[2] bg-primary hover:bg-primary/90 text-white rounded-lg h-9 md:h-10 text-[10px] md:text-xs font-black shadow-lg shadow-primary/10 transition-all active:scale-[0.98] uppercase tracking-widest gap-2"
+                  className="flex-[2] bg-primary hover:bg-primary/90 text-white rounded-lg h-8 md:h-9 text-[9px] md:text-xs font-black shadow-lg shadow-primary/10 transition-all active:scale-[0.98] uppercase tracking-widest gap-2"
                 >
                   {submitting ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" />
                   ) : currentIndex < questions.length - 1 ? (
-                    <>Next Step <ChevronRight className="w-3.5 h-3.5" /></>
+                    <>Next Step <ChevronRight className="w-3 h-3" /></>
                   ) : (
                     <>Complete Challenge</>
                   )}
@@ -322,48 +322,48 @@ export default function QuestionCard() {
               </div>
             </motion.div>
           ) : (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-              <div className="text-center space-y-2 py-1">
-                <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${result.correct ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-destructive/5 text-destructive border border-destructive/10"}`}>
-                  {result.correct ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <div className="text-center space-y-1 py-0.5">
+                <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${result.correct ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-destructive/5 text-destructive border border-destructive/10"}`}>
+                  {result.correct ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                 </div>
                 <div className="space-y-0">
-                  <h3 className="text-sm font-black text-foreground tracking-tight">Mission Success</h3>
-                  <p className="text-[10px] text-muted-foreground font-bold">
+                  <h3 className="text-xs font-black text-foreground tracking-tight">Mission Success</h3>
+                  <p className="text-[9px] text-muted-foreground font-bold">
                     Earned <span className="text-primary">+{result.totalPointsEarned} XP</span>
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+              <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1 custom-scrollbar">
                 {result.results?.map((res: any, i: number) => {
                   const q = questions.find(quest => quest.day === res.day);
                   return (
-                    <div key={i} className="bg-slate-50/50 rounded-lg p-3 md:p-4 border border-primary/5">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        {res.correct ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <XCircle className="w-3 h-3 text-destructive" />}
-                        <h4 className="text-[8px] font-black uppercase tracking-widest text-primary/40">Step {i + 1}</h4>
+                    <div key={i} className="bg-slate-50/50 rounded-lg p-2.5 md:p-3 border border-primary/5">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        {res.correct ? <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" /> : <XCircle className="w-2.5 h-2.5 text-destructive" />}
+                        <h4 className="text-[7px] font-black uppercase tracking-widest text-primary/40">Step {i + 1}</h4>
                       </div>
 
-                      <p className="text-xs font-bold text-foreground mb-3 leading-tight tracking-tight">{q?.question}</p>
+                      <p className="text-[11px] font-bold text-foreground mb-2 leading-tight tracking-tight">{q?.question}</p>
                       
-                      <div className="grid grid-cols-1 gap-1.5 mb-3">
+                      <div className="grid grid-cols-1 gap-1 mb-2">
                         {q && Object.entries(q.options).map(([key, value]) => {
                           const isCorrect = key === res.correctAnswer;
                           const isSelected = key === res.selectedAnswer;
                           const isError = isSelected && !res.correct;
 
                           return (
-                            <div key={key} className={`p-2 rounded-lg border flex items-center gap-2.5 transition-all ${isCorrect ? "bg-emerald-50/50 border-emerald-500/20 text-emerald-900" : isError ? "bg-destructive/5 border-destructive/20 text-destructive" : "bg-white border-primary/5 text-muted-foreground/50 opacity-60"}`}>
-                              <span className={`w-5 h-5 rounded flex items-center justify-center font-black text-[10px] ${isCorrect ? "bg-emerald-500 text-white" : isError ? "bg-destructive text-white" : "bg-muted text-muted-foreground"}`}>{key}</span>
-                              <span className="text-[10px] font-bold leading-tight">{value}</span>
+                            <div key={key} className={`p-1.5 rounded-md border flex items-center gap-2 transition-all ${isCorrect ? "bg-emerald-50/50 border-emerald-500/20 text-emerald-900" : isError ? "bg-destructive/5 border-destructive/20 text-destructive" : "bg-white border-primary/5 text-muted-foreground/50 opacity-60"}`}>
+                              <span className={`w-4 h-4 rounded-sm flex items-center justify-center font-black text-[9px] ${isCorrect ? "bg-emerald-500 text-white" : isError ? "bg-destructive text-white" : "bg-muted text-muted-foreground"}`}>{key}</span>
+                              <span className="text-[9px] font-bold leading-tight">{value}</span>
                             </div>
                           );
                         })}
                       </div>
 
-                      <div className="bg-white/50 rounded-lg p-2.5 border border-primary/5">
-                        <p className="text-[10px] text-foreground/70 font-medium leading-tight">{res.explanation}</p>
+                      <div className="bg-white/50 rounded-md p-2 border border-primary/5">
+                        <p className="text-[9px] text-foreground/70 font-medium leading-tight">{res.explanation}</p>
                       </div>
                     </div>
                   );
@@ -371,7 +371,7 @@ export default function QuestionCard() {
               </div>
 
               <div className="text-center opacity-30">
-                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">
+                <p className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">
                   Cycle Complete • Next Set in 24h
                 </p>
               </div>
