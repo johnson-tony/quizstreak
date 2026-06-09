@@ -269,7 +269,7 @@ export default function QuestionCard() {
         </div>
       </CardHeader>
       
-      <CardContent className="p-3 md:p-5">
+      <CardContent className="p-3">
         <AnimatePresence mode="wait">
           {!result ? (
             <motion.div 
