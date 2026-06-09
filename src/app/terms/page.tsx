@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 export default function TermsPage() {
   const { data: session } = useSession();
@@ -11,45 +12,56 @@ export default function TermsPage() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       
-      <main className="flex-grow flex flex-col items-center px-4 py-4 animate-in fade-in duration-700">
-        <div className="w-full max-w-4xl space-y-4">
-          <header className="space-y-2 text-center md:text-left">
-            <h1 className="text-4xl font-black text-foreground tracking-tight">Terms of Use</h1>
-            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Last updated: June 2026</p>
+      <main className="flex-grow flex flex-col items-center px-4 py-8 md:py-12 animate-in fade-in duration-700">
+        <div className="w-full max-w-4xl space-y-8 relative">
+          {session && (
+            <div className="absolute -top-4 right-0 md:top-0">
+              <Link href="/dashboard">
+                <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-4 md:px-6 h-9 md:h-10 text-[10px] md:text-xs font-black shadow-lg shadow-primary/10 uppercase tracking-widest">
+                  Dashboard
+                </Button>
+              </Link>
+            </div>
+          )}
+
+          <header className="space-y-2 text-center md:text-left pr-20 md:pr-0">
+            <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">Terms of Use</h1>
+            <p className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">Last updated: June 2026</p>
           </header>
 
-          <div className="space-y-3 text-sm md:text-base text-muted-foreground leading-relaxed">
+          <div className="space-y-10 text-sm md:text-base text-muted-foreground leading-relaxed">
             <section className="space-y-3">
-              <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight">Acceptable Use</h2>
-              <p>
+              <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight uppercase">
+                Acceptable Use
+              </h2>
+              <p className="max-w-3xl">
                 QuizStreak is designed for educational purposes. You agree to use the platform fairly, without attempting to exploit the AI generation system or manipulate leaderboard rankings through automated means.
               </p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight">Account Responsibility</h2>
-              <p>
+              <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight uppercase">
+                Account Responsibility
+              </h2>
+              <p className="max-w-3xl">
                 You are responsible for maintaining the security of your account. All activities performed under your authenticated profile are your responsibility.
               </p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight">Service Availability</h2>
-              <p>
+              <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight uppercase">
+                Service Availability
+              </h2>
+              <p className="max-w-3xl">
                 We strive to maintain 24/7 availability, but we do not guarantee uninterrupted access. We reserve the right to modify or discontinue features to improve the overall learning experience.
               </p>
             </section>
           </div>
 
-          <div className="pt-3 border-t border-primary/5 flex items-center justify-between">
-            <Link href="/" className="text-xs md:text-sm font-bold text-primary hover:underline">
+          <div className="pt-6 border-t border-primary/5">
+            <Link href="/" className="text-xs md:text-sm font-black text-primary hover:underline uppercase tracking-widest">
               ← Back to Home
             </Link>
-            {session && (
-              <Link href="/dashboard" className="text-xs md:text-sm font-bold text-primary hover:underline">
-                Go to Dashboard →
-              </Link>
-            )}
           </div>
         </div>
       </main>
