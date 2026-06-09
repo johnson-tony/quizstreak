@@ -14,17 +14,7 @@ export default function PrivacyPage() {
       
       <main className="flex-grow flex flex-col items-center px-4 py-8 md:py-12 animate-in fade-in duration-700">
         <div className="w-full max-w-4xl space-y-8 relative">
-          {session && (
-            <div className="absolute -top-4 right-0 md:top-0">
-              <Link href="/dashboard">
-                <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-4 md:px-6 h-9 md:h-10 text-[10px] md:text-xs font-black shadow-lg shadow-primary/10 uppercase tracking-widest">
-                  Dashboard
-                </Button>
-              </Link>
-            </div>
-          )}
-          
-          <header className="space-y-2 text-center md:text-left pr-20 md:pr-0">
+          <header className="space-y-2 text-center md:text-left">
             <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">Privacy Policy</h1>
             <p className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">Last updated: June 2026</p>
           </header>

@@ -102,16 +102,6 @@ export default function ContactPage() {
       
       <main className="flex-grow flex flex-col items-center justify-center px-2 sm:px-4 py-4 md:py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="w-full max-w-lg space-y-4 md:space-y-6 relative">
-          {session && (
-            <div className="absolute -top-4 right-0 md:top-0">
-              <Link href="/dashboard">
-                <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-4 md:px-6 h-9 md:h-10 text-[10px] md:text-xs font-black shadow-lg shadow-primary/10 uppercase tracking-widest">
-                  Dashboard
-                </Button>
-              </Link>
-            </div>
-          )}
-
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[9px] md:text-[10px] font-black uppercase tracking-widest">
               <Mail className="w-3 h-3" />

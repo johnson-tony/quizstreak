@@ -14,7 +14,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { answers, type } = await req.json(); // answers: { day: string, selectedAnswer: string }[], type: 'daily' | 'practice'
+    let { answers, type } = await req.json(); // answers: { day: string, selectedAnswer: string }[], type: 'daily' | 'practice'
+    type = type || 'daily';
 
     if (!Array.isArray(answers)) {
       return NextResponse.json({ error: 'Invalid payload structure' }, { status: 400 });
@@ -91,7 +92,9 @@ export async function POST(req: Request) {
         day: question.day,
         correct: isCorrect,
         correctAnswer: question.correctAnswer,
-        explanation: question.explanation
+        explanation: question.explanation,
+        question: question.question,
+        options: question.options
       });
     }
 
@@ -173,7 +176,9 @@ export async function GET(req: Request) {
           correct: a.correct,
           selectedAnswer: a.selectedAnswer,
           correctAnswer: q?.correctAnswer,
-          explanation: q?.explanation
+          explanation: q?.explanation,
+          question: q?.question,
+          options: q?.options
         };
       })
     });

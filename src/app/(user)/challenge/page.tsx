@@ -18,7 +18,7 @@ export default function ChallengePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
-      <main className="flex-grow mx-auto px-4 md:px-6 py-4 w-full max-w-2xl space-y-4 animate-in fade-in duration-500">
+      <main className="flex-grow mx-auto px-4 md:px-6 py-4 w-full max-w-4xl space-y-4 animate-in fade-in duration-500">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="shrink-0">
