@@ -12,7 +12,8 @@ import {
   Filter,
   Zap,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  Crown
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -110,7 +111,12 @@ export default function AdminUsersPage() {
                           <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">{user.name[0]}</AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
-                          <p className="text-xs md:text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">{user.name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs md:text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">{user.name}</p>
+                            {user.isSubscribed && (
+                              <Crown className="w-3 h-3 text-amber-500 fill-amber-500" />
+                            )}
+                          </div>
                           <p className="text-[9px] md:text-[10px] text-muted-foreground font-medium truncate">{user.email}</p>
                         </div>
                       </div>

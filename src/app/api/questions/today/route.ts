@@ -3,6 +3,7 @@ import { getQuestionsBySet } from '@/lib/google-sheets';
 import { auth } from '@/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
+import Setting from '@/models/Setting';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(req: Request) {
@@ -16,6 +17,17 @@ export async function GET(req: Request) {
     await dbConnect();
     const user = await User.findOne({ email: session.user.email });
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+    // Paywall Check
+    const settings = await Setting.findOne({}) || { isSubscriptionEnabled: false, upiLink: '', freeSetsLimit: 10 };
+    
+    if (settings.isSubscriptionEnabled && !user.isSubscribed && (user.currentSet || 1) > (settings.freeSetsLimit || 10)) {
+      return NextResponse.json({ 
+        error: 'Subscription required', 
+        requiresSubscription: true, 
+        upiLink: settings.upiLink 
+      }, { status: 403 });
+    }
 
     const questions = await getQuestionsBySet(user.currentSet);
 

@@ -14,7 +14,10 @@ import {
   CheckCircle2, 
   XCircle,
   Mail,
-  History
+  History,
+  CreditCard,
+  Crown,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -23,6 +26,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
   const { id } = use(params);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -41,6 +45,28 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
     }
   };
 
+  const toggleSubscription = async () => {
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`/api/admin/users/${id}/subscribe`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isSubscribed: !user?.isSubscribed }),
+      });
+      const updatedUser = await res.json();
+      if (updatedUser.error) {
+        toast.error(updatedUser.error);
+      } else {
+        setData((prev: any) => ({ ...prev, user: updatedUser }));
+        toast.success(`User ${updatedUser.isSubscribed ? 'subscribed' : 'unsubscribed'} successfully`);
+      }
+    } catch (error) {
+      toast.error("Failed to update subscription");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 space-y-8 max-w-5xl mx-auto">
@@ -55,11 +81,26 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <Link href="/admin/dashboard">
-        <Button variant="ghost" size="sm" className="mb-4 text-muted-foreground hover:text-primary group">
-          <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Directory
-        </Button>
-      </Link>
+      <div className="flex justify-between items-center">
+        <Link href="/admin/users">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary group">
+            <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Directory
+          </Button>
+        </Link>
+        
+        <div className="flex items-center gap-3">
+          <Button 
+            variant={user?.isSubscribed ? "default" : "outline"}
+            size="sm"
+            onClick={toggleSubscription}
+            disabled={isUpdating}
+            className={`rounded-xl font-bold gap-2 transition-all ${user?.isSubscribed ? 'bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-200' : 'border-amber-200 text-amber-700 hover:bg-amber-50'}`}
+          >
+            {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : user?.isSubscribed ? <Crown className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}
+            {user?.isSubscribed ? "PRO MEMBER" : "FREE USER"}
+          </Button>
+        </div>
+      </div>
 
       {/* User Profile Header */}
       <section className="glass-card p-6 md:p-8 rounded-3xl border-primary/5 shadow-xl bg-white relative overflow-hidden">

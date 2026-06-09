@@ -7,10 +7,28 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { CheckCircle2, XCircle, Loader2, Sparkles, ChevronRight, ChevronLeft, Download } from "lucide-react";
+import { 
+  CheckCircle2, 
+  XCircle, 
+  Loader2, 
+  Sparkles, 
+  ChevronRight, 
+  ChevronLeft, 
+  Download,
+  Crown,
+  Lock,
+  ExternalLink
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface Question {
   day: string;
@@ -33,6 +51,7 @@ export default function QuestionCard() {
   const [userAnswers, setUserAnswers] = useState<{ day: string, selectedAnswer: string }[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [paywall, setPaywall] = useState<{ enabled: boolean, upiLink: string }>({ enabled: false, upiLink: "" });
 
   useEffect(() => {
     fetchStatus();
@@ -59,7 +78,9 @@ export default function QuestionCard() {
     try {
       const res = await fetch("/api/questions/today");
       const data = await res.json();
-      if (data.error) {
+      if (data.requiresSubscription) {
+        setPaywall({ enabled: true, upiLink: data.upiLink });
+      } else if (data.error) {
         toast.error(data.error);
       } else {
         setQuestions(Array.isArray(data) ? data : [data]);
@@ -164,6 +185,43 @@ export default function QuestionCard() {
     return (
       <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm h-64 flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-primary animate-spin" />
+      </Card>
+    );
+  }
+
+  if (paywall.enabled) {
+    return (
+      <Card className="rounded-[2.5rem] border-primary/10 shadow-2xl bg-white overflow-hidden p-8 md:p-12 text-center space-y-8 animate-in zoom-in duration-500">
+        <div className="mx-auto w-24 h-24 bg-amber-500/10 rounded-full flex items-center justify-center relative">
+          <Lock className="w-10 h-10 text-amber-600" />
+          <div className="absolute -top-1 -right-1 bg-white p-1.5 rounded-full shadow-lg border border-amber-100">
+            <Crown className="w-5 h-5 text-amber-500" />
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          <h2 className="text-3xl font-black text-foreground tracking-tight">Free Limit Reached</h2>
+          <p className="text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed">
+            You&apos;ve completed the free trial sets! To continue your streak and access daily challenges, please subscribe to our Pro plan.
+          </p>
+        </div>
+
+        <div className="pt-4 space-y-4">
+          <Button 
+            onClick={() => window.open(paywall.upiLink, '_blank')}
+            className="w-full h-16 rounded-2xl text-xl font-black shadow-xl shadow-amber-200 bg-amber-500 hover:bg-amber-600 gap-3 group"
+          >
+            Get Unlimited Access
+            <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          </Button>
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+            Redirects to UPI payment link
+          </p>
+        </div>
+
+        <div className="p-4 bg-muted/50 rounded-2xl text-xs font-bold text-muted-foreground leading-relaxed">
+          Note: After payment, please allow up to 24 hours for our team to verify and unlock your account.
+        </div>
       </Card>
     );
   }

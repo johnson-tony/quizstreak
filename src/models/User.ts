@@ -10,6 +10,7 @@ export interface IUser {
   currentStreak: number;
   longestStreak: number;
   badges: string[];
+  isSubscribed: boolean;
   joinedAt: Date;
   lastAttemptDate?: Date;
 }
@@ -24,6 +25,7 @@ const UserSchema = new Schema<IUser>({
   currentStreak: { type: Number, default: 0 },
   longestStreak: { type: Number, default: 0 },
   badges: { type: [String], default: [] },
+  isSubscribed: { type: Boolean, default: false },
   joinedAt: { type: Date, default: Date.now },
   lastAttemptDate: { type: Date },
 });
