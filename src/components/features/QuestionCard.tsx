@@ -142,16 +142,20 @@ export default function QuestionCard() {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    const today = new Date().toLocaleDateString();
+    const today = new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const score = result.results.filter((r: any) => r.correct).length;
+    const total = result.results.length;
     
-    doc.setFontSize(20);
+    // Header Title
+    doc.setFontSize(12);
     doc.setTextColor(122, 31, 77); 
-    doc.text("QuizStreak Daily Challenge Report", 14, 22);
+    doc.text("QuizStreak Daily Challenge Report", 14, 20);
     
-    doc.setFontSize(10);
+    // Sub-header details
+    doc.setFontSize(7);
     doc.setTextColor(100);
-    doc.text(`Generated on: ${today}`, 14, 30);
-    doc.text(`Overall Result: ${result.correct ? "PASSED" : "REVIEW NEEDED"}`, 14, 35);
+    doc.text(`Date: ${today}`, 14, 25);
+    doc.text(`Final Score: ${score} / ${total}`, 14, 29);
 
     const tableData = result.results.map((res: any, index: number) => {
       const q = questions.find(quest => quest.day === res.day) || res;
@@ -160,24 +164,53 @@ export default function QuestionCard() {
         q?.question || "Question " + res.day,
         res.selectedAnswer,
         res.correctAnswer,
-        res.correct ? "Correct" : "Incorrect",
+        res.correct ? "Pass" : "Fail",
         res.explanation
       ];
     });
 
     autoTable(doc, {
-      startY: 45,
-      head: [['#', 'Question', 'Your Answer', 'Correct', 'Status', 'Explanation']],
+      startY: 34,
+      head: [['#', 'Question', 'Selected', 'Correct', 'Status', 'Explanation']],
       body: tableData,
-      headStyles: { fillColor: [122, 31, 77] },
-      columnStyles: {
-        1: { cellWidth: 50 },
-        5: { cellWidth: 60 },
+      headStyles: { 
+        fillColor: [122, 31, 77],
+        fontSize: 6,
+        halign: 'center',
+        minCellHeight: 6
       },
-      theme: 'grid'
+      bodyStyles: {
+        fontSize: 6,
+        valign: 'middle'
+      },
+      columnStyles: {
+        0: { cellWidth: 8, halign: 'center' },
+        1: { cellWidth: 65 },
+        2: { cellWidth: 15, halign: 'center' },
+        3: { cellWidth: 15, halign: 'center' },
+        4: { cellWidth: 12, halign: 'center', textColor: [100, 100, 100] },
+        5: { cellWidth: 67 },
+      },
+      didParseCell: function(data) {
+        if (data.section === 'body' && data.column.index === 4) {
+          if (data.cell.raw === 'Pass') {
+            data.cell.styles.textColor = [16, 185, 129];
+            data.cell.styles.fontStyle = 'bold';
+          } else if (data.cell.raw === 'Fail') {
+            data.cell.styles.textColor = [239, 68, 68];
+            data.cell.styles.fontStyle = 'bold';
+          }
+        }
+      },
+      theme: 'grid',
+      styles: {
+        cellPadding: 1.5,
+        lineColor: [230, 230, 230],
+        lineWidth: 0.1,
+      }
     });
 
-    doc.save(`QuizStreak_Result.pdf`);
+    doc.save(`QuizStreak_Report_${new Date().toISOString().split('T')[0]}.pdf`);
     toast.success("Result PDF downloaded!");
   };
 
@@ -231,10 +264,10 @@ export default function QuestionCard() {
       <div className="space-y-4 animate-in fade-in duration-500">
         <div className="bg-white rounded-2xl md:rounded-[2rem] shadow-xl border border-primary/10 overflow-hidden relative">
           {/* Exam Header */}
-          <div className="bg-slate-50/80 border-b border-primary/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-slate-50/80 border-b border-primary/10 px-4 md:px-6 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
              <div className="text-center md:text-left">
                <div className="flex items-center gap-3 justify-center md:justify-start">
-                 <h2 className="text-lg md:text-2xl font-black uppercase tracking-tight text-foreground">Challenge Report</h2>
+                 <h2 className="text-lg md:text-xl font-black uppercase tracking-tight text-foreground">Challenge Report</h2>
                  <Button 
                    variant="outline" 
                    size="sm" 
@@ -247,7 +280,7 @@ export default function QuestionCard() {
                <p className="text-[10px] md:text-xs text-muted-foreground font-bold tracking-widest uppercase mt-1">Official Result Document</p>
              </div>
              <div className="text-center md:text-right">
-               <div className="text-2xl md:text-3xl font-black text-primary">{result.results.filter((r: any) => r.correct).length} / {result.results.length}</div>
+               <div className="text-xl md:text-2xl font-black text-primary">{result.results.filter((r: any) => r.correct).length} / {result.results.length}</div>
                <p className="text-[10px] md:text-xs text-muted-foreground font-bold tracking-widest uppercase mt-1">Score</p>
              </div>
           </div>
@@ -260,13 +293,13 @@ export default function QuestionCard() {
               const selectedValue = q.options ? q.options[res.selectedAnswer as keyof typeof q.options] : "Your Answer";
 
               return (
-                <div key={i} className="p-4 md:p-6 hover:bg-slate-50/30 transition-colors">
+                <div key={i} className="p-4 hover:bg-slate-50/30 transition-colors">
                   <div className="flex gap-3 md:gap-4">
                     <div className="flex-shrink-0 mt-0.5">
                       {res.correct ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <XCircle className="w-5 h-5 text-destructive" />}
                     </div>
                     
-                    <div className="flex-grow space-y-3">
+                    <div className="flex-grow space-y-1">
                       <p className="text-sm md:text-base font-bold text-foreground leading-snug">
                         <span className="text-muted-foreground/50 mr-2">{i + 1}.</span>
                         {q?.question || "Question " + res.day}
@@ -312,7 +345,7 @@ export default function QuestionCard() {
                         )}
                       </div>
 
-                      <div className="bg-primary/[0.02] rounded-md p-3 md:p-4 border border-primary/5 ml-1 md:ml-6 mt-1">
+                      <div className="bg-primary/[0.02] rounded-md p-2 border border-primary/5 ml-1 md:ml-6 mt-1">
                         <p className="text-[11px] md:text-xs text-foreground/80 font-medium leading-relaxed">
                           <strong className="text-primary font-black mr-2 uppercase tracking-widest text-[9px]">Explanation</strong> 
                           {res.explanation}
