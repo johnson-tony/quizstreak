@@ -84,7 +84,7 @@ export default function QuestionBankPage() {
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight flex items-center gap-2 uppercase">
             <Library className="text-primary w-5 h-5 md:w-6 md:h-6" /> Question Bank
           </h1>
-          <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Manage curriculum library</p>
+          <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Manage curriculum library</p>
         </div>
 
         <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-primary/5 shadow-sm">

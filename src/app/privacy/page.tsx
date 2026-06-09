@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <div className="w-full max-w-4xl space-y-8 relative">
           <header className="space-y-2 text-center md:text-left">
             <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">Privacy Policy</h1>
-            <p className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">Last updated: June 2026</p>
+            <p className="text-xs md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">Last updated: June 2026</p>
           </header>
 
           <div className="space-y-4 text-sm md:text-base text-muted-foreground leading-relaxed">
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
       {/* Re-using simplified footer logic for consistency */}
       <footer className="bg-white/50 border-t border-primary/5 py-3 px-4">
         <div className="max-w-7xl mx-auto text-center md:text-left">
-          <p className="text-[10px] text-muted-foreground/60 font-medium text-center">© 2026 QuizStreak. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground/60 font-medium text-center">© 2026 QuizStreak. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -46,7 +46,7 @@ export default function BadgesSection({ userBadges }: BadgesSectionProps) {
                   <badge.icon className={`w-5 h-5 ${isEarned ? (badge.color || "text-primary") : "text-muted-foreground"}`} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[10px] font-black text-foreground leading-tight uppercase tracking-tight truncate">
+                  <div className="text-xs font-black text-foreground leading-tight uppercase tracking-tight truncate">
                     {badge.name}
                   </div>
                   {isEarned && (

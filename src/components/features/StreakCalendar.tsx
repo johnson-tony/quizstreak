@@ -15,7 +15,7 @@ export default function StreakCalendar() {
 
   const fetchActivity = async () => {
     try {
-      const res = await fetch("/api/user/activity");
+      const res = await fetch(`/api/user/activity?t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       setActivity(data);
     } catch (error) {
@@ -37,7 +37,11 @@ export default function StreakCalendar() {
     for (let i = 0; i < 364; i++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
-      const dateStr = currentDate.toISOString().split('T')[0];
+      
+      // Fix timezone shifting for local date rendering
+      const offset = currentDate.getTimezoneOffset();
+      const localDate = new Date(currentDate.getTime() - (offset * 60 * 1000));
+      const dateStr = localDate.toISOString().split('T')[0];
       
       // Check if user has an attempt on this date
       const hasAttempt = activity.some(a => {
@@ -88,7 +92,7 @@ export default function StreakCalendar() {
                 ))}
               </div>
             </div>
-            <div className="flex justify-between text-[9px] md:text-[10px] text-muted-foreground font-black uppercase tracking-widest px-1">
+            <div className="flex justify-between text-[9px] md:text-xs text-muted-foreground font-black uppercase tracking-widest px-1">
               <span>Start</span>
               <span>Timeline (364 Days)</span>
               <span>Today</span>

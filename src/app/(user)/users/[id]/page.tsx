@@ -92,14 +92,14 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
 
           <div className="flex-grow text-center md:text-left space-y-3">
             <div className="space-y-0.5">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 rounded-full border border-primary/10 text-primary text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 rounded-full border border-primary/10 text-primary text-[9px] md:text-xs font-black uppercase tracking-widest mb-1">
                 <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
                 Ranked #{user.rank}
               </div>
               <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight leading-tight uppercase">
                 {user.name}
               </h1>
-              <div className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground font-bold text-[10px] md:text-xs">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground font-bold text-xs md:text-xs">
                 <Calendar className="w-3 h-3" />
                 Joined {new Date(user.joinedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </div>

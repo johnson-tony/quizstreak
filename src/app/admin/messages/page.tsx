@@ -80,7 +80,7 @@ export default function AdminMessagesPage() {
             </Button>
           </Link>
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">Inquiries</h1>
-          <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">User Support requests</p>
+          <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">User Support requests</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export default function AdminMessagesPage() {
             <div className="p-2 flex flex-col md:flex-row items-start md:items-center md:gap-3">
               <div className="flex-grow space-y-0.5 min-w-0">
                 <div className="flex items-center flex-wrap gap-2 mb-0.5">
-                  <span className="text-[10px] md:text-[11px] font-black text-foreground truncate">{msg.name}</span>
+                  <span className="text-xs md:text-[11px] font-black text-foreground truncate">{msg.name}</span>
                   <Badge variant={msg.status === 'replied' ? 'default' : 'secondary'} className="rounded-full text-[7px] font-black uppercase px-1.5 py-0 h-3.5">
                     {msg.status}
                   </Badge>

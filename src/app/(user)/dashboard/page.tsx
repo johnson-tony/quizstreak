@@ -33,8 +33,8 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const [profileRes, attemptRes] = await Promise.all([
-        fetch("/api/user/profile"),
-        fetch("/api/attempts")
+        fetch(`/api/user/profile?t=${Date.now()}`, { cache: 'no-store' }),
+        fetch(`/api/attempts?t=${Date.now()}`, { cache: 'no-store' })
       ]);
       
       const profileData = await profileRes.json();
@@ -89,7 +89,7 @@ export default function DashboardPage() {
                    <div className="w-0.5 h-0.5 rounded-full bg-primary animate-pulse" />
                    <span className="text-[6px] md:text-[9px] font-black text-primary uppercase tracking-widest">Rank #{profile?.user?.rank}</span>
                  </div>
-                 <span className="text-[7px] md:text-[10px] text-muted-foreground font-bold italic uppercase tracking-tighter">Set #{profile?.user?.currentSet || 1}</span>
+                 <span className="text-[7px] md:text-xs text-muted-foreground font-bold italic uppercase tracking-tighter">Set #{profile?.user?.currentSet || 1}</span>
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <div className="text-[6px] md:text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none">Streak</div>
-                <div className="text-[10px] md:text-sm font-black text-foreground">{profile?.user?.currentStreak}d</div>
+                <div className="text-xs md:text-sm font-black text-foreground">{profile?.user?.currentStreak}d</div>
               </div>
             </div>
             <div className="flex-1 md:flex-none bg-primary/[0.02] border border-primary/5 px-2 md:px-3 py-1 md:py-1.5 rounded-lg md:rounded-xl flex items-center gap-1.5 md:gap-2 transition-all hover:bg-primary/[0.04]">
@@ -110,7 +110,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <div className="text-[6px] md:text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none">Score</div>
-                <div className="text-[10px] md:text-sm font-black text-foreground">{profile?.user?.totalPoints.toLocaleString()}</div>
+                <div className="text-xs md:text-sm font-black text-foreground">{profile?.user?.totalPoints.toLocaleString()}</div>
               </div>
             </div>
           </div>
@@ -119,61 +119,42 @@ export default function DashboardPage() {
         {/* Big CTA for the Daily Task */}
         <section>
           {attemptStatus?.attempted ? (
-            <div className="bg-emerald-500/[0.02] border border-dashed border-emerald-500/20 rounded-xl md:rounded-[2rem] p-3 md:p-8 text-center relative overflow-hidden group">
-               <div className="relative z-10 space-y-1.5 md:space-y-3">
-                  <div className="w-8 h-8 md:w-12 md:h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto shadow-inner ring-4 ring-emerald-50">
-                    <CheckCircle2 className="w-4 h-4 md:w-6 md:h-6 text-emerald-600" />
-                  </div>
-                  <h2 className="text-xs md:text-lg font-black text-foreground uppercase tracking-tight">Mission Done</h2>
-                  <p className="text-[9px] md:text-xs text-muted-foreground font-medium max-w-xs mx-auto">
-                    Expertly handled. Next mission: **Set #{profile?.user?.currentSet}**.
-                  </p>
-                  <Link href="/challenge" className="inline-block pt-0.5">
-                    <Button variant="outline" size="sm" className="rounded-md md:rounded-lg border-emerald-200 text-emerald-700 hover:bg-emerald-50 font-bold px-3 h-7 text-[8px] md:text-[10px] uppercase tracking-widest">
-                      Review
-                    </Button>
-                  </Link>
-               </div>
-            </div>
-          ) : (
             <motion.div 
               whileHover={{ scale: 1.002 }}
-              className="relative rounded-xl md:rounded-[2rem] overflow-hidden group shadow-xl shadow-primary/5"
+              className="relative rounded-xl md:rounded-[2rem] overflow-hidden group shadow-xl shadow-primary/20 bg-primary"
             >
-              <div className="absolute inset-0 bg-primary" />
               <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 blur-3xl -mr-24 -mt-24 rounded-full" />
               
               <div className="relative z-10 p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
                 <div className="text-center md:text-left space-y-1 md:space-y-3">
                   <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-white/10 rounded-full border border-white/20 text-white text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em]">
-                    <Sparkles className="w-2 h-2" /> Mission Ready
+                    <CheckCircle2 className="w-2 h-2" /> Mission Complete
                   </div>
                   <h2 className="text-lg sm:text-2xl md:text-4xl font-black text-white tracking-tight leading-[1.1] uppercase">
-                    Start Today&apos;s <br className="hidden sm:block" />
-                    Task <span className="text-white/60 font-medium italic text-xs md:text-2xl">Set #{profile?.user?.currentSet || 1}</span>
+                    Challenge Done <br className="hidden sm:block" />
+                    <span className="text-white/60 font-medium italic text-xs md:text-2xl">Return in 24h</span>
                   </h2>
                   <p className="text-primary-foreground/70 text-[9px] md:text-xs max-w-xs md:max-w-md font-medium leading-tight">
-                    Technical challenge available. Complete to earn points.
+                    You have successfully completed today's task. Next mission: Set #{profile?.user?.currentSet}.
                   </p>
                 </div>
                 
                 <Link href="/challenge" className="w-full sm:w-auto">
                   <motion.div whileHover={{ x: 2 }} whileTap={{ scale: 0.98 }}>
                     <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 h-10 md:h-16 px-5 md:px-10 rounded-lg md:rounded-2xl font-black text-xs md:text-base shadow-lg group transition-all uppercase tracking-widest">
-                      START MISSION <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
+                      Review Answers <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </motion.div>
                 </Link>
               </div>
             </motion.div>
-          )}
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-5">
           <div className="lg:col-span-2 space-y-3 md:space-y-4 order-2 lg:order-1">
             <StreakCalendar />
             <div className="glass-card p-3 md:p-5 rounded-xl md:rounded-2xl border-primary/5 shadow-md bg-white">
-              <h3 className="text-[8px] md:text-[10px] font-black text-foreground uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-1.5">
+              <h3 className="text-[8px] md:text-xs font-black text-foreground uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-1.5">
                 <TrendingUp className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
                 Performance
               </h3>

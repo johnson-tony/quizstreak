@@ -159,7 +159,7 @@ export default function MessageDetailsPage() {
             className="rounded-lg font-bold gap-1.5 text-muted-foreground hover:text-foreground h-8 px-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="text-[10px] md:text-xs">Inbox</span>
+            <span className="text-xs md:text-xs">Inbox</span>
           </Button>
         </Link>
 
@@ -199,7 +199,7 @@ export default function MessageDetailsPage() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <p className="text-muted-foreground font-medium text-[10px] md:text-xs uppercase tracking-wider">Inquiry from {message.name}</p>
+          <p className="text-muted-foreground font-medium text-xs md:text-xs uppercase tracking-wider">Inquiry from {message.name}</p>
         </div>
       </div>
 
@@ -213,7 +213,7 @@ export default function MessageDetailsPage() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-black text-foreground">{message.name}</span>
-                  <span className="text-[10px] md:text-xs font-medium text-muted-foreground">{message.email}</span>
+                  <span className="text-xs md:text-xs font-medium text-muted-foreground">{message.email}</span>
                 </div>
               </div>
               <div className="space-y-1 md:text-right">
@@ -244,7 +244,7 @@ export default function MessageDetailsPage() {
                 <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`} className="w-full md:w-auto">
                   <Button 
                     size="sm"
-                    className="w-full px-6 h-9 rounded-lg text-[10px] md:text-xs font-black shadow-md shadow-primary/10 gap-2 uppercase tracking-widest"
+                    className="w-full px-6 h-9 rounded-lg text-xs md:text-xs font-black shadow-md shadow-primary/10 gap-2 uppercase tracking-widest"
                   >
                     Reply
                     <Send className="w-3.5 h-3.5" />

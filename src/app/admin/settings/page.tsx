@@ -72,7 +72,7 @@ export default function AdminSettingsPage() {
             </Button>
           </Link>
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">System Settings</h1>
-          <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Global Configuration</p>
+          <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Global Configuration</p>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <CardTitle className="text-base md:text-lg font-black text-foreground uppercase">Subscription Paywall</CardTitle>
-                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Access control limits</p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Access control limits</p>
               </div>
             </div>
           </CardHeader>
@@ -94,7 +94,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between p-4 bg-primary/5 rounded-xl border border-primary/10">
               <div className="space-y-0.5">
                 <p className="text-xs font-black text-foreground uppercase tracking-tight">Enable Paywall</p>
-                <p className="text-[10px] text-muted-foreground font-medium leading-tight">Block access after free limit.</p>
+                <p className="text-xs text-muted-foreground font-medium leading-tight">Block access after free limit.</p>
               </div>
               <button 
                 onClick={() => setSettings({ ...settings, isSubscriptionEnabled: !settings.isSubscriptionEnabled })}
@@ -146,7 +146,7 @@ export default function AdminSettingsPage() {
         <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
         <div className="space-y-1">
           <p className="text-xs font-black text-amber-900 uppercase">Manual Verification Required</p>
-          <p className="text-[10px] text-amber-700 font-medium leading-relaxed">
+          <p className="text-xs text-amber-700 font-medium leading-relaxed">
             Since payments are via personal UPI, you must manually mark users as subscribed in the Users section after verification.
           </p>
         </div>

@@ -47,7 +47,7 @@ export default function LandingPage() {
             >
               <motion.div
                 variants={itemVariants}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black mb-4 md:mb-6"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-xs font-black mb-4 md:mb-6"
               >
                 <Trophy className="w-3 h-3" />
                 <span>2026 Season Now Live</span>

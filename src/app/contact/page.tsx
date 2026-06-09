@@ -80,7 +80,7 @@ export default function ContactPage() {
             </div>
             <div className="space-y-1">
               <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">Message Received</h2>
-              <p className="text-[10px] md:text-xs text-muted-foreground font-medium">
+              <p className="text-xs md:text-xs text-muted-foreground font-medium">
                 Thank you! Our experts will review your request and get back to you shortly via email.
               </p>
             </div>
@@ -103,14 +103,14 @@ export default function ContactPage() {
       <main className="flex-grow flex flex-col items-center justify-center px-2 sm:px-4 py-4 md:py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="w-full max-w-lg space-y-4 md:space-y-6 relative">
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[9px] md:text-[10px] font-black uppercase tracking-widest">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[9px] md:text-xs font-black uppercase tracking-widest">
               <Mail className="w-3 h-3" />
               Support
             </div>
             <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight leading-none uppercase">
               How can we <span className="text-primary italic">help?</span>
             </h1>
-            <p className="text-[10px] md:text-xs text-muted-foreground font-medium max-w-[240px] md:max-w-sm mx-auto">
+            <p className="text-xs md:text-xs text-muted-foreground font-medium max-w-[240px] md:max-w-sm mx-auto">
               Direct connection to our engineering and support team.
             </p>
           </div>

@@ -131,7 +131,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
     <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <Link href="/admin/users">
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary group h-8 px-2 text-[10px] md:text-xs">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary group h-8 px-2 text-xs md:text-xs">
             <ChevronLeft className="w-3.5 h-3.5 mr-1 group-hover:-translate-x-1 transition-transform" /> Directory
           </Button>
         </Link>
@@ -144,7 +144,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                 size="sm"
                 onClick={() => updateStatus(user?.status === 'suspended' ? 'active' : 'suspended')}
                 disabled={isUpdating}
-                className="rounded-lg font-bold gap-1.5 text-[9px] md:text-[10px] uppercase tracking-widest border-primary/10 h-8"
+                className="rounded-lg font-bold gap-1.5 text-[9px] md:text-xs uppercase tracking-widest border-primary/10 h-8"
               >
                 {isUpdating ? <Loader2 className="w-3 h-3 animate-spin" /> : user?.status === 'suspended' ? <UserCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
                 {user?.status === 'suspended' ? 'Activate' : 'Suspend'}
@@ -154,7 +154,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                 size="sm"
                 onClick={deleteUser}
                 disabled={isDeleting}
-                className="rounded-lg font-bold gap-1.5 text-[9px] md:text-[10px] uppercase tracking-widest shadow-sm h-8"
+                className="rounded-lg font-bold gap-1.5 text-[9px] md:text-xs uppercase tracking-widest shadow-sm h-8"
               >
                 {isDeleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                 Delete
@@ -167,7 +167,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
             size="sm"
             onClick={toggleSubscription}
             disabled={isUpdating}
-            className={`rounded-lg font-bold gap-1.5 transition-all h-8 text-[9px] md:text-[10px] uppercase tracking-widest ${user?.isSubscribed ? 'bg-amber-500 hover:bg-amber-600 shadow-sm' : 'border-amber-200 text-amber-700 hover:bg-amber-50'}`}
+            className={`rounded-lg font-bold gap-1.5 transition-all h-8 text-[9px] md:text-xs uppercase tracking-widest ${user?.isSubscribed ? 'bg-amber-500 hover:bg-amber-600 shadow-sm' : 'border-amber-200 text-amber-700 hover:bg-amber-50'}`}
           >
             {isUpdating ? <Loader2 className="w-3.h-3 animate-spin" /> : user?.isSubscribed ? <Crown className="w-3 h-3" /> : <CreditCard className="w-3 h-3" />}
             {user?.isSubscribed ? "PRO MEMBER" : "FREE USER"}
@@ -268,7 +268,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
           ))}
           {attempts.length === 0 && (
             <div className="text-center py-12 bg-muted/10 rounded-2xl border border-dashed border-primary/5">
-              <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-widest">No activity yet</p>
+              <p className="text-xs md:text-xs text-muted-foreground font-bold uppercase tracking-widest">No activity yet</p>
             </div>
           )}
         </div>

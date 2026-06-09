@@ -59,13 +59,13 @@ export default function RankingsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
         <div>
           <h1 className="text-xl md:text-3xl font-black text-foreground tracking-tight uppercase">Global Rankings</h1>
-          <p className="text-muted-foreground font-medium text-[10px] md:text-xs">Top performing experts in Software Engineering.</p>
+          <p className="text-muted-foreground font-medium text-xs md:text-xs">Top performing experts in Software Engineering.</p>
         </div>
         
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full md:w-auto">
           <TabsList className="grid grid-cols-2 w-full md:w-[180px] bg-primary/5 p-0.5 rounded-lg">
-            <TabsTrigger value="allTime" className="rounded-md font-bold text-[10px] data-[state=active]:bg-white data-[state=active]:shadow-xs">All Time</TabsTrigger>
-            <TabsTrigger value="weekly" className="rounded-md font-bold text-[10px] data-[state=active]:bg-white data-[state=active]:shadow-xs">Weekly</TabsTrigger>
+            <TabsTrigger value="allTime" className="rounded-md font-bold text-xs data-[state=active]:bg-white data-[state=active]:shadow-xs">All Time</TabsTrigger>
+            <TabsTrigger value="weekly" className="rounded-md font-bold text-xs data-[state=active]:bg-white data-[state=active]:shadow-xs">Weekly</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>

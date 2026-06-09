@@ -63,13 +63,13 @@ export default function ErrorLogsPage() {
             </Button>
           </Link>
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">System Health</h1>
-          <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Error Monitoring</p>
+          <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Error Monitoring</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={fetchLogs} className="rounded-lg font-bold gap-1.5 h-8 text-[10px] uppercase">
+          <Button variant="outline" size="sm" onClick={fetchLogs} className="rounded-lg font-bold gap-1.5 h-8 text-xs uppercase">
             <RefreshCcw className="w-3 h-3" /> Refresh
           </Button>
-          <Button variant="destructive" size="sm" onClick={clearLogs} className="rounded-lg font-bold gap-1.5 h-8 text-[10px] uppercase">
+          <Button variant="destructive" size="sm" onClick={clearLogs} className="rounded-lg font-bold gap-1.5 h-8 text-xs uppercase">
             <Trash2 className="w-3 h-3" /> Clear
           </Button>
         </div>
@@ -89,7 +89,7 @@ export default function ErrorLogsPage() {
                   </div>
                   <div className="space-y-0.5">
                     <h3 className="text-xs md:text-sm font-bold text-foreground leading-tight line-clamp-1">{log.message}</h3>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[9px] md:text-[10px] text-muted-foreground font-medium uppercase">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[9px] md:text-xs text-muted-foreground font-medium uppercase">
                       <span className="flex items-center gap-1"><Clock className="w-2.5 h-2.5" /> {new Date(log.timestamp).toLocaleDateString()} {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       <span className="flex items-center gap-1 font-black text-primary"><Globe className="w-2.5 h-2.5" /> {log.method} {log.path}</span>
                     </div>

@@ -111,7 +111,7 @@ export default function AdminDashboard() {
               <span className="text-[8px] font-black uppercase tracking-widest text-primary">System Online</span>
             </div>
             <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight">Nominal State</h2>
-            <p className="text-[10px] md:text-xs text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-xs md:text-xs text-muted-foreground max-w-lg leading-relaxed">
               Sync complete. Engine operational. engagement is up <span className="text-primary font-bold">12%</span>.
             </p>
           </div>

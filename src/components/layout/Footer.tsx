@@ -9,12 +9,12 @@ export default function Footer() {
             <img src="/quickstreak.svg" alt="QuizStreak Logo" className="w-8 h-8" />
             <div className="text-lg font-bold text-primary tracking-tight">QuizStreak</div>
           </Link>
-          <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="flex gap-6 text-xs font-bold uppercase tracking-widest text-muted-foreground">
             <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
             <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
           </div>
-          <div className="text-[10px] text-muted-foreground/60 font-medium">
+          <div className="text-xs text-muted-foreground/60 font-medium">
             © 2026 QuizStreak
           </div>
         </div>

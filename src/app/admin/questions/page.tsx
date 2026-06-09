@@ -138,11 +138,11 @@ export default function AdminQuestionsPage() {
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase flex items-center gap-2">
             <Wand2 className="text-primary w-5 h-5 md:w-6 md:h-6" /> Architect
           </h1>
-          <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">AI Curriculum Design</p>
+          <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">AI Curriculum Design</p>
         </div>
         
         <Link href="/admin/questions/bank" className="w-full md:w-auto">
-          <Button variant="outline" className="w-full md:w-auto rounded-lg h-10 px-4 border-primary/10 bg-white text-primary font-black uppercase text-[10px] md:text-xs shadow-sm">
+          <Button variant="outline" className="w-full md:w-auto rounded-lg h-10 px-4 border-primary/10 bg-white text-primary font-black uppercase text-xs md:text-xs shadow-sm">
             <Library className="w-3.5 h-3.5 mr-2" /> Question Bank
           </Button>
         </Link>
@@ -242,7 +242,7 @@ export default function AdminQuestionsPage() {
           <CardContent className="p-4 md:p-6 flex-grow flex flex-col justify-center gap-4">
             <div className="text-center md:text-left">
                <div className="text-3xl md:text-4xl font-black text-foreground tabular-nums">{questions.length}</div>
-               <p className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Total Challenges</p>
+               <p className="text-[8px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Total Challenges</p>
             </div>
             
             <div className="space-y-3">
@@ -290,8 +290,8 @@ export default function AdminQuestionsPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setAiQuestions([])} className="flex-1 sm:flex-none text-[10px] font-black text-white hover:bg-white/10 px-3 h-9 rounded-lg uppercase tracking-wider">Discard</Button>
-                <Button size="sm" onClick={saveToSheet} disabled={saving} className="flex-1 sm:flex-none bg-white text-primary hover:bg-white/90 text-[10px] font-black px-4 h-9 rounded-lg transition-all active:scale-95 shadow-md uppercase tracking-wider">
+                <Button variant="ghost" size="sm" onClick={() => setAiQuestions([])} className="flex-1 sm:flex-none text-xs font-black text-white hover:bg-white/10 px-3 h-9 rounded-lg uppercase tracking-wider">Discard</Button>
+                <Button size="sm" onClick={saveToSheet} disabled={saving} className="flex-1 sm:flex-none bg-white text-primary hover:bg-white/90 text-xs font-black px-4 h-9 rounded-lg transition-all active:scale-95 shadow-md uppercase tracking-wider">
                   {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Save className="w-3.5 h-3.5 mr-1.5" />} Deploy Batch
                 </Button>
               </div>
@@ -307,7 +307,7 @@ export default function AdminQuestionsPage() {
                   <p className="text-[11px] md:text-xs font-bold text-foreground mb-3 leading-relaxed">{q.question}</p>
                   <div className="grid grid-cols-1 gap-1.5">
                     {Object.entries(q.options).map(([key, val]) => (
-                      <div key={key} className={`p-2 rounded-lg text-[9px] md:text-[10px] font-bold border transition-all flex items-center ${key === q.correctAnswer ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-muted/30 border-transparent text-muted-foreground"}`}>
+                      <div key={key} className={`p-2 rounded-lg text-[9px] md:text-xs font-bold border transition-all flex items-center ${key === q.correctAnswer ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-muted/30 border-transparent text-muted-foreground"}`}>
                         <span className={`w-3.5 h-3.5 rounded-md flex items-center justify-center font-black mr-2 flex-shrink-0 ${key === q.correctAnswer ? "bg-emerald-600 text-white" : "bg-white text-muted-foreground"}`}>{key}</span>
                         {val as string}
                       </div>

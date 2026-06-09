@@ -63,7 +63,7 @@ export default function UserLayout({
         </div>
         
         <nav className="flex-grow p-4 flex flex-col gap-2 mt-4">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-2">Navigation</p>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-2">Navigation</p>
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
@@ -81,7 +81,7 @@ export default function UserLayout({
         <div className="p-4 space-y-3 border-t border-primary/5">
           <div className="bg-primary/5 rounded-2xl p-4 flex items-center justify-between group hover:bg-primary/10 transition-colors">
             <div className="min-w-0">
-              <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none mb-1">Total Score</p>
+              <p className="text-xs font-black text-primary uppercase tracking-widest leading-none mb-1">Total Score</p>
               <p className="text-sm font-black text-foreground truncate">{(session?.user as any)?.totalPoints || 0} PTS</p>
             </div>
             <Trophy className="w-4 h-4 text-primary fill-primary opacity-20 group-hover:opacity-100 transition-opacity" />
@@ -89,7 +89,7 @@ export default function UserLayout({
 
           <div className="bg-orange-500/5 rounded-2xl p-4 flex items-center justify-between group hover:bg-orange-500/10 transition-colors">
             <div>
-              <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest leading-none mb-1">Daily Streak</p>
+              <p className="text-xs font-black text-orange-600 uppercase tracking-widest leading-none mb-1">Daily Streak</p>
               <p className="text-sm font-black text-foreground">Set #{(session?.user as any)?.currentSet || 1}</p>
             </div>
             <Zap className="w-4 h-4 text-orange-500 fill-orange-500" />
@@ -125,9 +125,9 @@ export default function UserLayout({
                 <DropdownMenuGroup>
                   <DropdownMenuLabel className="font-normal py-2.5">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-[10px] font-black text-primary uppercase tracking-widest">Account</p>
+                      <p className="text-xs font-black text-primary uppercase tracking-widest">Account</p>
                       <p className="text-sm font-bold text-foreground leading-none truncate">{session?.user?.name}</p>
-                      <p className="text-[10px] text-muted-foreground leading-none truncate">{session?.user?.email}</p>
+                      <p className="text-xs text-muted-foreground leading-none truncate">{session?.user?.email}</p>
                     </div>
                   </DropdownMenuLabel>
                 </DropdownMenuGroup>

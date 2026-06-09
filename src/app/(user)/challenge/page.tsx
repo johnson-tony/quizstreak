@@ -28,7 +28,7 @@ export default function ChallengePage() {
             </Link>
             <div className="space-y-0">
               <h1 className="text-lg md:text-xl font-black text-foreground tracking-tight leading-none">Daily Quest</h1>
-              <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest opacity-60">Challenge Set</p>
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest opacity-60">Challenge Set</p>
             </div>
           </div>
 

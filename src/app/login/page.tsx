@@ -96,7 +96,7 @@ export default function LoginPage() {
           </Button>
 
           <div className="mt-10 pt-8 border-t border-primary/5 text-center">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center justify-center gap-2">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center justify-center gap-2">
               <Sparkles className="w-3 h-3 text-primary" /> Verified Secure Access
             </p>
           </div>

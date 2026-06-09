@@ -47,7 +47,7 @@ export default function Error({
           </Link>
         </div>
         
-        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">
+        <p className="text-xs text-muted-foreground uppercase tracking-widest font-black">
           Error ID: {error.digest || 'unknown'}
         </p>
       </div>

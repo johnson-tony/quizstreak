@@ -62,7 +62,7 @@ export default function AdminLayout({
         </div>
         
         <nav className="flex-grow p-4 flex flex-col gap-2 mt-4">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-2">Management</p>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-2">Management</p>
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
@@ -79,7 +79,7 @@ export default function AdminLayout({
 
         <div className="p-4 border-t border-primary/5">
           <div className="bg-primary/5 rounded-2xl p-4 mb-4">
-            <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none mb-1">Active Admin</p>
+            <p className="text-xs font-black text-primary uppercase tracking-widest leading-none mb-1">Active Admin</p>
             <p className="text-xs font-bold text-foreground truncate">{session?.user?.email}</p>
           </div>
           <Button 

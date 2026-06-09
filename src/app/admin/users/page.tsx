@@ -65,7 +65,7 @@ export default function AdminUsersPage() {
             </Button>
           </Link>
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">User Directory</h1>
-          <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">{users.length} enrolled users</p>
+          <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">{users.length} enrolled users</p>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
                               <Crown className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
                             )}
                           </div>
-                          <p className="text-[9px] md:text-[10px] text-muted-foreground font-medium truncate">{user.email}</p>
+                          <p className="text-[9px] md:text-xs text-muted-foreground font-medium truncate">{user.email}</p>
                         </div>
                       </div>
                     </td>
