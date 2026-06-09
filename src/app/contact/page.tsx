@@ -100,7 +100,7 @@ export default function ContactPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
       
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-12 md:py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <main className="flex-grow flex flex-col items-center justify-center px-4 py-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="w-full max-w-xl space-y-8">
           <div className="text-center space-y-3">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-primary text-xs font-black uppercase tracking-widest mb-4">
@@ -192,7 +192,7 @@ export default function ContactPage() {
           </Card>
 
           <p className="text-center text-xs font-bold text-muted-foreground">
-            Typically responds within 24 hours.
+            Typically responds within 1 hour.
           </p>
         </div>
       </main>
