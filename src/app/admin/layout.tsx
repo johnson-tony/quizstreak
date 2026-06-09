@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   Sparkles,
   BookOpen,
-  AlertCircle
+  AlertCircle,
+  Mail
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

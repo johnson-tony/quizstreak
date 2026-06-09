@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Mail, Send, CheckCircle2, Loader2, User, Type, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function ContactPage() {
   const { data: session, status } = useSession();
@@ -45,6 +46,7 @@ export default function ContactPage() {
     }
 
     setIsSubmitting(true);
+    console.log("Submitting form data:", formData);
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -52,12 +54,16 @@ export default function ContactPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to send message");
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      if (!response.ok) throw new Error(data.error || "Failed to send message");
 
       setSubmitted(true);
       toast.success("Message sent successfully!");
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      toast.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -78,12 +84,12 @@ export default function ContactPage() {
                 Your message has been received. Our team will get back to you shortly via email.
               </p>
             </div>
-            <Button 
-              asChild 
-              className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
+            <Link 
+              href="/dashboard"
+              className={cn(buttonVariants(), "w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20")}
             >
-              <Link href="/dashboard">Return to Dashboard</Link>
-            </Button>
+              Return to Dashboard
+            </Link>
           </Card>
         </main>
       </div>
@@ -169,6 +175,7 @@ export default function ContactPage() {
               </div>
 
               <Button 
+                type="submit"
                 disabled={isSubmitting}
                 className="w-full h-14 rounded-2xl text-lg font-black shadow-lg shadow-primary/20 transition-all active:scale-[0.98] group"
               >

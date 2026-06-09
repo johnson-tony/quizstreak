@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { 
   Mail, 
   MessageSquare, 
@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { 
   Dialog, 
   DialogContent, 
@@ -164,15 +165,12 @@ export default function AdminMessagesPage() {
                 </div>
 
                 <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      onClick={() => setSelectedMessage(msg)}
-                      variant="outline" 
-                      className="rounded-2xl h-12 px-6 font-black gap-2 border-primary/10 hover:bg-primary hover:text-white transition-all group/btn"
-                    >
-                      View & Reply
-                      <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
+                  <DialogTrigger 
+                    onClick={() => setSelectedMessage(msg)}
+                    className={cn(buttonVariants({ variant: "outline" }), "rounded-2xl h-12 px-6 font-black gap-2 border-primary/10 hover:bg-primary hover:text-white transition-all group/btn")}
+                  >
+                    View & Reply
+                    <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl rounded-[2.5rem] border-primary/10 p-0 overflow-hidden bg-white">
                     <DialogHeader className="p-8 pb-4 border-b border-primary/5 bg-primary/5">

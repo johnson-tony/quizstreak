@@ -15,14 +15,21 @@ export async function POST(req: Request) {
 
     await dbConnect();
 
-    const contact = await Contact.create({
+    const contactData: any = {
       name,
       email,
       subject,
       message,
-      userId: session?.user?.id,
       status: 'pending'
-    });
+    };
+
+    if (session?.user?.id) {
+      contactData.userId = session.user.id;
+    }
+
+    console.log("Saving contact message:", { ...contactData, message: "..." });
+    const contact = await Contact.create(contactData);
+    console.log("Contact saved successfully:", contact._id);
 
     return NextResponse.json({ success: true, contact }, { status: 201 });
   } catch (error: any) {
@@ -40,6 +47,7 @@ export async function GET(req: Request) {
 
     await dbConnect();
     const contacts = await Contact.find({}).sort({ createdAt: -1 });
+    console.log(`Retrieved ${contacts.length} contact messages for admin.`);
 
     return NextResponse.json({ contacts });
   } catch (error: any) {
