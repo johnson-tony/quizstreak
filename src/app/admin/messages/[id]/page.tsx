@@ -14,12 +14,19 @@ import {
   CheckCircle2,
   User,
   Calendar,
-  Trash2
+  Trash2,
+  ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ContactMessage {
   _id: string;
@@ -114,6 +121,24 @@ export default function MessageDetailsPage() {
     }
   };
 
+  const handleStatusUpdate = async (newStatus: 'pending' | 'replied' | 'ignored') => {
+    try {
+      const res = await fetch(`/api/contact/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
+
+      const updatedData = await res.json();
+      setMessage(updatedData.contact);
+      toast.success("Status updated!");
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -160,9 +185,19 @@ export default function MessageDetailsPage() {
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
             <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">Message Details</h1>
-            <Badge variant={message.status === 'replied' ? 'default' : 'secondary'} className="rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest px-2 py-0.5">
-              {message.status}
-            </Badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="outline-none">
+                <Badge variant={message.status === 'replied' ? 'default' : 'secondary'} className="rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest px-2 py-0.5 cursor-pointer flex items-center gap-1 hover:opacity-80 transition-opacity">
+                  {message.status}
+                  <ChevronDown className="w-2.5 h-2.5" />
+                </Badge>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-32 rounded-xl">
+                <DropdownMenuItem onClick={() => handleStatusUpdate('pending')} className="text-xs font-bold uppercase tracking-widest cursor-pointer">Pending</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusUpdate('replied')} className="text-xs font-bold uppercase tracking-widest cursor-pointer text-primary">Replied</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusUpdate('ignored')} className="text-xs font-bold uppercase tracking-widest cursor-pointer text-muted-foreground">Ignored</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <p className="text-muted-foreground font-medium text-[10px] md:text-xs uppercase tracking-wider">Inquiry from {message.name}</p>
         </div>

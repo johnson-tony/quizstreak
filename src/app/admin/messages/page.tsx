@@ -100,7 +100,7 @@ export default function AdminMessagesPage() {
       <div className="grid grid-cols-1 gap-2 md:gap-3">
         {filteredMessages.map((msg) => (
           <Card key={msg._id} className="group p-0.5 border-primary/5 hover:border-primary/20 transition-all rounded-xl overflow-hidden bg-white shadow-sm">
-            <div className="p-2 flex flex-col md:flex-row items-start md:items-center gap-3">
+            <div className="p-2 flex flex-col md:flex-row items-start md:items-center md:gap-3">
               <div className="flex-grow space-y-0.5 min-w-0">
                 <div className="flex items-center flex-wrap gap-2 mb-0.5">
                   <span className="text-[10px] md:text-[11px] font-black text-foreground truncate">{msg.name}</span>
