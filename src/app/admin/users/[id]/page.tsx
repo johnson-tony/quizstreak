@@ -83,7 +83,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("User successfully marked as deleted");
+        toast.success("User marked as deleted");
         router.push("/admin/users");
       }
     } catch (error) {
@@ -106,7 +106,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
         toast.error(updatedUser.error);
       } else {
         setData((prev: any) => ({ ...prev, user: updatedUser }));
-        toast.success(`User ${updatedUser.isSubscribed ? 'subscribed' : 'unsubscribed'} successfully`);
+        toast.success(`User ${updatedUser.isSubscribed ? 'subscribed' : 'unsubscribed'}`);
       }
     } catch (error) {
       toast.error("Failed to update subscription");
@@ -117,9 +117,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <div className="p-8 space-y-8 max-w-5xl mx-auto">
-        <Skeleton className="h-40 rounded-2xl" />
-        <Skeleton className="h-96 rounded-2xl" />
+      <div className="p-4 md:p-6 space-y-4 max-w-5xl mx-auto">
+        <Skeleton className="h-32 rounded-2xl" />
+        <Skeleton className="h-64 rounded-2xl" />
       </div>
     );
   }
@@ -128,11 +128,11 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
   const attempts = data?.attempts || [];
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <Link href="/admin/users">
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary group">
-            <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Directory
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary group h-8 px-2 text-[10px] md:text-xs">
+            <ChevronLeft className="w-3.5 h-3.5 mr-1 group-hover:-translate-x-1 transition-transform" /> Directory
           </Button>
         </Link>
         
@@ -144,9 +144,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                 size="sm"
                 onClick={() => updateStatus(user?.status === 'suspended' ? 'active' : 'suspended')}
                 disabled={isUpdating}
-                className="rounded-xl font-bold gap-2 text-[10px] uppercase tracking-widest border-primary/10"
+                className="rounded-lg font-bold gap-1.5 text-[9px] md:text-[10px] uppercase tracking-widest border-primary/10 h-8"
               >
-                {isUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : user?.status === 'suspended' ? <UserCheck className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
+                {isUpdating ? <Loader2 className="w-3 h-3 animate-spin" /> : user?.status === 'suspended' ? <UserCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
                 {user?.status === 'suspended' ? 'Activate' : 'Suspend'}
               </Button>
               <Button
@@ -154,9 +154,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                 size="sm"
                 onClick={deleteUser}
                 disabled={isDeleting}
-                className="rounded-xl font-bold gap-2 text-[10px] uppercase tracking-widest shadow-lg shadow-destructive/10"
+                className="rounded-lg font-bold gap-1.5 text-[9px] md:text-[10px] uppercase tracking-widest shadow-sm h-8"
               >
-                {isDeleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                {isDeleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                 Delete
               </Button>
             </>
@@ -167,56 +167,54 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
             size="sm"
             onClick={toggleSubscription}
             disabled={isUpdating}
-            className={`rounded-xl font-bold gap-2 transition-all ${user?.isSubscribed ? 'bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-200' : 'border-amber-200 text-amber-700 hover:bg-amber-50'}`}
+            className={`rounded-lg font-bold gap-1.5 transition-all h-8 text-[9px] md:text-[10px] uppercase tracking-widest ${user?.isSubscribed ? 'bg-amber-500 hover:bg-amber-600 shadow-sm' : 'border-amber-200 text-amber-700 hover:bg-amber-50'}`}
           >
-            {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : user?.isSubscribed ? <Crown className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}
+            {isUpdating ? <Loader2 className="w-3.h-3 animate-spin" /> : user?.isSubscribed ? <Crown className="w-3 h-3" /> : <CreditCard className="w-3 h-3" />}
             {user?.isSubscribed ? "PRO MEMBER" : "FREE USER"}
           </Button>
         </div>
       </div>
 
       {/* User Profile Header */}
-      <section className="glass-card p-6 md:p-8 rounded-3xl border-primary/5 shadow-xl bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] blur-3xl -mr-32 -mt-32 rounded-full" />
+      <section className="glass-card p-4 md:p-6 rounded-2xl border-primary/5 shadow-md bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] blur-3xl -mr-16 -mt-16 rounded-full" />
         
-        <div className="flex flex-col md:flex-row gap-6 items-center md:items-start relative z-10">
-          <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-white shadow-xl ring-1 ring-primary/5">
+        <div className="flex flex-col md:flex-row gap-4 items-center md:items-start relative z-10">
+          <Avatar className="h-20 w-20 md:h-24 md:w-24 border-2 border-white shadow-md ring-1 ring-primary/5">
             <AvatarImage src={user?.image} />
-            <AvatarFallback className="bg-primary/5 text-primary text-3xl font-black">{user?.name[0]}</AvatarFallback>
+            <AvatarFallback className="bg-primary/5 text-primary text-xl font-black">{user?.name[0]}</AvatarFallback>
           </Avatar>
           
-          <div className="flex-grow text-center md:text-left space-y-2">
+          <div className="flex-grow text-center md:text-left space-y-1.5">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-2">
-              <h1 className="text-3xl font-black text-foreground tracking-tight">{user?.name}</h1>
+              <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">{user?.name}</h1>
               {user?.status !== 'active' && (
-                <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${user?.status === 'suspended' ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-destructive/5 text-destructive border-destructive/20'}`}>
+                <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${user?.status === 'suspended' ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-destructive/5 text-destructive border-destructive/20'}`}>
                   {user?.status}
                 </div>
               )}
             </div>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="w-4 h-4" />
-                <span className="text-sm font-medium">{user?.email}</span>
+            <div className="flex flex-wrap justify-center md:justify-start gap-3">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium">
+                <Mail className="w-3 h-3" /> {user?.email}
               </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm font-medium italic text-primary/60">Joined {new Date(user?.joinedAt).toLocaleDateString()}</span>
+              <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium italic text-primary/60">
+                <Calendar className="w-3 h-3" /> Joined {new Date(user?.joinedAt).toLocaleDateString()}
               </div>
             </div>
             
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
-              <div className="px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest">Total Points</p>
-                <p className="text-xl font-black text-foreground">{user?.totalPoints.toLocaleString()}</p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
+              <div className="px-3 py-1.5 bg-primary/5 rounded-lg border border-primary/10">
+                <p className="text-[8px] font-black text-primary uppercase tracking-widest">Points</p>
+                <p className="text-sm md:text-base font-black text-foreground">{user?.totalPoints.toLocaleString()}</p>
               </div>
-              <div className="px-4 py-2 bg-orange-500/5 rounded-xl border border-orange-500/10">
-                <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest">Current Streak</p>
-                <p className="text-xl font-black text-foreground">{user?.currentStreak} Days</p>
+              <div className="px-3 py-1.5 bg-orange-500/5 rounded-lg border border-orange-500/10">
+                <p className="text-[8px] font-black text-orange-600 uppercase tracking-widest">Streak</p>
+                <p className="text-sm md:text-base font-black text-foreground">{user?.currentStreak}d</p>
               </div>
-              <div className="px-4 py-2 bg-amber-500/5 rounded-xl border border-amber-500/10">
-                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Best Streak</p>
-                <p className="text-xl font-black text-foreground">{user?.longestStreak} Days</p>
+              <div className="px-3 py-1.5 bg-amber-500/5 rounded-lg border border-amber-500/10">
+                <p className="text-[8px] font-black text-amber-600 uppercase tracking-widest">Best</p>
+                <p className="text-sm md:text-base font-black text-foreground">{user?.longestStreak}d</p>
               </div>
             </div>
           </div>
@@ -224,13 +222,13 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       </section>
 
       {/* Activity Log */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-black text-foreground tracking-tight flex items-center gap-2">
-          <History className="w-5 h-5 text-primary" />
+      <section className="space-y-3">
+        <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight flex items-center gap-2 uppercase">
+          <History className="w-4 h-4 text-primary" />
           Attempt History
         </h2>
 
-        <div className="grid gap-3">
+        <div className="grid gap-2">
           {attempts.map((attempt: any, i: number) => (
             <motion.div 
               key={attempt._id}
@@ -238,29 +236,29 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <Card className="rounded-2xl border-primary/5 shadow-sm bg-white overflow-hidden group hover:shadow-md transition-all">
-                <CardContent className="p-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${attempt.correct ? "bg-emerald-500/10 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
-                      {attempt.correct ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+              <Card className="rounded-xl border-primary/5 shadow-sm bg-white overflow-hidden group hover:shadow-md transition-all">
+                <CardContent className="p-3 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${attempt.correct ? "bg-emerald-500/10 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
+                      {attempt.correct ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-foreground">Question {attempt.questionId}</p>
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
-                        {new Date(attempt.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      <p className="text-xs md:text-sm font-bold text-foreground">Q{attempt.questionId}</p>
+                      <p className="text-[8px] md:text-[9px] text-muted-foreground font-bold uppercase tracking-widest">
+                        {new Date(attempt.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-4">
                     <div className="hidden sm:block text-right">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Answer</p>
-                      <p className="text-sm font-bold text-primary">{attempt.selectedAnswer}</p>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Answer</p>
+                      <p className="text-xs font-bold text-primary">{attempt.selectedAnswer}</p>
                     </div>
-                    <div className="text-right min-w-[80px]">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Awarded</p>
-                      <p className={`text-sm font-black ${attempt.pointsEarned > 0 ? "text-emerald-600" : "text-muted-foreground"}`}>
-                        +{attempt.pointsEarned} PTS
+                    <div className="text-right min-w-[60px]">
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Awarded</p>
+                      <p className={`text-xs font-black ${attempt.pointsEarned > 0 ? "text-emerald-600" : "text-muted-foreground"}`}>
+                        +{attempt.pointsEarned}
                       </p>
                     </div>
                   </div>
@@ -269,8 +267,8 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
             </motion.div>
           ))}
           {attempts.length === 0 && (
-            <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed border-primary/10">
-              <p className="text-muted-foreground font-medium italic">This user hasn&apos;t started their journey yet.</p>
+            <div className="text-center py-12 bg-muted/10 rounded-2xl border border-dashed border-primary/5">
+              <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-widest">No activity yet</p>
             </div>
           )}
         </div>

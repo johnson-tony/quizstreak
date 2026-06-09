@@ -47,20 +47,20 @@ export default function AdminLoginPage() {
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/5 blur-[100px] rounded-full" />
       </div>
 
-      <Card className="w-full max-w-md glass-card rounded-2xl border-primary/10 shadow-2xl overflow-hidden relative">
+      <Card className="w-full max-w-sm glass-card rounded-2xl border-primary/10 shadow-xl overflow-hidden relative">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
         
-        <CardHeader className="pt-8 pb-6 text-center">
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-3">
-            <Lock className="w-6 h-6 text-primary" />
+        <CardHeader className="pt-6 pb-4 text-center">
+          <div className="mx-auto w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2">
+            <Lock className="w-5 h-5 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-black text-foreground tracking-tight">Admin Portal</CardTitle>
+          <CardTitle className="text-xl font-black text-foreground tracking-tight uppercase">Admin Portal</CardTitle>
         </CardHeader>
 
-        <CardContent className="pb-10 px-8">
+        <CardContent className="pb-8 px-6">
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-primary px-1">Email Address</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-[9px] font-black uppercase tracking-widest text-primary px-1">Email Address</Label>
               <div className="relative group">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                 <input
@@ -70,13 +70,13 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none"
+                  className="w-full h-11 pl-9 pr-4 bg-muted/30 border border-primary/5 rounded-xl text-xs font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-primary px-1">Secure Password</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-[9px] font-black uppercase tracking-widest text-primary px-1">Secure Password</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                 <input
@@ -86,7 +86,7 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 bg-muted/30 border border-primary/5 rounded-xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none"
+                  className="w-full h-11 pl-9 pr-4 bg-muted/30 border border-primary/5 rounded-xl text-xs font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none"
                 />
               </div>
             </div>
@@ -94,9 +94,9 @@ export default function AdminLoginPage() {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-12 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-4"
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-md shadow-primary/10 transition-all active:scale-[0.98] mt-2"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Access Dashboard"}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Access"}
             </Button>
           </form>
         </CardContent>

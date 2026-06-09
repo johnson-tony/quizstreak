@@ -67,7 +67,7 @@ export default function MessageDetailsPage() {
   }, [id, router]);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this message? This action cannot be undone.")) return;
+    if (!confirm("Delete this message?")) return;
 
     setIsDeleting(true);
     try {
@@ -77,7 +77,7 @@ export default function MessageDetailsPage() {
 
       if (!res.ok) throw new Error("Failed to delete message");
 
-      toast.success("Message deleted successfully");
+      toast.success("Message deleted");
       router.push("/admin/messages");
     } catch (error) {
       toast.error("Failed to delete message");
@@ -99,17 +99,16 @@ export default function MessageDetailsPage() {
 
       if (!res.ok) throw new Error("Failed to send reply");
 
-      toast.success("Reply sent successfully via email!");
+      toast.success("Reply sent successfully!");
       setReplyText("");
       
-      // Refresh message data to show new reply
       const updatedRes = await fetch(`/api/contact/${id}`);
       const updatedData = await updatedRes.json();
       if (updatedData.contact) {
         setMessage(updatedData.contact);
       }
     } catch (error) {
-      toast.error("Failed to send reply. Check your email configuration.");
+      toast.error("Failed to send reply");
     } finally {
       setIsSending(false);
     }
@@ -118,7 +117,7 @@ export default function MessageDetailsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
@@ -126,17 +125,17 @@ export default function MessageDetailsPage() {
   if (!message) return null;
 
   return (
-    <div className="p-4 lg:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between gap-4">
+    <div className="p-2 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between gap-3">
         <Button 
           variant="ghost" 
           size="sm" 
           asChild
-          className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+          className="rounded-lg font-bold gap-1.5 text-muted-foreground hover:text-foreground h-8 px-2"
         >
           <Link href="/admin/messages">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Inbox
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span className="text-[10px] md:text-xs">Inbox</span>
           </Link>
         </Button>
 
@@ -145,76 +144,76 @@ export default function MessageDetailsPage() {
           size="sm"
           onClick={handleDelete}
           disabled={isDeleting}
-          className="rounded-xl font-bold gap-2 px-4 h-9 text-[10px] uppercase tracking-widest shadow-lg shadow-destructive/20"
+          className="rounded-lg font-bold gap-1.5 px-3 h-8 text-[9px] uppercase tracking-widest shadow-sm"
         >
           {isDeleting ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <Loader2 className="w-3 h-3 animate-spin" />
           ) : (
             <>
-              <Trash2 className="w-3.5 h-3.5" />
-              Delete Message
+              <Trash2 className="w-3 h-3" />
+              Delete
             </>
           )}
         </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">Message Details</h1>
-            <Badge variant={message.status === 'replied' ? 'default' : 'secondary'} className="rounded-full text-[10px] font-black uppercase tracking-widest px-3 py-1">
+            <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">Message Details</h1>
+            <Badge variant={message.status === 'replied' ? 'default' : 'secondary'} className="rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest px-2 py-0.5">
               {message.status}
             </Badge>
           </div>
-          <p className="text-muted-foreground font-medium text-xs md:text-sm">Viewing inquiry from {message.name}</p>
+          <p className="text-muted-foreground font-medium text-[10px] md:text-xs uppercase tracking-wider">Inquiry from {message.name}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 space-y-6">
-          <Card className="p-6 md:p-8 border-primary/10 rounded-[2rem] bg-white/50 backdrop-blur-sm shadow-sm space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-b border-primary/5 pb-6">
-              <div className="space-y-1.5">
-                <div className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                  <User className="w-3 h-3" /> Sender
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
+        <div className="lg:col-span-8 space-y-4 md:space-y-6">
+          <Card className="p-4 md:p-6 border-primary/10 rounded-xl md:rounded-2xl bg-white shadow-sm space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-primary/5 pb-4">
+              <div className="space-y-1">
+                <div className="text-[9px] font-black text-primary uppercase tracking-widest flex items-center gap-1.5">
+                  <User className="w-2.5 h-2.5" /> Sender
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-base font-black text-foreground">{message.name}</span>
-                  <span className="text-sm font-medium text-muted-foreground">{message.email}</span>
+                  <span className="text-sm font-black text-foreground">{message.name}</span>
+                  <span className="text-[10px] md:text-xs font-medium text-muted-foreground">{message.email}</span>
                 </div>
               </div>
-              <div className="space-y-1.5 md:text-right">
-                <div className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 md:justify-end">
-                  <Calendar className="w-3 h-3" /> Received On
+              <div className="space-y-1 md:text-right">
+                <div className="text-[9px] font-black text-primary uppercase tracking-widest flex items-center gap-1.5 md:justify-end">
+                  <Calendar className="w-2.5 h-2.5" /> Received On
                 </div>
-                <div className="text-sm font-bold text-foreground">
-                  {format(new Date(message.createdAt), 'MMMM do, yyyy @ h:mm a')}
+                <div className="text-xs md:text-sm font-bold text-foreground">
+                  {format(new Date(message.createdAt), 'MMM do, yyyy @ h:mm a')}
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="text-[10px] font-black text-primary uppercase tracking-widest">Subject</div>
-                <h4 className="text-xl md:text-2xl font-black text-foreground leading-tight">{message.subject}</h4>
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <div className="text-[9px] font-black text-primary uppercase tracking-widest">Subject</div>
+                <h4 className="text-base md:text-xl font-black text-foreground leading-tight">{message.subject}</h4>
               </div>
 
-              <div className="space-y-4 p-6 md:p-8 bg-primary/5 rounded-[2rem] border border-primary/10 relative group">
-                <MessageSquare className="absolute right-6 top-6 w-6 h-6 text-primary/10 group-hover:text-primary/20 transition-colors" />
-                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Message Content</div>
-                <p className="text-sm md:text-lg font-medium text-foreground leading-relaxed whitespace-pre-wrap">
+              <div className="space-y-2 p-4 bg-primary/5 rounded-xl border border-primary/10 relative group">
+                <MessageSquare className="absolute right-3 top-3 w-4 h-4 text-primary/10 group-hover:text-primary/20 transition-colors" />
+                <div className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">Message Content</div>
+                <p className="text-[11px] md:text-sm font-medium text-foreground leading-relaxed whitespace-pre-wrap">
                   {message.message}
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 md:p-8 border-primary/10 rounded-[2rem] bg-white/50 backdrop-blur-sm shadow-sm space-y-4">
-            <div className="text-[10px] font-black text-primary uppercase tracking-widest">Send a Reply</div>
-            <div className="space-y-4">
+          <Card className="p-4 md:p-6 border-primary/10 rounded-xl md:rounded-2xl bg-white shadow-sm space-y-3">
+            <div className="text-[9px] font-black text-primary uppercase tracking-widest">Send a Reply</div>
+            <div className="space-y-3">
               <textarea 
-                className="w-full h-40 md:h-56 bg-primary/5 border-none rounded-2xl p-6 text-sm md:text-base font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none placeholder:text-muted-foreground/40"
-                placeholder="Type your response here... Your reply will be sent directly to the user's email address."
+                className="w-full h-24 md:h-32 bg-primary/5 border-none rounded-xl p-3 text-[11px] md:text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none resize-none placeholder:text-muted-foreground/40"
+                placeholder="Type your response here..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
               />
@@ -222,15 +221,15 @@ export default function MessageDetailsPage() {
                 <Button 
                   onClick={handleReply}
                   disabled={isSending || !replyText.trim()}
-                  size="lg"
-                  className="w-full md:w-auto px-10 h-14 rounded-2xl text-base font-black shadow-lg shadow-primary/20 gap-3"
+                  size="sm"
+                  className="w-full md:w-auto px-6 h-9 rounded-lg text-[10px] md:text-xs font-black shadow-md shadow-primary/10 gap-2 uppercase tracking-widest"
                 >
                   {isSending ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
                     <>
                       Send Email Reply
-                      <Send className="w-5 h-5" />
+                      <Send className="w-3.5 h-3.5" />
                     </>
                   )}
                 </Button>
@@ -239,34 +238,33 @@ export default function MessageDetailsPage() {
           </Card>
         </div>
 
-        <div className="lg:col-span-4 space-y-6">
-          <Card className="p-6 md:p-8 border-primary/10 rounded-[2rem] bg-white/50 backdrop-blur-sm shadow-sm flex flex-col h-full min-h-[400px]">
-            <div className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 mb-6">
-              <Reply className="w-3.5 h-3.5" /> Correspondence History
+        <div className="lg:col-span-4 space-y-4 md:space-y-6">
+          <Card className="p-4 md:p-6 border-primary/10 rounded-xl md:rounded-2xl bg-white shadow-sm flex flex-col h-full min-h-[300px]">
+            <div className="text-[9px] font-black text-primary uppercase tracking-widest flex items-center gap-1.5 mb-4">
+              <Reply className="w-3 h-3" /> History
             </div>
             
-            <div className="flex-grow space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="flex-grow space-y-3 overflow-y-auto pr-1 custom-scrollbar">
               {message.replies.length > 0 ? (
                 message.replies.map((reply, i) => (
-                  <div key={i} className="p-5 border border-primary/10 rounded-2xl bg-white shadow-sm space-y-3 relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
-                    <p className="text-sm font-medium text-foreground whitespace-pre-wrap leading-relaxed">{reply.message}</p>
-                    <div className="pt-3 border-t border-primary/5 flex flex-col gap-0.5">
-                      <div className="flex items-center gap-1.5 text-[9px] font-black text-primary uppercase tracking-wider">
+                  <div key={i} className="p-3 border border-primary/10 rounded-xl bg-white shadow-sm space-y-2 relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-0.5 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                    <p className="text-[11px] md:text-xs font-medium text-foreground whitespace-pre-wrap leading-relaxed">{reply.message}</p>
+                    <div className="pt-2 border-t border-primary/5 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1 text-[8px] font-black text-primary uppercase tracking-wider">
                         <CheckCircle2 className="w-2.5 h-2.5" />
                         Sent by {reply.adminEmail}
                       </div>
-                      <div className="text-[8px] font-bold text-muted-foreground/60">
-                        {format(new Date(reply.sentAt), 'MMMM do, h:mm a')}
+                      <div className="text-[7px] font-bold text-muted-foreground/60">
+                        {format(new Date(reply.sentAt), 'MMM do, h:mm a')}
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-primary/[0.02] rounded-2xl border border-dashed border-primary/10">
-                  <Mail className="w-10 h-10 text-primary/10 mb-4" />
-                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">No previous replies sent</p>
-                  <p className="text-xs font-medium text-muted-foreground/60 mt-1 italic">Start the conversation by sending a reply.</p>
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-primary/[0.02] rounded-xl border border-dashed border-primary/10">
+                  <Mail className="w-6 h-6 text-primary/10 mb-2" />
+                  <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">No replies yet</p>
                 </div>
               )}
             </div>

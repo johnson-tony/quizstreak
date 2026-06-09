@@ -100,7 +100,7 @@ export default function AdminMessagesPage() {
       <div className="grid grid-cols-1 gap-2 md:gap-3">
         {filteredMessages.map((msg) => (
           <Card key={msg._id} className="group p-0.5 border-primary/5 hover:border-primary/20 transition-all rounded-xl overflow-hidden bg-white shadow-sm">
-            <div className="p-3 md:p-4 flex flex-col md:flex-row items-start md:items-center gap-3">
+            <div className="p-2 flex flex-col md:flex-row items-start md:items-center gap-3">
               <div className="flex-grow space-y-0.5 min-w-0">
                 <div className="flex items-center flex-wrap gap-2 mb-0.5">
                   <span className="text-[10px] md:text-[11px] font-black text-foreground truncate">{msg.name}</span>
@@ -108,8 +108,6 @@ export default function AdminMessagesPage() {
                     {msg.status}
                   </Badge>
                 </div>
-                <h3 className="text-xs md:text-sm font-bold text-foreground line-clamp-1">{msg.subject}</h3>
-                <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-1 italic opacity-70">"{msg.message}"</p>
               </div>
 
               <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-primary/5">
@@ -122,7 +120,7 @@ export default function AdminMessagesPage() {
 
                 <Link
                   href={`/admin/messages/${msg._id}`}
-                  className={cn(buttonVariants({ variant: "outline", size: "sm" }), "rounded-lg h-8 px-3 font-black gap-1 border-primary/10 hover:bg-primary hover:text-white transition-all text-[9px] uppercase tracking-wider")}
+                  className={cn(buttonVariants({ variant: "outline", size: "sm" }), "rounded-lg h-6 px-3 font-black gap-1 border-primary/10 hover:bg-primary hover:text-white transition-all text-[9px] uppercase tracking-wider")}
                 >
                   Reply
                   <ChevronRight className="w-2.5 h-2.5" />
