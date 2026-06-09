@@ -3,8 +3,10 @@
 import Navbar from "@/components/layout/Navbar";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function TermsPage() {
+  const { data: session } = useSession();
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -39,10 +41,15 @@ export default function TermsPage() {
             </section>
           </div>
 
-          <div className="pt-3 border-t border-primary/5">
+          <div className="pt-3 border-t border-primary/5 flex items-center justify-between">
             <Link href="/" className="text-xs md:text-sm font-bold text-primary hover:underline">
               ← Back to Home
             </Link>
+            {session && (
+              <Link href="/dashboard" className="text-xs md:text-sm font-bold text-primary hover:underline">
+                Go to Dashboard →
+              </Link>
+            )}
           </div>
         </div>
       </main>

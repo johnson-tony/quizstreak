@@ -5,11 +5,13 @@ import { motion, Variants } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { useSession } from "next-auth/react";
 import { 
   Trophy
 } from "lucide-react";
 
 export default function LandingPage() {
+  const { data: session } = useSession();
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -72,13 +74,13 @@ export default function LandingPage() {
                 className="flex flex-col sm:flex-row justify-center gap-3"
               >
                 <Link 
-                  href="/login" 
+                  href={session ? "/dashboard" : "/login"} 
                   className={buttonVariants({ 
                     size: "lg", 
                     className: "bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-11 md:h-12 text-sm font-bold shadow-lg shadow-primary/10" 
                   })}
                 >
-                  Start Your Streak
+                  {session ? "Go to Dashboard" : "Start Your Streak"}
                 </Link>
               </motion.div>
             </motion.div>

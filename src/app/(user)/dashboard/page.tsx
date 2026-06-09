@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/layout/Navbar";
 import StatsSection from "@/components/features/StatsSection";
 import StreakCalendar from "@/components/features/StreakCalendar";
 import BadgesSection from "@/components/features/BadgesSection";
@@ -53,7 +52,6 @@ export default function DashboardPage() {
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <main className="flex-grow max-w-7xl mx-auto px-4 py-8 space-y-6 w-full">
           <Skeleton className="h-24 w-full rounded-2xl" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

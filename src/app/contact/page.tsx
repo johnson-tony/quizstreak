@@ -194,6 +194,14 @@ export default function ContactPage() {
           <p className="text-center text-[9px] font-black text-muted-foreground uppercase tracking-widest">
             Typically responds within 1 hour.
           </p>
+
+          {session && (
+            <div className="pt-2 text-center">
+              <Link href="/dashboard" className="text-[10px] md:text-xs font-bold text-primary hover:underline">
+                ← Go to Dashboard
+              </Link>
+            </div>
+          )}
         </div>
       </main>
     </div>

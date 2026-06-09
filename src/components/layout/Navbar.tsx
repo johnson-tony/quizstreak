@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
-import { Menu } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -22,25 +21,13 @@ export default function Navbar() {
           </div>
           
           <div className="flex items-center gap-3">
-            {session ? (
-              <Link href="/dashboard">
-                <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-6 h-9 text-xs font-bold shadow-lg shadow-primary/10">
-                  Go to Dashboard
-                </Button>
-              </Link>
-            ) : (
+            {!session && (
               <Link href="/login">
                 <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-6 h-9 text-xs font-bold shadow-lg shadow-primary/10">
                   Login
                 </Button>
               </Link>
             )}
-            
-            <div className="md:hidden">
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </div>
           </div>
         </div>
       </div>
