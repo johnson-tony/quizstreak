@@ -40,16 +40,13 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="p-2 md:p-6 space-y-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-2xl" />
+            <Skeleton key={i} className="h-20 rounded-xl" />
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Skeleton className="h-64 rounded-3xl" />
-          <Skeleton className="h-64 rounded-3xl" />
-        </div>
+        <Skeleton className="h-48 rounded-2xl" />
       </div>
     );
   }
@@ -62,9 +59,9 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="p-3 sm:p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto animate-in fade-in duration-700">
+    <div className="p-4 md:p-6 space-y-6 mx-auto animate-in fade-in duration-700">
       {/* Mini Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
         {smallStats.map((stat, i) => (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -75,26 +72,26 @@ export default function AdminDashboard() {
             {stat.href ? (
               <Link href={stat.href}>
                 <Card className="rounded-xl md:rounded-2xl border-primary/5 shadow-sm bg-white hover:shadow-md hover:border-primary/10 transition-all cursor-pointer group">
-                  <CardContent className="p-3 md:p-5 flex items-center justify-between">
+                  <CardContent className="p-2.5 md:p-4 flex items-center justify-between">
                     <div>
-                      <p className="text-[8px] md:text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-0.5 md:mb-1">{stat.label}</p>
-                      <p className="text-lg md:text-2xl font-black text-foreground leading-none">{stat.value?.toLocaleString()}</p>
+                      <p className="text-[7px] md:text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">{stat.label}</p>
+                      <p className="text-base md:text-xl font-black text-foreground leading-none">{stat.value?.toLocaleString()}</p>
                     </div>
-                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0 ml-2`}>
-                      <stat.icon className="w-4 h-4 md:w-5 md:h-5" />
+                    <div className={`w-7 h-7 md:w-9 md:h-9 rounded-lg md:rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 ml-1.5`}>
+                      <stat.icon className="w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
                     </div>
                   </CardContent>
                 </Card>
               </Link>
             ) : (
               <Card className="rounded-xl md:rounded-2xl border-primary/5 shadow-sm bg-white">
-                <CardContent className="p-3 md:p-5 flex items-center justify-between">
+                <CardContent className="p-2.5 md:p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-[8px] md:text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-0.5 md:mb-1">{stat.label}</p>
-                    <p className="text-lg md:text-2xl font-black text-foreground leading-none">{stat.value?.toLocaleString()}</p>
+                    <p className="text-[7px] md:text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">{stat.label}</p>
+                    <p className="text-base md:text-xl font-black text-foreground leading-none">{stat.value?.toLocaleString()}</p>
                   </div>
-                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center flex-shrink-0 ml-2`}>
-                    <stat.icon className="w-4 h-4 md:w-5 md:h-5" />
+                  <div className={`w-7 h-7 md:w-9 md:h-9 rounded-lg md:rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center flex-shrink-0 ml-1.5`}>
+                    <stat.icon className="w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
                   </div>
                 </CardContent>
               </Card>
@@ -104,29 +101,29 @@ export default function AdminDashboard() {
       </div>
 
       {/* System Health Section */}
-      <div className="bg-primary/5 rounded-2xl md:rounded-[2.5rem] p-5 md:p-10 border border-primary/10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl -mr-32 -mt-32 rounded-full" />
+      <div className="bg-primary/5 rounded-xl md:rounded-3xl p-4 md:p-8 border border-primary/10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-3xl -mr-24 -mt-24 rounded-full" />
         
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <div className="text-center md:text-left space-y-2">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-white rounded-full border border-primary/10 shadow-sm">
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+          <div className="text-center md:text-left space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full border border-primary/10 shadow-sm">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-primary">System Online</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-primary">System Online</span>
             </div>
-            <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight px-1">Performance is Nominal</h2>
-            <p className="text-[11px] md:text-sm text-muted-foreground max-w-lg px-2">
-              The AI generation engine and Google Sheets database are fully synchronized. User engagement has increased by <span className="text-primary font-bold">12%</span> this week.
+            <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight">Nominal State</h2>
+            <p className="text-[10px] md:text-xs text-muted-foreground max-w-lg leading-relaxed">
+              Sync complete. Engine operational. engagement is up <span className="text-primary font-bold">12%</span>.
             </p>
           </div>
-          <div className="flex gap-4 md:gap-8">
+          <div className="flex gap-6 md:gap-8">
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-black text-primary leading-none">+{stats?.newUsersLastWeek}</div>
-              <p className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">New Users (7d)</p>
+              <div className="text-xl md:text-2xl font-black text-primary leading-none">+{stats?.newUsersLastWeek}</div>
+              <p className="text-[7px] md:text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Growth</p>
             </div>
-            <div className="w-[1px] h-8 md:h-10 bg-primary/10" />
+            <div className="w-[1px] h-6 md:h-8 bg-primary/10" />
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-black text-primary leading-none">{stats?.successRate}%</div>
-              <p className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Avg Accuracy</p>
+              <div className="text-xl md:text-2xl font-black text-primary leading-none">{stats?.successRate}%</div>
+              <p className="text-[7px] md:text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Accuracy</p>
             </div>
           </div>
         </div>

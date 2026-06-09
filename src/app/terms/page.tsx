@@ -29,7 +29,7 @@ export default function TermsPage() {
             <p className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">Last updated: June 2026</p>
           </header>
 
-          <div className="space-y-10 text-sm md:text-base text-muted-foreground leading-relaxed">
+          <div className="space-y-4 text-sm md:text-base text-muted-foreground leading-relaxed">
             <section className="space-y-3">
               <h2 className="text-lg md:text-xl font-black text-foreground tracking-tight uppercase">
                 Acceptable Use

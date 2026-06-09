@@ -54,7 +54,7 @@ export default function AdminLayout({
     <div className="min-h-screen flex bg-background">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 flex-col border-r border-primary/5 bg-white/80 backdrop-blur-xl sticky top-0 h-screen">
-        <div className="p-6 border-b border-primary/5">
+        <div className="py-3 px-6 border-b border-primary/5">
           <Link href="/" className="flex items-center gap-3">
             <img src="/quickstreak.svg" alt="Logo" className="w-8 h-8" />
             <span className="text-xl font-black text-primary tracking-tight">Console</span>
@@ -96,17 +96,17 @@ export default function AdminLayout({
       {/* Main Content Area */}
       <div className="flex-grow flex flex-col min-w-0">
         {/* Mobile Navbar */}
-        <header className="lg:hidden border-b border-primary/5 bg-white/80 backdrop-blur-xl sticky top-0 z-50 px-4 h-16 flex items-center justify-between safe-top">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/quickstreak.svg" alt="Logo" className="w-7 h-7" />
-            <div className="text-lg font-black text-primary tracking-tight">Admin</div>
+        <header className="lg:hidden border-b border-primary/5 bg-white/80 backdrop-blur-xl sticky top-0 z-50 px-3 h-12 flex items-center justify-between safe-top">
+          <Link href="/" className="flex items-center gap-1.5">
+            <img src="/quickstreak.svg" alt="Logo" className="w-6 h-6" />
+            <div className="text-base font-black text-primary tracking-tight uppercase">Admin</div>
           </Link>
-          <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)} className="rounded-xl text-primary">
-            <Menu className="w-6 h-6" />
+          <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)} className="w-8 h-8 rounded-lg text-primary">
+            <Menu className="w-5 h-5" />
           </Button>
         </header>
 
-        <main className="flex-grow pb-10">
+        <main className="flex-grow pb-6">
           {children}
         </main>
       </div>
@@ -127,38 +127,38 @@ export default function AdminLayout({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[280px] bg-white z-[70] lg:hidden shadow-2xl flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-[240px] bg-white z-[70] lg:hidden shadow-2xl flex flex-col"
             >
-              <div className="p-6 border-b border-primary/5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img src="/quickstreak.svg" alt="Logo" className="w-8 h-8" />
-                  <span className="text-xl font-black text-primary">Admin</span>
+              <div className="p-4 border-b border-primary/5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <img src="/quickstreak.svg" alt="Logo" className="w-6 h-6" />
+                  <span className="text-lg font-black text-primary uppercase">Admin</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-full">
-                  <X className="w-5 h-5 text-muted-foreground" />
+                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="w-8 h-8 rounded-full">
+                  <X className="w-4 h-4 text-muted-foreground" />
                 </Button>
               </div>
 
-              <nav className="flex-grow p-4 space-y-2 mt-4">
+              <nav className="flex-grow p-3 space-y-1 mt-2">
                 {navItems.map((item) => (
                   <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-black transition-all ${
-                      pathname === item.href ? "bg-primary text-white" : "text-muted-foreground"
+                    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                      pathname === item.href ? "bg-primary text-white shadow-lg shadow-primary/10" : "text-muted-foreground hover:bg-primary/5"
                     }`}>
-                      <item.icon className="w-5 h-5" />
+                      <item.icon className="w-4 h-4" />
                       {item.name}
                     </div>
                   </Link>
                 ))}
               </nav>
 
-              <div className="p-6 border-t border-primary/5">
+              <div className="p-4 border-t border-primary/5">
                 <Button 
                   variant="outline" 
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full h-14 border-destructive/10 text-destructive rounded-2xl font-black gap-3"
+                  className="w-full h-10 border-destructive/10 text-destructive rounded-xl font-bold gap-2 text-xs uppercase"
                 >
-                  <LogOut className="w-5 h-5" /> Logout
+                  <LogOut className="w-4 h-4" /> Logout
                 </Button>
               </div>
             </motion.aside>
