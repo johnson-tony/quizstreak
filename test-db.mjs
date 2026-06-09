@@ -13,9 +13,13 @@ async function testConnection() {
   }
 
   console.log('Attempting to connect to MongoDB...');
+  console.log('URI length:', MONGODB_URI.length);
+  console.log('URI start:', MONGODB_URI.substring(0, 20));
   try {
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 15000,
+      family: 4,
+      dbName: 'quizstreak',
     });
     console.log('✅ MongoDB connection successful!');
     process.exit(0);
