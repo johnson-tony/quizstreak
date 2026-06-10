@@ -2,28 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { 
   Users, 
-  BookOpen, 
   Activity, 
   TrendingUp, 
   Zap,
   Sparkles,
-  ArrowUpRight,
-  UserCheck
+  UserCheck,
+  Library,
+  ChevronRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-export default function AdminDashboard() {
-  const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+interface AdminStats {
+  totalUsers: number;
+  totalAttempts: number;
+  successRate: number;
+  activeToday: number;
+  newUsersLastWeek: number;
+  totalQuestions: number;
+  categoryCounts: Record<string, number>;
+}
 
-  useEffect(() => {
-    fetchAdminStats();
-  }, []);
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchAdminStats = async () => {
     try {
@@ -31,12 +38,17 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data.error) toast.error(data.error);
       else setStats(data);
-    } catch (error) {
-      toast.error("Failed to load platform stats");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to load platform stats";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchAdminStats();
+  }, []);
 
   if (loading) {
     return (
@@ -127,6 +139,65 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Content Breakdown Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <Card className="rounded-xl md:rounded-3xl border-primary/5 shadow-sm bg-white overflow-hidden lg:col-span-2">
+          <div className="p-4 md:p-6 border-b border-primary/5 bg-primary/[0.01] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Library className="w-4 h-4 text-primary" />
+              <h3 className="text-sm md:text-base font-black text-foreground uppercase tracking-tight">Curriculum Health</h3>
+            </div>
+            <Link href="/admin/questions">
+               <Button variant="ghost" size="sm" className="h-7 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5">
+                 Manage Bank <ChevronRight className="w-3 h-3 ml-1" />
+               </Button>
+            </Link>
+          </div>
+          <CardContent className="p-4 md:p-6">
+             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {stats && Object.entries(stats.categoryCounts).sort((a: [string, number], b: [string, number]) => b[1] - a[1]).map(([cat, count]: [string, number]) => (
+                  <div key={cat} className="p-3 rounded-xl bg-muted/30 border border-primary/5 flex items-center justify-between group hover:border-primary/20 transition-all">
+                    <div>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">{cat}</p>
+                      <p className="text-sm font-black text-foreground">{count} <span className="text-[10px] text-muted-foreground/60 font-medium">Items</span></p>
+                    </div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                  </div>
+                ))}
+             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-xl md:rounded-3xl border-primary/5 shadow-sm bg-primary overflow-hidden text-white group">
+          <CardContent className="p-6 md:p-8 flex flex-col h-full relative">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
+             
+             <div className="relative z-10 space-y-4">
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                   <h3 className="text-lg md:text-xl font-black uppercase tracking-tight">AI Architect</h3>
+                   <p className="text-xs text-white/70 font-medium leading-relaxed mt-1">Generate 15-20 fresh professional challenges in seconds.</p>
+                </div>
+                <Link href="/admin/questions" className="block pt-2">
+                  <Button className="w-full bg-white text-primary hover:bg-white/90 rounded-xl font-black uppercase tracking-widest text-[10px] h-10 shadow-lg">
+                    Open Architect
+                  </Button>
+                </Link>
+             </div>
+             
+             <div className="mt-auto pt-8 flex items-end justify-between relative z-10">
+                <div>
+                   <div className="text-3xl font-black leading-none">{stats?.totalQuestions}</div>
+                   <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">Total Bank Size</p>
+                </div>
+                <TrendingUp className="w-8 h-8 opacity-20" />
+             </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

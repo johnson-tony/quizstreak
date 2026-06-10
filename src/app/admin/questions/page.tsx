@@ -1,29 +1,37 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { 
   Sparkles, 
-  Plus,
   Save, 
   Loader2, 
   Wand2,
   RefreshCcw,
   ArrowLeft,
   Library,
-  ChevronRight,
-  Database
+  Database,
+  Search,
+  Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
+interface Question {
+  category: string;
+  question: string;
+  options: Record<string, string>;
+  correctAnswer: string;
+  day?: string;
+  set: string;
+}
+
 export default function AdminQuestionsPage() {
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -31,24 +39,19 @@ export default function AdminQuestionsPage() {
   const [count, setCount] = useState(5);
   const [difficulty, setDifficulty] = useState("Medium");
   const [targetSet, setTargetSet] = useState("");
-  const [aiQuestions, setAiQuestions] = useState<any[]>([]);
+  const [aiQuestions, setAiQuestions] = useState<Question[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showCatList, setShowCatList] = useState(false);
 
-  useEffect(() => {
-    fetchQuestions();
-  }, []);
+  // Derived categories from bank
+  const dynamicCategories = Array.from(new Set([
+    ...questions.map(q => q.category),
+    "JavaScript", "React", "Angular", "Python", "SQL", "AWS", "AI", ".NET", "Laravel", "Aptitude", "Debugging", "Interviews", "Communication", "Marketing", "Leadership"
+  ])).sort();
 
-  useEffect(() => {
-    if (questions.length > 0 && !targetSet) {
-      const uniqueSetNumbers = Array.from(new Set(questions.map(q => parseInt(q.set) || 0))).sort((a,b) => a-b);
-      const lastSet = uniqueSetNumbers[uniqueSetNumbers.length - 1] || 1;
-      const questionsInLast = questions.filter(q => parseInt(q.set) === lastSet).length;
-      
-      if (questionsInLast < 15) setTargetSet(lastSet.toString());
-      else setTargetSet((lastSet + 1).toString());
-    } else if (questions.length === 0) {
-      setTargetSet("1");
-    }
-  }, [questions]);
+  const filteredCats = dynamicCategories.filter(c => 
+    c.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const fetchQuestions = async () => {
     setLoading(true);
@@ -57,8 +60,9 @@ export default function AdminQuestionsPage() {
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setQuestions(Array.isArray(data) ? data : []);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to load curriculum");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to load curriculum";
+      toast.error(msg);
       setQuestions([]);
     } finally {
       setLoading(false);
@@ -93,7 +97,7 @@ export default function AdminQuestionsPage() {
         throw new Error("AI returned an invalid response format. Please try again.");
       }
       
-      const formatted = data.map((q: any, i: number) => ({
+      const formatted = data.map((q: Question, i: number) => ({
         ...q,
         day: `Q${(questions.length + i + 1).toString().padStart(3, '0')}`,
         set: targetSet
@@ -101,8 +105,9 @@ export default function AdminQuestionsPage() {
       
       setAiQuestions(formatted);
       toast.success(`AI Drafted ${count} questions for Set ${targetSet}`);
-    } catch (error: any) {
-      toast.error(error.message || "AI Generation failed");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "AI Generation failed";
+      toast.error(msg);
     } finally {
       setGenerating(false);
     }
@@ -122,21 +127,40 @@ export default function AdminQuestionsPage() {
       toast.success("Questions synced with Google Sheets!");
       setAiQuestions([]);
       fetchQuestions();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to save");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to save";
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
   };
 
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  useEffect(() => {
+    if (questions.length > 0 && !targetSet) {
+      const uniqueSetNumbers = Array.from(new Set(questions.map(q => parseInt(q.set) || 0))).sort((a,b) => a-b);
+      const lastSet = uniqueSetNumbers[uniqueSetNumbers.length - 1] || 1;
+      const questionsInLast = questions.filter(q => parseInt(q.set) === lastSet).length;
+      
+      if (questionsInLast < 15) setTargetSet(lastSet.toString());
+      else setTargetSet((lastSet + 1).toString());
+    } else if (questions.length === 0) {
+      setTargetSet("1");
+    }
+  }, [questions]);
+
+
   const uniqueSets = Array.from(new Set(questions.map(q => parseInt(q.set) || 0))).sort((a,b) => a-b).map(s => s.toString());
 
   // Category counts logic
-  const categoryCounts = questions.reduce((acc: any, q: any) => {
+  const categoryCounts = questions.reduce((acc: Record<string, number>, q: Question) => {
     acc[q.category] = (acc[q.category] || 0) + 1;
     return acc;
   }, {});
-  const sortedCategories = Object.entries(categoryCounts).sort((a: any, b: any) => b[1] - a[1]);
+  const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
 
   return (
     <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-6xl mx-auto animate-in fade-in duration-700">
@@ -170,15 +194,55 @@ export default function AdminQuestionsPage() {
           <CardContent className="p-4 md:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
-                <div className="space-y-1">
-                  <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Skill</label>
-                  <select 
-                    value={category} 
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full h-10 px-3 bg-muted/30 border border-primary/5 rounded-xl text-xs font-bold appearance-none cursor-pointer focus:ring-1 focus:ring-primary/10"
-                  >
-                    {["JavaScript", "React", "Angular", "Python", "SQL", "AWS", "AI", ".NET", "Laravel", "Aptitude", "Debugging", "Interviews"].map(c => <option key={c}>{c}</option>)}
-                  </select>
+                <div className="space-y-1 relative">
+                  <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Skill Focus</label>
+                  <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <input 
+                      type="text"
+                      value={category}
+                      onChange={(e) => {
+                        setCategory(e.target.value);
+                        setSearchQuery(e.target.value);
+                        setShowCatList(true);
+                      }}
+                      onFocus={() => setShowCatList(true)}
+                      className="w-full h-10 pl-9 pr-3 bg-muted/30 border border-primary/5 rounded-xl text-xs font-bold focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="Search or type new skill..."
+                    />
+                    
+                    <AnimatePresence>
+                      {showCatList && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="absolute top-full left-0 w-full mt-1 bg-white border border-primary/10 rounded-xl shadow-xl z-50 max-h-[200px] overflow-y-auto overflow-x-hidden custom-scrollbar py-1"
+                        >
+                          {filteredCats.length > 0 ? (
+                            filteredCats.map(c => (
+                              <button
+                                key={c}
+                                onClick={() => {
+                                  setCategory(c);
+                                  setShowCatList(false);
+                                }}
+                                className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-foreground hover:bg-primary/5 transition-colors group"
+                              >
+                                {c}
+                                {category === c && <Check className="w-3 h-3 text-primary" />}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="px-3 py-2 text-[10px] font-bold text-muted-foreground italic">
+                              Hit Enter to add &quot;{category}&quot;
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  {showCatList && <div className="fixed inset-0 z-40" onClick={() => setShowCatList(false)} />}
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -278,6 +342,21 @@ export default function AdminQuestionsPage() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="pt-2 border-t border-primary/5">
+               <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-3 flex items-center justify-between">
+                 <span>Skill Breakdown</span>
+                 <span className="text-primary">{sortedCategories.length} Topics</span>
+               </p>
+               <div className="grid grid-cols-2 gap-2 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
+                  {sortedCategories.map(([cat, count]) => (
+                    <div key={cat} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-primary/5 group hover:border-primary/10 transition-all">
+                       <span className="text-[8px] md:text-[9px] font-bold text-foreground truncate mr-2">{cat}</span>
+                       <span className="text-[9px] font-black text-primary bg-primary/5 px-1.5 rounded-md">{count}</span>
+                    </div>
+                  ))}
+               </div>
             </div>
           </CardContent>
         </Card>

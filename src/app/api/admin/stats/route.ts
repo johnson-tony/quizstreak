@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import Attempt from '@/models/Attempt';
+import { getAllQuestions } from '@/lib/google-sheets';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(req: Request) {
@@ -16,10 +17,11 @@ export async function GET(req: Request) {
 
     await dbConnect();
 
-    const [totalUsers, totalAttempts, attempts] = await Promise.all([
+    const [totalUsers, totalAttempts, attempts, questions] = await Promise.all([
       User.countDocuments(),
       Attempt.countDocuments(),
       Attempt.find({}, 'correct'),
+      getAllQuestions(),
     ]);
 
     const correctAttempts = attempts.filter(a => a.correct).length;
@@ -31,11 +33,19 @@ export async function GET(req: Request) {
     
     const newUsersLastWeek = await User.countDocuments({ joinedAt: { $gte: sevenDaysAgo } });
 
+    // Category breakdown
+    const categoryCounts = questions.reduce((acc: any, q: any) => {
+      acc[q.category] = (acc[q.category] || 0) + 1;
+      return acc;
+    }, {});
+
     return NextResponse.json({
       totalUsers,
       totalAttempts,
       successRate,
       newUsersLastWeek,
+      totalQuestions: questions.length,
+      categoryCounts,
       activeToday: await User.countDocuments({ lastAttemptDate: { $gte: new Date().setUTCHours(0,0,0,0) } }),
     });
   } catch (error) {
