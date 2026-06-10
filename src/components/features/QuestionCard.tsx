@@ -17,7 +17,8 @@ import {
   Download,
   Crown,
   Lock,
-  ExternalLink
+  ExternalLink,
+  Trophy
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import jsPDF from "jspdf";

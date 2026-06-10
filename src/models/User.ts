@@ -11,6 +11,8 @@ export interface IUser {
   longestStreak: number;
   badges: string[];
   isSubscribed: boolean;
+  subscriptionExpiresAt?: Date;
+  preferredTrack: string;
   joinedAt: Date;
   lastAttemptDate?: Date;
   status: 'active' | 'suspended' | 'deleted';

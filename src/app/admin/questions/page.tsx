@@ -131,6 +131,13 @@ export default function AdminQuestionsPage() {
 
   const uniqueSets = Array.from(new Set(questions.map(q => parseInt(q.set) || 0))).sort((a,b) => a-b).map(s => s.toString());
 
+  // Category counts logic
+  const categoryCounts = questions.reduce((acc: any, q: any) => {
+    acc[q.category] = (acc[q.category] || 0) + 1;
+    return acc;
+  }, {});
+  const sortedCategories = Object.entries(categoryCounts).sort((a: any, b: any) => b[1] - a[1]);
+
   return (
     <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-6xl mx-auto animate-in fade-in duration-700">
       {/* Page Header */}
