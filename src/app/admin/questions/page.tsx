@@ -55,9 +55,11 @@ export default function AdminQuestionsPage() {
     try {
       const res = await fetch("/api/admin/questions");
       const data = await res.json();
-      setQuestions(data);
-    } catch (error) {
-      toast.error("Failed to load curriculum");
+      if (data.error) throw new Error(data.error);
+      setQuestions(Array.isArray(data) ? data : []);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to load curriculum");
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
@@ -86,6 +88,10 @@ export default function AdminQuestionsPage() {
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
+      
+      if (!Array.isArray(data)) {
+        throw new Error("AI returned an invalid response format. Please try again.");
+      }
       
       const formatted = data.map((q: any, i: number) => ({
         ...q,

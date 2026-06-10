@@ -65,8 +65,8 @@ export default function LandingPage() {
                 variants={itemVariants}
                 className="max-w-lg mx-auto text-xs sm:text-sm md:text-base text-muted-foreground mb-6 md:mb-8 leading-relaxed px-4"
               >
-                Master the skills that matter. Daily professional challenges in Software Engineering, 
-                Data Science, Cloud Architecture, and Analytical Aptitude.
+                Elevate your expertise through consistency. Join professionals mastering 
+                new skills every day through curated challenges and a community of growth.
               </motion.p>
               
               <motion.div 

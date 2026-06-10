@@ -7,8 +7,31 @@ import { Providers } from "@/components/layout/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "QuizStreak | Master One Challenge Every Day",
-  description: "Build your JavaScript, SQL, AWS, Aptitude and Interview skills through daily challenges, streaks and rankings.",
+  title: "QuizStreak | Level Up Every Day",
+  description: "Transform your daily routine into a journey of growth. Join daily challenges, maintain your streak, and climb the rankings.",
+  metadataBase: new URL("https://quizstreak.com"), // Replace with your actual domain
+  openGraph: {
+    title: "QuizStreak | Level Up Every Day",
+    description: "Transform your daily routine into a journey of growth. Join daily challenges, maintain your streak, and climb the rankings.",
+    url: "https://quizstreak.com",
+    siteName: "QuizStreak",
+    images: [
+      {
+        url: "/quickstreak.svg",
+        width: 800,
+        height: 800,
+        alt: "QuizStreak Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "QuizStreak | Level Up Every Day",
+    description: "Transform your daily routine into a journey of growth. Join daily challenges, maintain your streak, and climb the rankings.",
+    images: ["/quickstreak.svg"],
+  },
   icons: {
     icon: "/quickstreak.svg",
     apple: "/quickstreak.svg",
