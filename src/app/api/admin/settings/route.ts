@@ -40,6 +40,10 @@ export async function POST(req: Request) {
       settings.isSubscriptionEnabled = body.isSubscriptionEnabled ?? settings.isSubscriptionEnabled;
       settings.upiLink = body.upiLink ?? settings.upiLink;
       settings.freeSetsLimit = body.freeSetsLimit ?? settings.freeSetsLimit;
+      settings.siteName = body.siteName ?? settings.siteName;
+      settings.logoUrl = body.logoUrl ?? settings.logoUrl;
+      settings.dailyQuote = body.dailyQuote ?? settings.dailyQuote;
+      settings.autoUpdateQuote = body.autoUpdateQuote ?? settings.autoUpdateQuote;
       await settings.save();
     }
 

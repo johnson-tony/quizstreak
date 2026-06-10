@@ -46,7 +46,7 @@ export default function AdminLayout({
     { name: "Users", href: "/admin/users", icon: Users },
     { name: "Curriculum", href: "/admin/questions", icon: BookOpen },
     { name: "Messages", href: "/admin/messages", icon: Mail },
-    { name: "Subscription", href: "/admin/settings", icon: Settings },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
     { name: "System Health", href: "/admin/errors", icon: AlertCircle },
   ];
 
