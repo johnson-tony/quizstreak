@@ -49,6 +49,8 @@ export async function GET(req: Request) {
         badges: user.badges,
         joinedAt: user.joinedAt,
         rank,
+        persona: user.persona,
+        preferredTrack: user.preferredTrack
       },
       stats: {
         totalSolved,
@@ -56,6 +58,31 @@ export async function GET(req: Request) {
         totalAttempts,
       }
     });
+  } catch (error) {
+    return handleApiError(error, req, session?.user?.id);
+  }
+}
+
+export async function POST(req: Request) {
+  let session;
+  try {
+    session = await auth();
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { persona, preferredTrack } = await req.json();
+    await dbConnect();
+    
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+    if (persona) user.persona = persona;
+    if (preferredTrack) user.preferredTrack = preferredTrack;
+    
+    await user.save();
+
+    return NextResponse.json({ success: true, user });
   } catch (error) {
     return handleApiError(error, req, session?.user?.id);
   }

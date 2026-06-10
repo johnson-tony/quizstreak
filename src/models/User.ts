@@ -13,6 +13,7 @@ export interface IUser {
   isSubscribed: boolean;
   subscriptionExpiresAt?: Date;
   preferredTrack: string;
+  persona: 'technical' | 'non-technical' | 'mixed' | 'unselected';
   joinedAt: Date;
   lastAttemptDate?: Date;
   status: 'active' | 'suspended' | 'deleted';
@@ -29,6 +30,13 @@ const UserSchema = new Schema<IUser>({
   longestStreak: { type: Number, default: 0 },
   badges: { type: [String], default: [] },
   isSubscribed: { type: Boolean, default: false },
+  subscriptionExpiresAt: { type: Date },
+  preferredTrack: { type: String, default: 'Mixed' },
+  persona: { 
+    type: String, 
+    enum: ['technical', 'non-technical', 'mixed', 'unselected'], 
+    default: 'unselected' 
+  },
   joinedAt: { type: Date, default: Date.now },
   lastAttemptDate: { type: Date },
   status: { 

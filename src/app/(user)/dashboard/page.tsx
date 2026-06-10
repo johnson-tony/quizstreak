@@ -11,15 +11,35 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Award, Zap, TrendingUp, Sparkles, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Award, Zap, TrendingUp, Sparkles, ChevronRight, CheckCircle2, Code2, MessageSquare, Layers, Target, Rocket, MousePointer2, Database, Cloud, Terminal, BrainCircuit } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+
+const SKILLS = [
+  { id: 'JavaScript', name: 'JavaScript', icon: Code2, color: 'text-yellow-600', bg: 'bg-yellow-50', type: 'technical' },
+  { id: 'SQL', name: 'Database', icon: Database, color: 'text-blue-600', bg: 'bg-blue-50', type: 'technical' },
+  { id: 'AWS', name: 'Cloud/AWS', icon: Cloud, color: 'text-orange-600', bg: 'bg-orange-50', type: 'technical' },
+  { id: 'Python', name: 'Python', icon: Terminal, color: 'text-emerald-600', bg: 'bg-emerald-50', type: 'technical' },
+  { id: 'Communication', name: 'Communication', icon: MessageSquare, color: 'text-indigo-600', bg: 'bg-indigo-50', type: 'non-technical' },
+  { id: 'Interviews', name: 'Interview Prep', icon: Target, color: 'text-rose-600', bg: 'bg-rose-50', type: 'non-technical' },
+  { id: 'Aptitude', name: 'Aptitude', icon: BrainCircuit, color: 'text-purple-600', bg: 'bg-purple-50', type: 'non-technical' },
+  { id: 'Leadership', name: 'Leadership', icon: Award, color: 'text-amber-600', bg: 'bg-amber-50', type: 'non-technical' },
+];
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const [profile, setProfile] = useState<any>(null);
   const [attemptStatus, setAttemptStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [updatingPersona, setUpdatingPersona] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -42,10 +62,35 @@ export default function DashboardPage() {
 
       setProfile(profileData);
       setAttemptStatus(attemptData);
+      
+      if (profileData.user.persona === 'unselected') {
+        setShowOnboarding(true);
+      }
     } catch (error) {
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePersonaSelect = async (persona: string) => {
+    setUpdatingPersona(true);
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ persona }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProfile((prev: any) => ({ ...prev, user: { ...prev.user, persona } }));
+        setShowOnboarding(false);
+        toast.success(`Welcome, ${persona === 'mixed' ? 'Explorer' : persona === 'technical' ? 'Architect' : 'Professional'}!`);
+      }
+    } catch (error) {
+      toast.error("Failed to save selection");
+    } finally {
+      setUpdatingPersona(false);
     }
   };
 
@@ -63,9 +108,15 @@ export default function DashboardPage() {
     );
   }
 
+  const userPersona = profile?.user?.persona || 'mixed';
+  const filteredSkills = SKILLS.filter(skill => {
+    if (userPersona === 'mixed') return true;
+    return skill.type === userPersona;
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-grow max-w-7xl mx-auto px-2 sm:px-4 py-2 md:py-4 space-y-3 md:space-y-4 w-full animate-in fade-in duration-700">
+      <main className="flex-grow max-w-7xl mx-auto px-2 sm:px-4 py-2 md:py-4 space-y-4 md:space-y-6 w-full animate-in fade-in duration-700">
         {/* Compact Welcome & Quick Stats Section */}
         <section className="flex flex-col md:flex-row md:items-center justify-between gap-3 glass-card p-3 md:p-5 rounded-xl md:rounded-[2rem] border-primary/5 shadow-lg bg-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.02] blur-3xl -mr-24 -mt-24 rounded-full" />
@@ -85,11 +136,13 @@ export default function DashboardPage() {
                 {session?.user?.name?.split(' ')[0]}
               </h1>
               <div className="flex items-center gap-2 mt-1">
-                 <div className="px-1 py-0.5 bg-primary/5 rounded-full border border-primary/10 flex items-center gap-1">
+                 <div className="px-1.5 py-0.5 bg-primary/5 rounded-full border border-primary/10 flex items-center gap-1">
                    <div className="w-0.5 h-0.5 rounded-full bg-primary animate-pulse" />
-                   <span className="text-[6px] md:text-[9px] font-black text-primary uppercase tracking-widest">Rank #{profile?.user?.rank}</span>
+                   <span className="text-[6px] md:text-[9px] font-black text-primary uppercase tracking-widest">
+                     {userPersona === 'technical' ? 'Architect' : userPersona === 'non-technical' ? 'Professional' : 'Explorer'}
+                   </span>
                  </div>
-                 <span className="text-[7px] md:text-xs text-muted-foreground font-bold italic uppercase tracking-tighter">Set #{profile?.user?.currentSet || 1}</span>
+                 <span className="text-[7px] md:text-xs text-muted-foreground font-bold italic uppercase tracking-tighter">Rank #{profile?.user?.rank}</span>
               </div>
             </div>
           </div>
@@ -131,18 +184,18 @@ export default function DashboardPage() {
                     <CheckCircle2 className="w-2 h-2" /> Mission Complete
                   </div>
                   <h2 className="text-lg sm:text-2xl md:text-4xl font-black text-white tracking-tight leading-[1.1] uppercase">
-                    Challenge Done <br className="hidden sm:block" />
+                    {userPersona === 'non-technical' ? 'Session Complete' : 'Challenge Done'} <br className="hidden sm:block" />
                     <span className="text-white/60 font-medium italic text-xs md:text-2xl">Return in 24h</span>
                   </h2>
                   <p className="text-primary-foreground/70 text-[9px] md:text-xs max-w-xs md:max-w-md font-medium leading-tight">
-                    You have successfully completed today's task. Next mission: Set #{profile?.user?.currentSet}.
+                    Great work! You have finished today&apos;s tailored challenges. Keep the momentum going!
                   </p>
                 </div>
                 
                 <Link href="/challenge" className="w-full sm:w-auto">
                   <motion.div whileHover={{ x: 2 }} whileTap={{ scale: 0.98 }}>
                     <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 h-10 md:h-16 px-5 md:px-10 rounded-lg md:rounded-2xl font-black text-xs md:text-base shadow-lg group transition-all uppercase tracking-widest">
-                      Review Answers <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
+                      Review Results <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </motion.div>
                 </Link>
@@ -160,21 +213,21 @@ export default function DashboardPage() {
                 <div className="relative z-10 p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
                   <div className="text-center md:text-left space-y-1 md:space-y-3">
                     <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-white/10 rounded-full border border-white/20 text-white text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em]">
-                      <Sparkles className="w-2 h-2" /> New Mission Available
+                      <Sparkles className="w-2 h-2" /> Personalized Set Ready
                     </div>
                     <h2 className="text-lg sm:text-2xl md:text-4xl font-black text-white tracking-tight leading-[1.1] uppercase">
-                      Daily Challenge <br className="hidden sm:block" />
-                      <span className="text-white/60 font-medium italic text-xs md:text-2xl">Ready to Start?</span>
+                      Daily Streak <br className="hidden sm:block" />
+                      <span className="text-white/60 font-medium italic text-xs md:text-2xl">Start Your Progress</span>
                     </h2>
                     <p className="text-primary-foreground/70 text-[9px] md:text-xs max-w-xs md:max-w-md font-medium leading-tight">
-                      Test your knowledge with today's curated set. Earn points and maintain your streak!
+                      Attempt 15 questions tailored to your <strong>{userPersona}</strong> focus. Earn XP and grow!
                     </p>
                   </div>
                   
                   <div className="w-full sm:w-auto">
                     <motion.div whileHover={{ x: 2 }} whileTap={{ scale: 0.98 }}>
                       <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 h-10 md:h-16 px-5 md:px-10 rounded-lg md:rounded-2xl font-black text-xs md:text-base shadow-lg group transition-all uppercase tracking-widest">
-                        Start Now <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
+                        Launch <ChevronRight className="ml-0.5 w-3 h-3 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
                       </Button>
                     </motion.div>
                   </div>
@@ -184,13 +237,57 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-5">
+        {/* Forge Your Skills Section (Filtered) */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-[10px] md:text-xs font-black text-foreground uppercase tracking-widest flex items-center gap-2">
+              <Code2 className="w-3 h-3 md:w-4 md:h-4 text-primary" />
+              Focus Mastery
+            </h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowOnboarding(true)}
+              className="h-6 text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary"
+            >
+              Change Focus
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {filteredSkills.map((skill) => (
+              <Link key={skill.id} href={`/practice/${skill.id}`}>
+                <motion.div 
+                  whileHover={{ y: -4 }}
+                  className="bg-white p-4 md:p-6 rounded-xl md:rounded-2xl border border-primary/5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
+                >
+                  <div className={`absolute top-0 right-0 w-16 h-16 ${skill.bg} blur-2xl -mr-8 -mt-8 rounded-full opacity-50 group-hover:opacity-100 transition-opacity`} />
+                  
+                  <div className="relative z-10 space-y-3">
+                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${skill.bg} flex items-center justify-center transition-transform group-hover:scale-110`}>
+                      <skill.icon className={`w-5 h-5 md:w-6 md:h-6 ${skill.color}`} />
+                    </div>
+                    <div>
+                      <h4 className="text-[10px] md:text-sm font-black text-foreground uppercase tracking-tight">{skill.name}</h4>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Practice Now</span>
+                        <ChevronRight className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-5 pt-2">
           <div className="lg:col-span-2 space-y-3 md:space-y-4 order-2 lg:order-1">
             <StreakCalendar />
             <div className="glass-card p-3 md:p-5 rounded-xl md:rounded-2xl border-primary/5 shadow-md bg-white">
               <h3 className="text-[8px] md:text-xs font-black text-foreground uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-1.5">
                 <TrendingUp className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
-                Performance
+                Growth Stats
               </h3>
               <StatsSection stats={{
                 totalPoints: profile?.user?.totalPoints || 0,
@@ -222,7 +319,46 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
-    </div>
 
+      {/* Persona Onboarding Modal */}
+      <Dialog open={showOnboarding} onOpenChange={(val) => !updatingPersona && userPersona !== 'unselected' && setShowOnboarding(val)}>
+        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+          <div className="bg-primary p-8 text-center text-white relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
+            <Rocket className="w-12 h-12 text-white mx-auto mb-4 animate-bounce" />
+            <DialogTitle className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-none mb-2">Personalize Your Journey</DialogTitle>
+            <DialogDescription className="text-white/70 text-xs md:text-sm font-bold uppercase tracking-widest">How should we tailor your daily challenges?</DialogDescription>
+          </div>
+          
+          <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white">
+             {[
+               { id: 'technical', label: 'Architect', desc: 'Focus on Coding, Cloud & Data', icon: Code2, color: 'blue' },
+               { id: 'non-technical', label: 'Professional', desc: 'Focus on Soft Skills & EQ', icon: MessageSquare, color: 'rose' },
+               { id: 'mixed', label: 'Explorer', desc: 'A 50/50 mix of all skills', icon: Sparkles, color: 'primary' }
+             ].map((opt) => (
+               <button
+                 key={opt.id}
+                 disabled={updatingPersona}
+                 onClick={() => handlePersonaSelect(opt.id)}
+                 className="flex flex-col items-center text-center p-6 rounded-2xl border-2 border-slate-100 hover:border-primary hover:bg-primary/[0.02] transition-all group relative active:scale-[0.98]"
+               >
+                 <div className={`w-12 h-12 rounded-xl bg-${opt.color}-500/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                    <opt.icon className="w-6 h-6 text-primary" />
+                 </div>
+                 <h4 className="text-sm font-black uppercase tracking-tight text-foreground">{opt.label}</h4>
+                 <p className="text-[10px] font-bold text-muted-foreground mt-1 leading-tight">{opt.desc}</p>
+                 <MousePointer2 className="w-4 h-4 text-primary absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+               </button>
+             ))}
+          </div>
+          
+          <div className="px-8 pb-8 text-center bg-white">
+            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+              You can change this anytime from your dashboard settings.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

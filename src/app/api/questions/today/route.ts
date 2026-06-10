@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getQuestionsBySet, getAllQuestions } from '@/lib/google-sheets';
+import { getQuestionsBySet, getAllQuestions, Question } from '@/lib/google-sheets';
 import { auth } from '@/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
@@ -30,11 +30,38 @@ export async function GET(req: Request) {
       }, { status: 403 });
     }
 
-    let questions = [];
+    let questions: Question[] = [];
     const track = user.preferredTrack || 'Mixed';
+    const persona = user.persona || 'mixed';
+
+    // Group Definitions
+    const NON_TECH_CATEGORIES = ['Aptitude', 'Interviews', 'Communication', 'Leadership', 'Marketing', 'Soft Skills'];
 
     if (track === 'Mixed') {
-      questions = await getQuestionsBySet(user.currentSet);
+      if (persona === 'mixed') {
+        questions = await getQuestionsBySet(user.currentSet);
+      } else {
+        // Filtered mixed challenge based on persona
+        const allQuestions = await getAllQuestions();
+        const previousAttempts = await Attempt.find({ userId: user._id });
+        const attemptedIds = new Set(previousAttempts.map(a => a.questionId));
+
+        let pool: Question[] = [];
+        if (persona === 'technical') {
+          pool = allQuestions.filter(q => !NON_TECH_CATEGORIES.includes(q.category));
+        } else if (persona === 'non-technical') {
+          pool = allQuestions.filter(q => NON_TECH_CATEGORIES.includes(q.category));
+        }
+
+        questions = pool
+          .filter(q => !attemptedIds.has(q.day))
+          .slice(0, 15);
+
+        // Fallback if not enough fresh questions
+        if (questions.length < 5) {
+          questions = pool.sort(() => Math.random() - 0.5).slice(0, 15);
+        }
+      }
     } else {
       // Specialist Track Logic: Pull 15 fresh questions for that category
       const allQuestions = await getAllQuestions();
