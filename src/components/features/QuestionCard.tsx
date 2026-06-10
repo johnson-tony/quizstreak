@@ -159,11 +159,18 @@ export default function QuestionCard() {
 
     const tableData = result.results.map((res: any, index: number) => {
       const q = questions.find(quest => quest.day === res.day) || res;
+      
+      const getOptionText = (key: string) => {
+        if (!q || !q.options || !key) return key;
+        const text = q.options[key as keyof typeof q.options];
+        return text ? `${key}) ${text}` : key;
+      };
+
       return [
         index + 1,
         q?.question || "Question " + res.day,
-        res.selectedAnswer,
-        res.correctAnswer,
+        getOptionText(res.selectedAnswer),
+        getOptionText(res.correctAnswer),
         res.correct ? "Pass" : "Fail",
         res.explanation
       ];
@@ -171,7 +178,7 @@ export default function QuestionCard() {
 
     autoTable(doc, {
       startY: 34,
-      head: [['#', 'Question', 'Selected', 'Correct', 'Status', 'Explanation']],
+      head: [['#', 'Question', 'Your Answer', 'Correct Answer', 'Status', 'Explanation']],
       body: tableData,
       headStyles: { 
         fillColor: [122, 31, 77],
@@ -181,15 +188,15 @@ export default function QuestionCard() {
       },
       bodyStyles: {
         fontSize: 6,
-        valign: 'middle'
+        valign: 'top'
       },
       columnStyles: {
-        0: { cellWidth: 8, halign: 'center' },
-        1: { cellWidth: 65 },
-        2: { cellWidth: 15, halign: 'center' },
-        3: { cellWidth: 15, halign: 'center' },
-        4: { cellWidth: 12, halign: 'center', textColor: [100, 100, 100] },
-        5: { cellWidth: 67 },
+        0: { cellWidth: 7, halign: 'center' },
+        1: { cellWidth: 48 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 35 },
+        4: { cellWidth: 10, halign: 'center', textColor: [100, 100, 100] },
+        5: { cellWidth: 47 },
       },
       didParseCell: function(data) {
         if (data.section === 'body' && data.column.index === 4) {
