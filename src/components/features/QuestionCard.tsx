@@ -22,6 +22,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import confetti from "canvas-confetti";
 import {
   Dialog,
   DialogContent,
@@ -132,6 +133,14 @@ export default function QuestionCard() {
       } else {
         setResult(data);
         setShowResultPopup(true);
+        
+        // Trigger celebration
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#7A1F4D', '#E2E8F0', '#10B981']
+        });
       }
     } catch (error) {
       toast.error("Failed to submit answers");
@@ -469,26 +478,33 @@ export default function QuestionCard() {
       <Dialog open={showResultPopup} onOpenChange={setShowResultPopup}>
         <DialogContent className="sm:max-w-md text-center p-8 rounded-[2rem] border-primary/10 shadow-2xl">
           <DialogTitle className="sr-only">Challenge Complete</DialogTitle>
-          <div className={`mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-2 ${result?.correct ? "bg-emerald-100 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
-             {result?.correct ? <CheckCircle2 className="w-10 h-10" /> : <XCircle className="w-10 h-10" />}
+          <div className="mx-auto w-24 h-24 rounded-full bg-primary/5 flex items-center justify-center mb-4 relative">
+             <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping opacity-20" />
+             <Trophy className="w-12 h-12 text-primary" />
           </div>
           <div className="space-y-2">
              <h2 className="text-2xl font-black uppercase tracking-tight text-foreground">
-               {result?.correct ? "Mission Success!" : "Mission Failed"}
+               Set Complete!
              </h2>
-             <p className="text-sm font-bold text-muted-foreground">
-               You earned <strong className="text-primary text-base">+{result?.totalPointsEarned} XP</strong> today
+             <p className="text-sm font-bold text-muted-foreground leading-relaxed">
+               {result?.correct 
+                 ? "Excellent work! You've mastered today's challenges." 
+                 : "Great effort! Consistency is the key to mastery. Keep it up!"}
              </p>
+             <div className="pt-2">
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">XP EARNED</p>
+               <div className="text-3xl font-black text-foreground">+{result?.totalPointsEarned} XP</div>
+             </div>
           </div>
           <Button 
-            className="w-full mt-6 h-12 rounded-xl text-xs font-black shadow-lg shadow-primary/20 gap-2 uppercase tracking-widest transition-all active:scale-[0.98]"
+            className="w-full mt-8 h-12 rounded-xl text-xs font-black shadow-lg shadow-primary/20 gap-2 uppercase tracking-widest transition-all active:scale-[0.98] bg-primary hover:bg-primary/90 text-white"
             onClick={() => {
               setShowResultPopup(false);
               setShowDetailedResults(true);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           >
-            View Your Answers
+            Review Performance <ChevronRight className="w-4 h-4" />
           </Button>
         </DialogContent>
       </Dialog>
