@@ -6,7 +6,7 @@ import BadgesSection from "@/components/features/BadgesSection";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, TrendingUp, Calendar, Trophy, ChevronLeft, Code2, Database, Cloud, Terminal, MessageSquare, Target as TargetIcon, BrainCircuit, Award, BookOpen } from "lucide-react";
+import { Zap, TrendingUp, Calendar, Trophy, ChevronLeft, Code2, Database, Cloud, Terminal, MessageSquare, Target as TargetIcon, BrainCircuit, Award, BookOpen, BarChart3, Megaphone, ClipboardList } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ const CATEGORY_MAP: Record<string, { icon: any, color: string, bg: string }> = {
   'Digital Marketing': { icon: Megaphone, color: 'text-pink-600', bg: 'bg-pink-50' },
   'Product Management': { icon: ClipboardList, color: 'text-violet-600', bg: 'bg-violet-50' },
   'Communication': { icon: MessageSquare, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  'Interviews': { icon: TargetIcon, color: 'text-rose-600', bg: 'bg-rose-50' },
   'Aptitude': { icon: BrainCircuit, color: 'text-purple-600', bg: 'bg-purple-50' },
   'Leadership': { icon: Award, color: 'text-amber-600', bg: 'bg-amber-50' },
 };

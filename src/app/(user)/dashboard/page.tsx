@@ -30,7 +30,6 @@ const SKILLS = [
   { id: 'Digital Marketing', name: 'Marketing', icon: Megaphone, color: 'text-pink-600', bg: 'bg-pink-50', type: 'non-technical' },
   { id: 'Product Management', name: 'Product', icon: ClipboardList, color: 'text-violet-600', bg: 'bg-violet-50', type: 'non-technical' },
   { id: 'Communication', name: 'Communication', icon: MessageSquare, color: 'text-indigo-600', bg: 'bg-indigo-50', type: 'non-technical' },
-  { id: 'Interviews', name: 'Interview Prep', icon: Target, color: 'text-rose-600', bg: 'bg-rose-50', type: 'non-technical' },
   { id: 'Aptitude', name: 'Aptitude', icon: BrainCircuit, color: 'text-purple-600', bg: 'bg-purple-50', type: 'non-technical' },
   { id: 'Leadership', name: 'Leadership', icon: Award, color: 'text-amber-600', bg: 'bg-amber-50', type: 'non-technical' },
 ];
@@ -340,7 +339,7 @@ export default function DashboardPage() {
 
       {/* Persona Onboarding Modal */}
       <Dialog open={showOnboarding} onOpenChange={(val) => !updatingPersona && userPersona !== 'unselected' && setShowOnboarding(val)}>
-        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border-none shadow-2xl mx-4">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[500px] p-0 overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border-none shadow-2xl">
           <div className="bg-primary p-6 md:p-8 text-center text-white relative">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-3xl rounded-full -mr-12 -mt-12" />
             <Rocket className="w-8 h-8 md:w-10 md:h-10 text-white mx-auto mb-3 animate-bounce" />

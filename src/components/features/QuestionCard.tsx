@@ -48,33 +48,33 @@ interface Question {
 }
 
 const BookLoading = () => (
-  <div className="flex flex-col items-center justify-center p-8 space-y-6">
-    <div className="relative w-24 h-32 md:w-32 md:h-40">
+  <div className="flex flex-col items-center justify-center p-6 space-y-4">
+    <div className="relative w-16 h-20 md:w-20 md:h-24">
       <motion.div
-        className="absolute inset-0 bg-primary/10 rounded-r-lg border-2 border-primary/20"
+        className="absolute inset-0 bg-primary/5 rounded-r-md border border-primary/10"
         style={{ perspective: 1000 }}
       >
         <motion.div
-          className="absolute inset-0 bg-white rounded-r-lg shadow-inner origin-left border-l-4 border-primary/40"
+          className="absolute inset-0 bg-white rounded-r-md shadow-sm origin-left border-l-2 border-primary/20"
           animate={{ rotateY: [0, -160, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute inset-0 bg-white/80 rounded-r-lg shadow-inner origin-left border-l-4 border-primary/30"
+          className="absolute inset-0 bg-white/90 rounded-r-md shadow-sm origin-left border-l-2 border-primary/15"
           animate={{ rotateY: [0, -160, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
         />
         <motion.div
-          className="absolute inset-0 bg-white/60 rounded-r-lg shadow-inner origin-left border-l-4 border-primary/20"
+          className="absolute inset-0 bg-white/80 rounded-r-md shadow-sm origin-left border-l-2 border-primary/10"
           animate={{ rotateY: [0, -160, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
         />
       </motion.div>
-      <div className="absolute left-0 top-0 bottom-0 w-2 bg-primary/60 rounded-l-lg" />
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40 rounded-l-md" />
     </div>
-    <div className="space-y-2 text-center">
-      <h3 className="text-sm font-black uppercase tracking-[0.2em] text-primary animate-pulse">Curating Your Quest</h3>
-      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Flipping through the archives...</p>
+    <div className="space-y-1 text-center">
+      <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 animate-pulse">Curating Quest</h3>
+      <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Flipping archives...</p>
     </div>
   </div>
 );
@@ -454,31 +454,26 @@ export default function QuestionCard({ category }: { category?: string }) {
 
   if (categoryEmpty) {
     return (
-      <Card className="rounded-[2rem] border-primary/10 shadow-xl bg-white overflow-hidden p-8 md:p-12 text-center space-y-6 animate-in zoom-in duration-500">
-        <div className="mx-auto w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center relative">
-          <BookOpen className="w-8 h-8 text-primary/60" />
-          <div className="absolute inset-0 rounded-full border-2 border-primary/10 border-dashed animate-[spin_10s_linear_infinite]" />
-        </div>
-        
-        <div className="space-y-3">
-          <h2 className="text-2xl font-black text-foreground tracking-tight uppercase">Coming Soon</h2>
-          <p className="text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed text-sm">
-            We are currently curating new challenges for the <strong className="text-primary capitalize">{category}</strong> category to ensure the highest quality for your learning journey.
-          </p>
-        </div>
+      <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm p-8 md:p-12 text-center animate-in fade-in duration-500">
+        <div className="space-y-4">
+          <div className="mx-auto w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center">
+            <BookOpen className="w-5 h-5 text-primary/40" />
+          </div>
+          
+          <div className="space-y-1">
+            <h3 className="text-sm font-black text-foreground uppercase tracking-widest">Questions Coming Soon</h3>
+            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+              We&apos;re currently adding more content for <span className="text-primary">{category}</span>.
+            </p>
+          </div>
 
-        <div className="pt-4 space-y-4">
-          <Link href="/contact">
-            <Button 
-              className="w-full h-12 rounded-xl text-xs font-black shadow-lg shadow-primary/10 bg-primary hover:bg-primary/90 gap-2 uppercase tracking-widest group"
-            >
-              Contact Administrator
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-            He will help improve your experience
-          </p>
+          <div className="pt-2">
+            <Link href="/contact">
+              <Button variant="outline" size="sm" className="rounded-lg text-[9px] font-black uppercase tracking-widest border-primary/10 hover:bg-primary/5 hover:text-primary h-8 px-4">
+                Contact Admin
+              </Button>
+            </Link>
+          </div>
         </div>
       </Card>
     );
