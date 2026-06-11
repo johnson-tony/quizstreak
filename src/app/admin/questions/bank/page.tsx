@@ -62,12 +62,15 @@ export default function QuestionBankPage() {
     }
   };
 
-  const uniqueSets = Array.from(new Set(questions.map(q => q.set))).sort((a,b) => parseInt(a)-parseInt(b));
+  const uniqueSets = Array.from(new Set(questions.map(q => q.set).filter(Boolean))).sort((a,b) => parseInt(a as string)-parseInt(b as string));
   
   const filteredQuestions = questions.filter(q => {
     const matchesSet = selectedSetFilter === "all" || q.set === selectedSetFilter;
-    const matchesSearch = q.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          q.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const qText = (q.question || "").toLowerCase();
+    const qCat = (q.category || "").toLowerCase();
+    const sTerm = searchTerm.toLowerCase();
+    
+    const matchesSearch = qText.includes(sTerm) || qCat.includes(sTerm);
     return matchesSet && matchesSearch;
   });
 

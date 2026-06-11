@@ -174,14 +174,35 @@ export async function deleteQuestion(rowIndex: number) {
 
     const auth = new google.auth.GoogleAuth({ credentials, scopes: SCOPES });
     const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: `Sheet1!A${rowIndex}:L${rowIndex}`,
+    // Get the sheet ID for "Sheet1"
+    const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
+    const sheet = spreadsheet.data.sheets?.find(s => s.properties?.title === 'Sheet1');
+    const sheetId = sheet?.properties?.sheetId || 0;
+
+    // To physically remove the row and shift others up, we use batchUpdate with deleteDimension
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId,
+                dimension: 'ROWS',
+                startIndex: rowIndex - 1,
+                endIndex: rowIndex,
+              },
+            },
+          },
+        ],
+      },
     });
+    
     return { success: true };
   } catch (error) {
-    console.error('Error clearing row:', error);
+    console.error('Error deleting row:', error);
     throw error;
   }
 }

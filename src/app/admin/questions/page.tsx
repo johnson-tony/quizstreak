@@ -45,12 +45,12 @@ export default function AdminQuestionsPage() {
 
   // Derived categories from bank
   const dynamicCategories = Array.from(new Set([
-    ...questions.map(q => q.category),
+    ...questions.map(q => q.category).filter(Boolean),
     "JavaScript", "React", "Angular", "Python", "SQL", "AWS", "AI", ".NET", "Laravel", "Aptitude", "Debugging", "Interviews", "Communication", "Marketing", "Leadership"
   ])).sort();
 
   const filteredCats = dynamicCategories.filter(c => 
-    c.toLowerCase().includes(searchQuery.toLowerCase())
+    c && c.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const fetchQuestions = async () => {
