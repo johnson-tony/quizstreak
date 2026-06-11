@@ -97,14 +97,47 @@ export default function AdminQuestionsPage() {
         throw new Error("AI returned an invalid response format. Please try again.");
       }
       
-      const formatted = data.map((q: Question, i: number) => ({
+      // Deduplication Logic
+      const existingQuestionsTexts = new Set(questions.map(q => (q.question || "").toLowerCase().trim()));
+      const uniqueDrafted: Question[] = [];
+      const duplicateCountInDraft = { bank: 0, self: 0 };
+
+      data.forEach((q: Question) => {
+        const qText = (q.question || "").toLowerCase().trim();
+        
+        // Check against existing bank
+        if (existingQuestionsTexts.has(qText)) {
+          duplicateCountInDraft.bank++;
+          return;
+        }
+
+        // Check against questions already in this draft
+        if (uniqueDrafted.some(u => (u.question || "").toLowerCase().trim() === qText)) {
+          duplicateCountInDraft.self++;
+          return;
+        }
+
+        uniqueDrafted.push(q);
+      });
+
+      if (uniqueDrafted.length === 0) {
+        toast.error("AI generated only duplicates. Please try again with a different configuration.");
+        setGenerating(false);
+        return;
+      }
+
+      if (duplicateCountInDraft.bank > 0 || duplicateCountInDraft.self > 0) {
+        toast.info(`Filtered out ${duplicateCountInDraft.bank + duplicateCountInDraft.self} duplicate questions.`);
+      }
+      
+      const formatted = uniqueDrafted.map((q: Question, i: number) => ({
         ...q,
         day: `Q${(questions.length + i + 1).toString().padStart(3, '0')}`,
         set: targetSet
       }));
       
       setAiQuestions(formatted);
-      toast.success(`AI Drafted ${count} questions for Set ${targetSet}`);
+      toast.success(`AI Drafted ${uniqueDrafted.length} unique questions for Set ${targetSet}`);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "AI Generation failed";
       toast.error(msg);
