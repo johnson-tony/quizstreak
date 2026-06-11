@@ -5,13 +5,12 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import StatsSection from "@/components/features/StatsSection";
 import StreakCalendar from "@/components/features/StreakCalendar";
-import BadgesSection from "@/components/features/BadgesSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Award, Zap, TrendingUp, Sparkles, ChevronRight, CheckCircle2, Code2, MessageSquare, Layers, Target, Rocket, MousePointer2, Database, Cloud, Terminal, BrainCircuit } from "lucide-react";
+import { Award, Zap, TrendingUp, Sparkles, ChevronRight, CheckCircle2, Code2, MessageSquare, Layers, Target, Rocket, MousePointer2, Database, Cloud, Terminal, BrainCircuit, Megaphone, BarChart3, ClipboardList, Plus } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -27,6 +26,9 @@ const SKILLS = [
   { id: 'SQL', name: 'Database', icon: Database, color: 'text-blue-600', bg: 'bg-blue-50', type: 'technical' },
   { id: 'AWS', name: 'Cloud/AWS', icon: Cloud, color: 'text-orange-600', bg: 'bg-orange-50', type: 'technical' },
   { id: 'Python', name: 'Python', icon: Terminal, color: 'text-emerald-600', bg: 'bg-emerald-50', type: 'technical' },
+  { id: 'Data Science', name: 'Data Science', icon: BarChart3, color: 'text-cyan-600', bg: 'bg-cyan-50', type: 'technical' },
+  { id: 'Digital Marketing', name: 'Marketing', icon: Megaphone, color: 'text-pink-600', bg: 'bg-pink-50', type: 'non-technical' },
+  { id: 'Product Management', name: 'Product', icon: ClipboardList, color: 'text-violet-600', bg: 'bg-violet-50', type: 'non-technical' },
   { id: 'Communication', name: 'Communication', icon: MessageSquare, color: 'text-indigo-600', bg: 'bg-indigo-50', type: 'non-technical' },
   { id: 'Interviews', name: 'Interview Prep', icon: Target, color: 'text-rose-600', bg: 'bg-rose-50', type: 'non-technical' },
   { id: 'Aptitude', name: 'Aptitude', icon: BrainCircuit, color: 'text-purple-600', bg: 'bg-purple-50', type: 'non-technical' },
@@ -259,7 +261,7 @@ export default function DashboardPage() {
               <Link key={skill.id} href={`/practice/${skill.id}`}>
                 <motion.div 
                   whileHover={{ y: -4 }}
-                  className="bg-white p-4 md:p-6 rounded-xl md:rounded-2xl border border-primary/5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
+                  className="bg-white p-4 md:p-6 rounded-xl md:rounded-2xl border border-primary/5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden h-full"
                 >
                   <div className={`absolute top-0 right-0 w-16 h-16 ${skill.bg} blur-2xl -mr-8 -mt-8 rounded-full opacity-50 group-hover:opacity-100 transition-opacity`} />
                   
@@ -278,6 +280,24 @@ export default function DashboardPage() {
                 </motion.div>
               </Link>
             ))}
+            
+            {/* Suggest a Skill Card */}
+            <Link href="/contact">
+              <motion.div 
+                whileHover={{ y: -4 }}
+                className="bg-primary/[0.02] p-4 md:p-6 rounded-xl md:rounded-2xl border border-dashed border-primary/20 hover:border-primary/40 transition-all group relative h-full flex flex-col justify-center"
+              >
+                <div className="relative z-10 space-y-2 text-center md:text-left">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto md:mx-0 group-hover:scale-110 transition-transform">
+                    <Plus className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] md:text-sm font-black text-primary uppercase tracking-tight">Suggest More</h4>
+                    <p className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Tell us what to add</p>
+                  </div>
+                </div>
+              </motion.div>
+            </Link>
           </div>
         </section>
 
@@ -300,8 +320,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-3 md:space-y-4 order-1 lg:order-2">
-            <BadgesSection userBadges={profile?.user?.badges || []} />
-            
             <Card className="rounded-xl md:rounded-2xl border-primary/5 bg-primary overflow-hidden shadow-lg group">
                <CardContent className="p-4 md:p-5 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 blur-2xl -mr-10 -mt-10 rounded-full" />
@@ -322,39 +340,41 @@ export default function DashboardPage() {
 
       {/* Persona Onboarding Modal */}
       <Dialog open={showOnboarding} onOpenChange={(val) => !updatingPersona && userPersona !== 'unselected' && setShowOnboarding(val)}>
-        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
-          <div className="bg-primary p-8 text-center text-white relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
-            <Rocket className="w-12 h-12 text-white mx-auto mb-4 animate-bounce" />
-            <DialogTitle className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-none mb-2">Personalize Your Journey</DialogTitle>
-            <DialogDescription className="text-white/70 text-xs md:text-sm font-bold uppercase tracking-widest">How should we tailor your daily challenges?</DialogDescription>
+        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border-none shadow-2xl mx-4">
+          <div className="bg-primary p-6 md:p-8 text-center text-white relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-3xl rounded-full -mr-12 -mt-12" />
+            <Rocket className="w-8 h-8 md:w-10 md:h-10 text-white mx-auto mb-3 animate-bounce" />
+            <DialogTitle className="text-xl md:text-2xl font-black uppercase tracking-tight leading-none mb-2">Personalize</DialogTitle>
+            <DialogDescription className="text-white/70 text-[10px] md:text-xs font-bold uppercase tracking-widest">Tailor your daily challenges</DialogDescription>
           </div>
           
-          <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white">
+          <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-3 bg-white">
              {[
-               { id: 'technical', label: 'Architect', desc: 'Focus on Coding, Cloud & Data', icon: Code2, color: 'blue' },
-               { id: 'non-technical', label: 'Professional', desc: 'Focus on Soft Skills & EQ', icon: MessageSquare, color: 'rose' },
-               { id: 'mixed', label: 'Explorer', desc: 'A 50/50 mix of all skills', icon: Sparkles, color: 'primary' }
+               { id: 'technical', label: 'Architect', desc: 'Code & Data', icon: Code2, color: 'blue' },
+               { id: 'non-technical', label: 'Pro', desc: 'Soft Skills', icon: MessageSquare, color: 'rose' },
+               { id: 'mixed', label: 'Explorer', desc: 'Mixed Skills', icon: Sparkles, color: 'primary' }
              ].map((opt) => (
                <button
                  key={opt.id}
                  disabled={updatingPersona}
                  onClick={() => handlePersonaSelect(opt.id)}
-                 className="flex flex-col items-center text-center p-6 rounded-2xl border-2 border-slate-100 hover:border-primary hover:bg-primary/[0.02] transition-all group relative active:scale-[0.98]"
+                 className="flex md:flex-col items-center md:text-center p-3 md:p-4 rounded-xl border-2 border-slate-100 hover:border-primary hover:bg-primary/[0.02] transition-all group relative active:scale-[0.98] gap-3 md:gap-0"
                >
-                 <div className={`w-12 h-12 rounded-xl bg-${opt.color}-500/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                    <opt.icon className="w-6 h-6 text-primary" />
+                 <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg bg-${opt.color}-500/10 flex items-center justify-center md:mb-2 shrink-0 group-hover:scale-110 transition-transform`}>
+                    <opt.icon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                  </div>
-                 <h4 className="text-sm font-black uppercase tracking-tight text-foreground">{opt.label}</h4>
-                 <p className="text-[10px] font-bold text-muted-foreground mt-1 leading-tight">{opt.desc}</p>
-                 <MousePointer2 className="w-4 h-4 text-primary absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                 <div className="text-left md:text-center">
+                   <h4 className="text-[11px] md:text-xs font-black uppercase tracking-tight text-foreground">{opt.label}</h4>
+                   <p className="text-[9px] md:text-[10px] font-bold text-muted-foreground leading-tight">{opt.desc}</p>
+                 </div>
+                 <MousePointer2 className="w-3 h-3 text-primary absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
                </button>
              ))}
           </div>
           
-          <div className="px-8 pb-8 text-center bg-white">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-              You can change this anytime from your dashboard settings.
+          <div className="px-6 pb-6 text-center bg-white">
+            <p className="text-[8px] md:text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+              You can change this anytime in settings.
             </p>
           </div>
         </DialogContent>

@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     
     // Filter by category and shuffle
     const filtered = allQuestions
-      .filter(q => q.category.toLowerCase() === category.toLowerCase())
+      .filter(q => q && q.category && q.category.toLowerCase() === category.toLowerCase())
       .sort(() => Math.random() - 0.5)
       .slice(0, 5); // Just 5 questions for a quick practice sprint
 

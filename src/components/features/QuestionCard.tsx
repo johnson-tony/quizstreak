@@ -18,7 +18,8 @@ import {
   Crown,
   Lock,
   ExternalLink,
-  Trophy
+  Trophy,
+  BookOpen
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import jsPDF from "jspdf";
@@ -46,7 +47,39 @@ interface Question {
   };
 }
 
-export default function QuestionCard() {
+const BookLoading = () => (
+  <div className="flex flex-col items-center justify-center p-8 space-y-6">
+    <div className="relative w-24 h-32 md:w-32 md:h-40">
+      <motion.div
+        className="absolute inset-0 bg-primary/10 rounded-r-lg border-2 border-primary/20"
+        style={{ perspective: 1000 }}
+      >
+        <motion.div
+          className="absolute inset-0 bg-white rounded-r-lg shadow-inner origin-left border-l-4 border-primary/40"
+          animate={{ rotateY: [0, -160, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute inset-0 bg-white/80 rounded-r-lg shadow-inner origin-left border-l-4 border-primary/30"
+          animate={{ rotateY: [0, -160, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+        />
+        <motion.div
+          className="absolute inset-0 bg-white/60 rounded-r-lg shadow-inner origin-left border-l-4 border-primary/20"
+          animate={{ rotateY: [0, -160, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+        />
+      </motion.div>
+      <div className="absolute left-0 top-0 bottom-0 w-2 bg-primary/60 rounded-l-lg" />
+    </div>
+    <div className="space-y-2 text-center">
+      <h3 className="text-sm font-black uppercase tracking-[0.2em] text-primary animate-pulse">Curating Your Quest</h3>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Flipping through the archives...</p>
+    </div>
+  </div>
+);
+
+export default function QuestionCard({ category }: { category?: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -54,26 +87,32 @@ export default function QuestionCard() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [paywall, setPaywall] = useState<{ enabled: boolean, upiLink: string }>({ enabled: false, upiLink: "" });
+  const [categoryEmpty, setCategoryEmpty] = useState(false);
   
   const [showResultPopup, setShowResultPopup] = useState(false);
   const [showDetailedResults, setShowDetailedResults] = useState(false);
 
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [category]);
 
   const fetchStatus = async () => {
     setLoading(true);
+    setCategoryEmpty(false);
     try {
-      const res = await fetch("/api/attempts");
-      const data = await res.json();
-      if (data.attempted) {
-        setResult(data);
-        setShowDetailedResults(true);
-        setLoading(false);
-      } else {
-        fetchQuestions();
+      // If it's a practice session, we don't necessarily check the daily status first
+      // but we should check if the user has already attempted it if it's the daily one.
+      if (!category) {
+        const res = await fetch("/api/attempts");
+        const data = await res.json();
+        if (data.attempted) {
+          setResult(data);
+          setShowDetailedResults(true);
+          setLoading(false);
+          return;
+        }
       }
+      fetchQuestions();
     } catch (error) {
       toast.error("Failed to load your progress");
       setLoading(false);
@@ -82,19 +121,40 @@ export default function QuestionCard() {
 
   const fetchQuestions = async () => {
     try {
-      const res = await fetch("/api/questions/today");
+      const endpoint = category 
+        ? `/api/questions/practice?category=${encodeURIComponent(category)}` 
+        : "/api/questions/today";
+        
+      const res = await fetch(endpoint);
+      
+      // Handle non-JSON or server error responses gracefully
+      const contentType = res.headers.get("content-type");
+      if (!res.ok && (!contentType || !contentType.includes("application/json"))) {
+        throw new Error("Server communication failed");
+      }
+
       const data = await res.json();
+      
       if (data.requiresSubscription) {
         setPaywall({ enabled: true, upiLink: data.upiLink });
       } else if (data.error) {
-        toast.error(data.error);
+        // More robust error checking
+        const errorMessage = String(data.error || "");
+        if (category && errorMessage.toLowerCase().includes("no questions found")) {
+          setCategoryEmpty(true);
+        } else {
+          toast.error(errorMessage);
+        }
       } else {
-        setQuestions(Array.isArray(data) ? data : [data]);
+        const questionsArray = Array.isArray(data) ? data : (data ? [data] : []);
+        setQuestions(questionsArray);
       }
     } catch (error) {
+      console.error("Fetch error:", error);
       toast.error("Failed to load questions");
     } finally {
-      setLoading(false);
+      // Small delay to show the nice animation
+      setTimeout(() => setLoading(false), 1500);
     }
   };
 
@@ -126,7 +186,11 @@ export default function QuestionCard() {
       const res = await fetch("/api/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: userAnswers, type: 'daily' }),
+        body: JSON.stringify({ 
+          answers: userAnswers, 
+          type: category ? 'practice' : 'daily',
+          category: category 
+        }),
       });
       const data = await res.json();
       if (data.error) {
@@ -159,7 +223,7 @@ export default function QuestionCard() {
     // Header Title
     doc.setFontSize(12);
     doc.setTextColor(122, 31, 77); 
-    doc.text("QuizStreak Daily Challenge Report", 14, 20);
+    doc.text(`QuizStreak ${category ? category + ' Practice' : 'Daily Challenge'} Report`, 14, 20);
     
     // Sub-header details
     doc.setFontSize(7);
@@ -227,14 +291,15 @@ export default function QuestionCard() {
       }
     });
 
-    doc.save(`QuizStreak_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`QuizStreak_${category || 'Challenge'}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
     toast.success("Result PDF downloaded!");
   };
 
   if (loading) {
     return (
-      <Card className="rounded-2xl border-primary/5 shadow-sm bg-white/50 backdrop-blur-sm h-64 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-primary animate-spin" />
+      <Card className="rounded-[2rem] border-primary/5 shadow-xl bg-white h-[400px] flex items-center justify-center overflow-hidden relative">
+        <div className="absolute inset-0 bg-primary/[0.02] animate-pulse" />
+        <BookLoading />
       </Card>
     );
   }
@@ -384,6 +449,38 @@ export default function QuestionCard() {
           </Link>
         </div>
       </div>
+    );
+  }
+
+  if (categoryEmpty) {
+    return (
+      <Card className="rounded-[2rem] border-primary/10 shadow-xl bg-white overflow-hidden p-8 md:p-12 text-center space-y-6 animate-in zoom-in duration-500">
+        <div className="mx-auto w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center relative">
+          <BookOpen className="w-8 h-8 text-primary/60" />
+          <div className="absolute inset-0 rounded-full border-2 border-primary/10 border-dashed animate-[spin_10s_linear_infinite]" />
+        </div>
+        
+        <div className="space-y-3">
+          <h2 className="text-2xl font-black text-foreground tracking-tight uppercase">Coming Soon</h2>
+          <p className="text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed text-sm">
+            We are currently curating new challenges for the <strong className="text-primary capitalize">{category}</strong> category to ensure the highest quality for your learning journey.
+          </p>
+        </div>
+
+        <div className="pt-4 space-y-4">
+          <Link href="/contact">
+            <Button 
+              className="w-full h-12 rounded-xl text-xs font-black shadow-lg shadow-primary/10 bg-primary hover:bg-primary/90 gap-2 uppercase tracking-widest group"
+            >
+              Contact Administrator
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+            He will help improve your experience
+          </p>
+        </div>
+      </Card>
     );
   }
 
