@@ -12,13 +12,16 @@ export async function GET(req: Request) {
 
     let users = [];
 
+    // Only show active users; deleted (trashed) users are hidden from rankings
+    const filter = { status: 'active' };
+
     if (type === 'allTime') {
-      users = await User.find({})
+      users = await User.find(filter)
         .sort({ totalPoints: -1 })
         .limit(100)
         .select('name image totalPoints badges');
     } else {
-      users = await User.find({})
+      users = await User.find(filter)
         .sort({ totalPoints: -1 })
         .limit(100)
         .select('name image totalPoints badges');

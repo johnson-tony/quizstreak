@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { 
+import {
   Users, 
   Search, 
   Filter,
   Zap,
   ChevronRight,
   ArrowLeft,
-  Crown
+  Crown,
+  Trash2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -67,6 +68,11 @@ export default function AdminUsersPage() {
           <h1 className="text-xl md:text-2xl font-black text-foreground tracking-tight uppercase">User Directory</h1>
           <p className="text-xs md:text-xs text-muted-foreground font-medium uppercase tracking-wider">{users.length} enrolled users</p>
         </div>
+        <Link href="/admin/users/deleted">
+          <Button variant="outline" size="sm" className="rounded-lg font-bold text-[9px] md:text-xs uppercase tracking-widest border-destructive/10 text-destructive hover:bg-destructive/5 h-8 gap-1.5">
+            <Trash2 className="w-3 h-3" /> Trash
+          </Button>
+        </Link>
       </div>
 
       {/* User Management Section */}

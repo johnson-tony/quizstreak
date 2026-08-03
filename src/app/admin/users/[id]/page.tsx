@@ -72,7 +72,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
   };
 
   const deleteUser = async () => {
-    if (!confirm("Are you sure you want to delete this user? They will be marked as 'deleted' and won't be able to sign in.")) return;
+    if (!confirm("Are you sure you want to move this user to trash? They will be hidden from user lists.")) return;
 
     setIsDeleting(true);
     try {
@@ -83,7 +83,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("User marked as deleted");
+        toast.success("User moved to trash");
         router.push("/admin/users");
       }
     } catch (error) {

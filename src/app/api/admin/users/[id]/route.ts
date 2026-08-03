@@ -73,7 +73,7 @@ export async function DELETE(
 
   try {
     await dbConnect();
-    // Soft delete: Mark as deleted instead of removing from DB
+    // Soft delete: mark as deleted, keep the user and their data in the DB
     const user = await User.findByIdAndUpdate(
       id,
       { status: 'deleted' },
@@ -84,7 +84,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, message: 'User marked as deleted' });
+    return NextResponse.json({ success: true, message: 'User moved to trash' });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

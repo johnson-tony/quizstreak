@@ -13,7 +13,7 @@ export async function GET(
     const { id } = await params;
     await dbConnect();
 
-    const user = await User.findById(id).select('-email -googleId -status');
+    const user = await User.findOne({ _id: id, status: 'active' }).select('-email -googleId -status');
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
