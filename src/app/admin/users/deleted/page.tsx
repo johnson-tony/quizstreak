@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Trash2, ArrowLeft, UserCheck, Loader2, Zap } from "lucide-react";
+import { Trash2, ArrowLeft, UserCheck, Loader2, Zap, XCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminDeletedUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [restoringId, setRestoringId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -51,6 +52,27 @@ export default function AdminDeletedUsersPage() {
       toast.error("Failed to restore user");
     } finally {
       setRestoringId(null);
+    }
+  };
+
+  const permanentlyDeleteUser = async (id: string) => {
+    if (!window.confirm("Permanently delete this user and ALL their data? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/admin/users/${id}?permanent=true`, {
+        method: "DELETE",
+      });
+      const result = await res.json();
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("User permanently deleted");
+        fetchUsers();
+      }
+    } catch (error) {
+      toast.error("Failed to permanently delete user");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -128,16 +150,28 @@ export default function AdminDeletedUsersPage() {
                     </div>
                   </td>
                   <td className="px-3 md:px-5 py-2.5 md:py-3.5 text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => restoreUser(user._id)}
-                      disabled={restoringId === user._id}
-                      className="rounded-lg font-bold text-[8px] md:text-[9px] text-emerald-600 hover:bg-emerald-50 border-emerald-200 h-7 px-2 gap-1"
-                    >
-                      {restoringId === user._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <UserCheck className="w-3 h-3" />}
-                      Restore
-                    </Button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => restoreUser(user._id)}
+                        disabled={restoringId === user._id}
+                        className="rounded-lg font-bold text-[8px] md:text-[9px] text-emerald-600 hover:bg-emerald-50 border-emerald-200 h-7 px-2 gap-1"
+                      >
+                        {restoringId === user._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <UserCheck className="w-3 h-3" />}
+                        Restore
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => permanentlyDeleteUser(user._id)}
+                        disabled={deletingId === user._id}
+                        className="rounded-lg font-bold text-[8px] md:text-[9px] text-destructive hover:bg-destructive hover:text-white border-destructive/30 h-7 px-2 gap-1"
+                      >
+                        {deletingId === user._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
+                        Delete Forever
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}

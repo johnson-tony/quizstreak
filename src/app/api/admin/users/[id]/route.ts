@@ -73,6 +73,23 @@ export async function DELETE(
 
   try {
     await dbConnect();
+
+    const { searchParams } = new URL(req.url);
+    const permanent = searchParams.get('permanent') === 'true';
+
+    if (permanent) {
+      // Hard delete: permanently remove the user and all their data
+      const user = await User.findByIdAndDelete(id);
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+
+      await Attempt.deleteMany({ userId: id });
+
+      return NextResponse.json({ success: true, message: 'User permanently deleted' });
+    }
+
     // Soft delete: mark as deleted, keep the user and their data in the DB
     const user = await User.findByIdAndUpdate(
       id,
