@@ -239,41 +239,39 @@ export default function DashboardPage() {
         </section>
 
         {/* Forge Your Skills Section (Filtered) */}
-        <section className="space-y-3">
+        <section className="space-y-2.5">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-[10px] md:text-xs font-black text-foreground uppercase tracking-widest flex items-center gap-2">
-              <Code2 className="w-3 h-3 md:w-4 md:h-4 text-primary" />
+            <h3 className="text-[10px] md:text-xs font-black text-foreground uppercase tracking-widest flex items-center gap-1.5">
+              <Code2 className="w-3.5 h-3.5 text-primary" />
               Focus Mastery
             </h3>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => setShowOnboarding(true)}
-              className="h-6 text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary"
+              className="h-6 px-2 text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-md"
             >
               Change Focus
             </Button>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
             {filteredSkills.map((skill) => (
               <Link key={skill.id} href={`/practice/${skill.id}`}>
                 <motion.div 
-                  whileHover={{ y: -4 }}
-                  className="bg-white p-4 md:p-6 rounded-xl md:rounded-2xl border border-primary/5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden h-full"
+                  whileHover={{ y: -2 }}
+                  className="bg-white p-2.5 md:p-3 rounded-xl border border-primary/5 shadow-sm hover:shadow-md hover:border-primary/15 transition-all group relative overflow-hidden h-full flex items-center gap-2.5 md:gap-3"
                 >
-                  <div className={`absolute top-0 right-0 w-16 h-16 ${skill.bg} blur-2xl -mr-8 -mt-8 rounded-full opacity-50 group-hover:opacity-100 transition-opacity`} />
+                  <div className={`absolute top-0 right-0 w-12 h-12 ${skill.bg} blur-xl -mr-6 -mt-6 rounded-full opacity-40 group-hover:opacity-100 transition-opacity`} />
                   
-                  <div className="relative z-10 space-y-3">
-                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${skill.bg} flex items-center justify-center transition-transform group-hover:scale-110`}>
-                      <skill.icon className={`w-5 h-5 md:w-6 md:h-6 ${skill.color}`} />
-                    </div>
-                    <div>
-                      <h4 className="text-[10px] md:text-sm font-black text-foreground uppercase tracking-tight">{skill.name}</h4>
-                      <div className="flex items-center gap-1 mt-1">
-                        <span className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Practice Now</span>
-                        <ChevronRight className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary transition-transform group-hover:translate-x-1" />
-                      </div>
+                  <div className={`w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl ${skill.bg} flex items-center justify-center transition-transform group-hover:scale-105 shrink-0 relative z-10`}>
+                    <skill.icon className={`w-4 h-4 md:w-4.5 md:h-4.5 ${skill.color}`} />
+                  </div>
+                  <div className="min-w-0 flex-1 relative z-10">
+                    <h4 className="text-[11px] md:text-xs font-black text-foreground uppercase tracking-tight truncate group-hover:text-primary transition-colors leading-tight">{skill.name}</h4>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className="text-[8px] md:text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Practice</span>
+                      <ChevronRight className="w-2.5 h-2.5 text-primary transition-transform group-hover:translate-x-0.5" />
                     </div>
                   </div>
                 </motion.div>
@@ -283,17 +281,15 @@ export default function DashboardPage() {
             {/* Suggest a Skill Card */}
             <Link href="/contact">
               <motion.div 
-                whileHover={{ y: -4 }}
-                className="bg-primary/[0.02] p-4 md:p-6 rounded-xl md:rounded-2xl border border-dashed border-primary/20 hover:border-primary/40 transition-all group relative h-full flex flex-col justify-center"
+                whileHover={{ y: -2 }}
+                className="bg-primary/[0.02] p-2.5 md:p-3 rounded-xl border border-dashed border-primary/20 hover:border-primary/40 transition-all group relative h-full flex items-center gap-2.5 md:gap-3"
               >
-                <div className="relative z-10 space-y-2 text-center md:text-left">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto md:mx-0 group-hover:scale-110 transition-transform">
-                    <Plus className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="text-[10px] md:text-sm font-black text-primary uppercase tracking-tight">Suggest More</h4>
-                    <p className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Tell us what to add</p>
-                  </div>
+                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <Plus className="w-4 h-4 md:w-4.5 md:h-4.5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] md:text-xs font-black text-primary uppercase tracking-tight truncate leading-tight">Suggest More</h4>
+                  <p className="text-[8px] md:text-[9px] font-bold text-muted-foreground uppercase tracking-widest truncate leading-none mt-0.5">Add topics</p>
                 </div>
               </motion.div>
             </Link>
