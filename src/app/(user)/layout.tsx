@@ -15,7 +15,8 @@ import {
   X,
   Sparkles,
   BookOpen,
-  User
+  User,
+  Coins
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -47,6 +48,7 @@ export default function UserLayout({
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Weekly Pools", href: "/pools", icon: Coins },
     { name: "Rankings", href: "/rankings", icon: Trophy },
     { name: "Daily Task", href: "/challenge", icon: Zap },
   ];

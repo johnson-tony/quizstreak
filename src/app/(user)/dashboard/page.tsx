@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Award, Zap, TrendingUp, Sparkles, ChevronRight, CheckCircle2, Code2, MessageSquare, Layers, Target, Rocket, MousePointer2, Database, Cloud, Terminal, BrainCircuit, Megaphone, BarChart3, ClipboardList, Plus } from "lucide-react";
+import { Award, Zap, TrendingUp, Sparkles, ChevronRight, CheckCircle2, Code2, MessageSquare, Layers, Target, Rocket, MousePointer2, Database, Cloud, Terminal, BrainCircuit, Megaphone, BarChart3, ClipboardList, Plus, Coins, Trophy } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -236,6 +236,37 @@ export default function DashboardPage() {
               </motion.div>
             </Link>
           )}
+        </section>
+
+        {/* Weekly Paid Pools & Tournament Arena Banner */}
+        <section>
+          <Link href="/pools">
+            <motion.div
+              whileHover={{ scale: 1.002 }}
+              whileTap={{ scale: 0.998 }}
+              className="relative rounded-xl md:rounded-2xl overflow-hidden shadow-md bg-gradient-to-r from-purple-900 via-indigo-900 to-primary p-4 md:p-6 text-white border border-purple-500/20 group cursor-pointer"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 text-[8px] md:text-[9px] font-black uppercase tracking-widest text-amber-300">
+                    <Trophy className="w-3 h-3 text-amber-300" /> Weekend Tournaments & Friend Duels
+                  </div>
+                  <h3 className="text-base sm:text-lg md:text-xl font-black uppercase tracking-tight text-white">
+                    Compete in Weekly Prize Pools
+                  </h3>
+                  <p className="text-xs text-white/70 font-medium max-w-xl">
+                    Take on official 30-question weekend tournaments or challenge friends in custom duels to win the prize pool!
+                  </p>
+                </div>
+
+                <div className="shrink-0">
+                  <Button className="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-slate-950 h-9 md:h-11 px-5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg gap-1.5">
+                    <Coins className="w-4 h-4" /> Explore Pools <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </Link>
         </section>
 
         {/* Forge Your Skills Section (Filtered) */}

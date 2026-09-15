@@ -38,7 +38,7 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isPublicPage = ["/", "/login"].includes(nextUrl.pathname);
-      const isProtectedRoute = ["/dashboard", "/challenge", "/rankings"].some(path => 
+      const isProtectedRoute = ["/dashboard", "/challenge", "/rankings", "/pools"].some(path => 
         nextUrl.pathname.startsWith(path)
       );
 

@@ -44,6 +44,9 @@ export async function POST(req: Request) {
       settings.logoUrl = body.logoUrl ?? settings.logoUrl;
       settings.dailyQuote = body.dailyQuote ?? settings.dailyQuote;
       settings.autoUpdateQuote = body.autoUpdateQuote ?? settings.autoUpdateQuote;
+      settings.adminUpiId = body.adminUpiId ?? settings.adminUpiId;
+      settings.paymentQrUrl = body.paymentQrUrl ?? settings.paymentQrUrl;
+      settings.platformCommissionPercent = body.platformCommissionPercent ?? settings.platformCommissionPercent;
       await settings.save();
     }
 

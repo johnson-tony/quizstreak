@@ -8,6 +8,9 @@ export interface ISetting {
   logoUrl: string;
   dailyQuote: string;
   autoUpdateQuote: boolean;
+  adminUpiId?: string;
+  paymentQrUrl?: string;
+  platformCommissionPercent?: number;
 }
 
 const SettingSchema = new Schema<ISetting>({
@@ -18,6 +21,9 @@ const SettingSchema = new Schema<ISetting>({
   logoUrl: { type: String, default: "/quickstreak.svg" },
   dailyQuote: { type: String, default: "Master the skills that matter. One challenge at a time." },
   autoUpdateQuote: { type: Boolean, default: true },
+  adminUpiId: { type: String, default: "" },
+  paymentQrUrl: { type: String, default: "" },
+  platformCommissionPercent: { type: Number, default: 10 },
 });
 
 const Setting = models.Setting || model<ISetting>('Setting', SettingSchema);

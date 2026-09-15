@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Settings, ShieldCheck, Link as LinkIcon, AlertCircle, Save, CheckCircle2, ArrowLeft, Palette, Quote, Type } from "lucide-react";
+import { Loader2, Settings, ShieldCheck, Link as LinkIcon, AlertCircle, Save, CheckCircle2, ArrowLeft, Palette, Quote, Type, QrCode, Coins } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -18,7 +18,10 @@ export default function AdminSettingsPage() {
     siteName: "QuizStreak",
     logoUrl: "/quickstreak.svg",
     dailyQuote: "",
-    autoUpdateQuote: true
+    autoUpdateQuote: true,
+    adminUpiId: "",
+    paymentQrUrl: "",
+    platformCommissionPercent: 10,
   });
 
   useEffect(() => {
@@ -45,6 +48,31 @@ export default function AdminSettingsPage() {
       toast.success("Logo uploaded! Remember to save changes.");
     } catch (error: any) {
       toast.error(error.message || "Failed to upload logo");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      
+      setSettings(prev => ({ ...prev, paymentQrUrl: data.url }));
+      toast.success("Payment QR code uploaded! Remember to save changes.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to upload QR code");
     } finally {
       setUploading(false);
     }
@@ -274,6 +302,86 @@ export default function AdminSettingsPage() {
                   className="w-full h-10 bg-primary/5 border-none rounded-xl px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none"
                   placeholder="upi://pay?pa=..."
                 />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Weekly Pools & Tournament Payment Settings */}
+        <Card className="rounded-xl md:rounded-2xl border-primary/5 shadow-md bg-white overflow-hidden">
+          <CardHeader className="p-4 md:p-6 border-b border-primary/5 bg-primary/[0.01]">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <Coins className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <CardTitle className="text-base md:text-lg font-black text-foreground uppercase">Weekly Pools & Tournaments Payment</CardTitle>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Configure UPI ID and QR code for pool entry fees</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 md:p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest px-1">Admin UPI ID (VPA)</label>
+                <input 
+                  type="text"
+                  value={settings.adminUpiId}
+                  onChange={(e) => setSettings({ ...settings, adminUpiId: e.target.value })}
+                  className="w-full h-10 bg-primary/5 border-none rounded-xl px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none"
+                  placeholder="e.g., yourname@okaxis or quizstreak@upi"
+                />
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Shown to users to pay pool entry fees via UPI apps.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest px-1">Platform Commission Fee (%)</label>
+                <input 
+                  type="number"
+                  min="0"
+                  max="50"
+                  value={settings.platformCommissionPercent}
+                  onChange={(e) => setSettings({ ...settings, platformCommissionPercent: parseInt(e.target.value) || 0 })}
+                  className="w-full h-10 bg-primary/5 border-none rounded-xl px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 transition-all outline-none"
+                  placeholder="e.g., 10"
+                />
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Percentage kept by QuizStreak from each pool prize pool (e.g., 10%).</p>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-primary/5">
+              <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest px-1">Payment QR Code Image</label>
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-24 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                  {uploading ? (
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  ) : settings.paymentQrUrl ? (
+                    <img src={settings.paymentQrUrl} alt="QR Preview" className="w-full h-full object-contain p-2" />
+                  ) : (
+                    <QrCode className="w-8 h-8 text-muted-foreground/30" />
+                  )}
+                </div>
+                <div className="flex-grow space-y-2">
+                  <div className="relative">
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      onChange={handleQrUpload}
+                      className="hidden"
+                      id="qr-upload"
+                      disabled={uploading}
+                    />
+                    <label 
+                      htmlFor="qr-upload"
+                      className={`inline-flex items-center gap-2 px-4 h-10 rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                        uploading ? "bg-muted text-muted-foreground" : "bg-purple-500/10 text-purple-700 hover:bg-purple-500/20"
+                      }`}
+                    >
+                      {uploading ? "Uploading QR..." : "Upload QR Image"}
+                    </label>
+                  </div>
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Upload your PhonePe / GPay / Paytm Merchant QR code (JPG or PNG).</p>
+                </div>
               </div>
             </div>
           </CardContent>
