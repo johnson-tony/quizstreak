@@ -3,8 +3,8 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/db";
 import Pool from "@/models/Pool";
 import PoolParticipant from "@/models/PoolParticipant";
-import User from "@/models/User";
 import { handleApiError } from "@/lib/error-handler";
+import User from "@/models/User";
 
 export async function GET(
   req: Request,
@@ -25,6 +25,11 @@ export async function GET(
     const participants = await PoolParticipant.find({ poolId: pool._id })
       .sort({ score: -1, timeTakenSeconds: 1 })
       .lean();
+
+    // Only verified participants count toward the required pool size.
+    const verifiedParticipantsCount = participants.filter(
+      (p) => p.paymentStatus === "verified"
+    ).length;
 
     // Check if current user is enrolled
     let myParticipation: any = null;
@@ -70,7 +75,7 @@ export async function GET(
         endDate: pool.endDate,
         createdAt: pool.createdAt,
       },
-      participantsCount: participants.length,
+      participantsCount: verifiedParticipantsCount,
       participants: participants.map((p) => ({
         _id: p._id,
         userId: p.userId,
