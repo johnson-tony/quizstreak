@@ -8,6 +8,8 @@ export interface IAttempt {
   correct: boolean;
   pointsEarned: number;
   type: 'daily' | 'practice'; // New field
+  terminatedDueToCheating?: boolean;
+  cheatingReason?: string;
   createdAt: Date;
 }
 
@@ -19,6 +21,8 @@ const AttemptSchema = new Schema<IAttempt>({
   correct: { type: Boolean, required: true },
   pointsEarned: { type: Number, required: true },
   type: { type: String, enum: ['daily', 'practice'], default: 'daily' },
+  terminatedDueToCheating: { type: Boolean, default: false },
+  cheatingReason: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let { answers, type } = await req.json(); // answers: { day: string, selectedAnswer: string }[], type: 'daily' | 'practice'
+    let { answers, type, terminatedDueToCheating, cheatingReason } = await req.json(); // answers: { day: string, selectedAnswer: string }[], type: 'daily' | 'practice'
     type = type || 'daily';
 
     if (!Array.isArray(answers)) {
@@ -85,7 +85,9 @@ export async function POST(req: Request) {
         selectedAnswer: answer.selectedAnswer,
         correct: isCorrect,
         pointsEarned: points,
-        type: type || 'daily'
+        type: type || 'daily',
+        terminatedDueToCheating: !!terminatedDueToCheating,
+        cheatingReason: cheatingReason || undefined
       });
 
       results.push({
@@ -117,7 +119,9 @@ export async function POST(req: Request) {
           user.currentStreak = 1;
         }
 
-        if (user.currentStreak > user.longestStreak) {
+        if (user.longestStreak > user.currentStreak) {
+          // keep
+        } else {
           user.longestStreak = user.currentStreak;
         }
         
@@ -157,7 +161,9 @@ export async function POST(req: Request) {
       results,
       newStreak: user.currentStreak,
       newTotalPoints: user.totalPoints,
-      newSet: user.currentSet
+      newSet: user.currentSet,
+      terminatedDueToCheating: !!terminatedDueToCheating,
+      cheatingReason: cheatingReason || undefined
     });
   } catch (error) {
     return handleApiError(error, req, session?.user?.id);
@@ -188,11 +194,15 @@ export async function GET(req: Request) {
 
     // For GET, we need the questions for the specific set/category they attempted TODAY
     const questions = await getAllQuestions();
+    const isTerminatedCheating = attempts.some(a => a.terminatedDueToCheating);
+    const cheatingReason = attempts.find(a => a.terminatedDueToCheating)?.cheatingReason;
 
     return NextResponse.json({
       attempted: true,
       correct: attempts.every(a => a.correct),
       pointsEarned: attempts.reduce((sum, a) => sum + a.pointsEarned, 0),
+      terminatedDueToCheating: isTerminatedCheating,
+      cheatingReason,
       results: attempts.map(a => {
         const q = questions.find(q => q.day === a.questionId);
         return {

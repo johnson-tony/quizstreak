@@ -19,7 +19,9 @@ import {
   Lock,
   ExternalLink,
   Trophy,
-  BookOpen
+  BookOpen,
+  ShieldAlert,
+  AlertTriangle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import jsPDF from "jspdf";
@@ -32,6 +34,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Link from "next/link";
+import { useQuizProctor } from "@/hooks/useQuizProctor";
+import QuizProctorBar from "@/components/features/QuizProctorBar";
+import QuizWarningModal from "@/components/features/QuizWarningModal";
+import QuizTerminatedModal from "@/components/features/QuizTerminatedModal";
 
 interface Question {
   day: string;
@@ -91,6 +97,78 @@ export default function QuestionCard({ category }: { category?: string }) {
   
   const [showResultPopup, setShowResultPopup] = useState(false);
   const [showDetailedResults, setShowDetailedResults] = useState(false);
+
+  // Anti-cheat proctoring & termination states
+  const [showTerminatedModal, setShowTerminatedModal] = useState(false);
+  const [terminatedReason, setTerminatedReason] = useState("");
+
+  const isQuizActive = !loading && !paywall.enabled && !categoryEmpty && questions.length > 0 && !result && !showDetailedResults;
+
+  const handleCheatTermination = async (reason: string) => {
+    if (submitting || result) return;
+    setSubmitting(true);
+    setTerminatedReason(reason);
+
+    // Auto-conclude: fill any unanswered questions as "None" so attempt is completed and scored
+    const completedAnswers = questions.map((q) => {
+      const answered = userAnswers.find((a) => a.day === q.day);
+      return answered || { day: q.day, selectedAnswer: "None" };
+    });
+
+    try {
+      const res = await fetch("/api/attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          answers: completedAnswers,
+          type: category ? "practice" : "daily",
+          category: category,
+          terminatedDueToCheating: true,
+          cheatingReason: reason,
+        }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        setResult(data);
+        setShowTerminatedModal(true);
+      }
+    } catch (error) {
+      console.error("Auto-submission error:", error);
+      toast.error("Quiz concluded due to repeated security violations.");
+      const localResults = questions.map((q) => {
+        const ans = userAnswers.find((a) => a.day === q.day);
+        return {
+          day: q.day,
+          correct: false,
+          selectedAnswer: ans ? ans.selectedAnswer : "None",
+          correctAnswer: "N/A",
+          explanation: "Attempt concluded early due to security violations.",
+          question: q.question,
+          options: q.options,
+        };
+      });
+      setResult({
+        correct: false,
+        totalPointsEarned: 0,
+        results: localResults,
+        terminatedDueToCheating: true,
+        cheatingReason: reason,
+      });
+      setShowTerminatedModal(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const proctor = useQuizProctor({
+    isActive: isQuizActive,
+    maxViolations: 2,
+    onConclude: (reason) => {
+      handleCheatTermination(reason);
+    },
+  });
 
   useEffect(() => {
     fetchStatus();
@@ -231,6 +309,11 @@ export default function QuestionCard({ category }: { category?: string }) {
     doc.text(`Date: ${today}`, 14, 25);
     doc.text(`Final Score: ${score} / ${total}`, 14, 29);
 
+    if (result.terminatedDueToCheating) {
+      doc.setTextColor(220, 38, 38);
+      doc.text(`Integrity Notice: Terminated early due to security focus violations.`, 14, 33);
+    }
+
     const tableData = result.results.map((res: any, index: number) => {
       const q = questions.find(quest => quest.day === res.day) || res;
       
@@ -251,7 +334,7 @@ export default function QuestionCard({ category }: { category?: string }) {
     });
 
     autoTable(doc, {
-      startY: 34,
+      startY: result.terminatedDueToCheating ? 37 : 34,
       head: [['#', 'Question', 'Your Answer', 'Correct Answer', 'Status', 'Explanation']],
       body: tableData,
       headStyles: { 
@@ -366,6 +449,21 @@ export default function QuestionCard({ category }: { category?: string }) {
                <p className="text-xs md:text-xs text-muted-foreground font-bold tracking-widest uppercase mt-1">Score</p>
              </div>
           </div>
+
+          {result?.terminatedDueToCheating && (
+            <div className="bg-red-50 border-b border-red-200/80 px-4 md:px-6 py-3 flex items-start sm:items-center gap-3">
+              <ShieldAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5 sm:mt-0" />
+              <div className="text-xs">
+                <span className="font-black text-red-700 uppercase tracking-wide mr-1.5">
+                  Concluded Early Due to Cheating:
+                </span>
+                <span className="text-red-900 font-semibold">
+                  {result.cheatingReason || "Focus loss or tab switching detected 2 times."}{" "}
+                  Your final score reflects answers submitted prior to early conclusion.
+                </span>
+              </div>
+            </div>
+          )}
 
           <div className="divide-y divide-primary/10">
             {result.results?.map((res: any, i: number) => {
@@ -488,8 +586,17 @@ export default function QuestionCard({ category }: { category?: string }) {
   }
 
   return (
-    <>
-      <Card className="rounded-xl border border-primary/5 shadow-sm bg-white overflow-hidden">
+    <div className="space-y-3">
+      {isQuizActive && (
+        <QuizProctorBar
+          violationCount={proctor.violationCount}
+          maxViolations={2}
+          isFullscreen={proctor.isFullscreen}
+          onToggleFullscreen={proctor.toggleFullscreen}
+        />
+      )}
+
+      <Card className="rounded-xl border border-primary/5 shadow-sm bg-white overflow-hidden select-none">
         <CardHeader className="border-b border-primary/5 bg-primary/[0.01] p-3 md:p-4">
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2">
@@ -601,6 +708,27 @@ export default function QuestionCard({ category }: { category?: string }) {
           </Button>
         </DialogContent>
       </Dialog>
-    </>
+
+      {/* Cheating Warning Modal (Strike 1 of 2) */}
+      <QuizWarningModal
+        open={proctor.isWarningOpen}
+        onClose={proctor.closeWarning}
+        reason={proctor.violationLogs[proctor.violationLogs.length - 1]?.reason}
+      />
+
+      {/* Cheating Termination Modal (Strike 2 of 2 - Concludes Quiz & Gives Total Score) */}
+      <QuizTerminatedModal
+        open={showTerminatedModal}
+        score={result?.results ? result.results.filter((r: { correct?: boolean }) => Boolean(r.correct)).length : 0}
+        total={result?.results ? result.results.length : questions.length}
+        pointsEarned={result?.totalPointsEarned || 0}
+        reason={terminatedReason}
+        onReview={() => {
+          setShowTerminatedModal(false);
+          setShowDetailedResults(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+    </div>
   );
 }

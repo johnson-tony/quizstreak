@@ -1,8 +1,10 @@
 import Groq from "groq-sdk";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+function getGroqClient() {
+  return new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
+}
 
 export async function generateAIQuestions(category: string, count: number, difficulty: string) {
   const prompt = `
@@ -30,6 +32,7 @@ export async function generateAIQuestions(category: string, count: number, diffi
   `;
 
   try {
+    const groq = getGroqClient();
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         {
