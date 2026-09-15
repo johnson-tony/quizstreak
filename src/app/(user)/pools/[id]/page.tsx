@@ -62,6 +62,8 @@ export default function PoolDetailPage() {
   const myParticipation = data?.myParticipation;
   const isEnrolled = !!myParticipation;
   const isCompleted = myParticipation?.quizStatus === "completed" || myParticipation?.quizStatus === "terminated_cheating";
+  const participantsCount = data?.participantsCount || 0;
+  const poolIsFull = pool ? participantsCount >= pool.maxMembers : false;
 
   const copyInviteLink = () => {
     if (typeof window === "undefined" || !pool) return;
@@ -111,7 +113,6 @@ export default function PoolDetailPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
       <main className="flex-grow mx-auto px-4 md:px-6 py-6 w-full max-w-5xl space-y-6 animate-in fade-in duration-500">
-        {/* Navigation Back */}
         <div className="flex items-center justify-between">
           <Link href="/pools">
             <Button
@@ -129,7 +130,6 @@ export default function PoolDetailPage() {
           </div>
         </div>
 
-        {/* Hero Pool Header */}
         <section className="bg-white rounded-[2rem] border border-primary/10 p-6 md:p-8 shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
@@ -148,11 +148,10 @@ export default function PoolDetailPage() {
                 {pool.title}
               </h1>
               <p className="text-xs text-muted-foreground font-medium">
-                Created by <strong className="text-foreground">{pool.creatorName}</strong> • {data?.participantsCount || 0} / {pool.maxMembers} Players Joined
+                Created by <strong className="text-foreground">{pool.creatorName}</strong> • {participantsCount} / {pool.maxMembers} Players Joined
               </p>
             </div>
 
-            {/* Prize & Action Box */}
             <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end justify-between gap-3 p-4 bg-slate-50 rounded-2xl border border-primary/5 min-w-[240px]">
               <div>
                 <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block">
@@ -163,7 +162,6 @@ export default function PoolDetailPage() {
                 </span>
               </div>
 
-              {/* Action Button depending on user state */}
               {!isEnrolled ? (
                 <Button
                   onClick={() => setShowPaymentModal(true)}
@@ -176,17 +174,26 @@ export default function PoolDetailPage() {
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   Score: {myParticipation?.score} / {pool.questionCount}
                 </div>
-              ) : (
+              ) : poolIsFull ? (
                 <Link href={`/pools/${pool._id}/play`} className="w-full">
                   <Button className="w-full h-11 rounded-xl text-xs font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 gap-2">
                     <Play className="w-4 h-4 fill-white" /> Start Quiz Arena
                   </Button>
                 </Link>
+              ) : (
+                <div className="flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold w-full justify-center text-center">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-amber-600" />
+                    Waiting for Players
+                  </div>
+                  <span className="text-[10px] font-medium text-amber-700">
+                    {participantsCount} / {pool.maxMembers} joined • Quiz unlocks when the pool is full
+                  </span>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Social Share / Invite Bar */}
           <div className="p-4 bg-purple-50/60 rounded-2xl border border-purple-100 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-purple-950 font-bold text-xs">
               <Share2 className="w-4 h-4 text-purple-600 shrink-0" />
@@ -226,7 +233,6 @@ export default function PoolDetailPage() {
           </div>
         </section>
 
-        {/* Live Leaderboard & Standings */}
         <section className="space-y-3">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-sm md:text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
@@ -296,7 +302,6 @@ export default function PoolDetailPage() {
           </Card>
         </section>
 
-        {/* Enrolled Players Roster */}
         <section className="space-y-3">
           <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground px-1">
             Enrolled Players ({data?.participants?.length || 0})
@@ -328,7 +333,6 @@ export default function PoolDetailPage() {
         </section>
       </main>
 
-      {/* Payment Modal */}
       <PoolPaymentModal
         open={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
