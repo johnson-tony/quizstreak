@@ -43,6 +43,22 @@ export async function GET(
       return NextResponse.json({ error: "Your payment verification is pending." }, { status: 403 });
     }
 
+    // The quiz is locked until the required number of verified players has joined.
+    // Only verified participants count toward maxMembers so pending/rejected payments
+    // cannot unlock the quiz.
+    const verifiedParticipantsCount = await PoolParticipant.countDocuments({
+      poolId: pool._id,
+      paymentStatus: "verified",
+    });
+
+    if (verifiedParticipantsCount < pool.maxMembers) {
+      return NextResponse.json({
+        waitingForPlayers: true,
+        participantsCount: verifiedParticipantsCount,
+        requiredPlayers: pool.maxMembers,
+      }, { status: 409 });
+    }
+
     // If already completed, return status
     if (participant.quizStatus === "completed" || participant.quizStatus === "terminated_cheating") {
       return NextResponse.json({
