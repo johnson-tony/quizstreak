@@ -6,16 +6,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { 
-  LayoutDashboard, 
-  Trophy, 
-  Zap, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Trophy,
+  Zap,
+  LogOut,
   Menu,
   X,
-  Sparkles,
   BookOpen,
-  User,
   Coins
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,6 +44,11 @@ export default function UserLayout({
     redirect("/");
   }
 
+  // Admin accounts must stay inside the admin area.
+  if ((session?.user as any)?.role === "admin") {
+    redirect("/admin/dashboard");
+  }
+
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Weekly Pools", href: "/pools", icon: Coins },
@@ -55,7 +58,6 @@ export default function UserLayout({
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 flex-col border-r border-primary/5 bg-white/80 backdrop-blur-xl sticky top-0 h-screen">
         <div className="p-6 border-b border-primary/5">
           <Link href="/" className="flex items-center gap-3">
@@ -63,14 +65,14 @@ export default function UserLayout({
             <span className="text-xl font-black text-primary tracking-tight font-heading">QuizStreak</span>
           </Link>
         </div>
-        
+
         <nav className="flex-grow p-4 flex flex-col gap-2 mt-4">
           <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] px-3 mb-2">Navigation</p>
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
-                pathname === item.href 
-                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                pathname === item.href
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
                   : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
               }`}>
                 <item.icon className="w-4 h-4" />
@@ -99,23 +101,17 @@ export default function UserLayout({
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <div className="flex-grow flex flex-col min-w-0">
-        {/* Top Header (Desktop & Mobile) */}
         <header className="border-b border-primary/5 bg-white/80 backdrop-blur-xl sticky top-0 z-50 px-4 md:px-8 h-16 flex items-center justify-between safe-top">
-          {/* Logo only on Mobile Header */}
           <div className="flex items-center gap-2 lg:hidden">
             <Link href="/" className="flex items-center gap-2">
               <img src="/quickstreak.svg" alt="Logo" className="w-7 h-7" />
               <div className="text-lg font-black text-primary tracking-tight">QuizStreak</div>
             </Link>
           </div>
-          
-          {/* Desktop Spacer (Header is empty on left/center for desktop) */}
           <div className="hidden lg:block" />
 
           <div className="flex items-center gap-3">
-            {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-primary/5 hover:ring-primary/20 transition-all p-0" />}>
                 <Avatar className="h-full w-full">
@@ -141,13 +137,9 @@ export default function UserLayout({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Mobile Menu Icon */}
             <div className="lg:hidden">
-              <button 
-                onClick={() => {
-                  console.log("Opening mobile menu...");
-                  setIsMobileMenuOpen(true);
-                }} 
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
                 className="flex items-center justify-center w-10 h-10 rounded-xl text-primary hover:bg-primary/5 transition-colors"
               >
                 <Menu className="w-6 h-6" />
@@ -162,10 +154,9 @@ export default function UserLayout({
         <Footer />
       </div>
 
-      {/* Mobile Drawer Overlay */}
       <AnimatePresence mode="wait">
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             key="mobile-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -175,7 +166,7 @@ export default function UserLayout({
           />
         )}
         {isMobileMenuOpen && (
-          <motion.aside 
+          <motion.aside
             key="mobile-drawer"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -188,8 +179,8 @@ export default function UserLayout({
                 <img src="/quickstreak.svg" alt="Logo" className="w-8 h-8" />
                 <span className="text-xl font-black text-primary font-heading tracking-tight">QuizStreak</span>
               </div>
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)} 
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
@@ -210,8 +201,8 @@ export default function UserLayout({
             </nav>
 
             <div className="p-6 border-t border-primary/5">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="w-full h-14 border-destructive/10 text-destructive rounded-2xl font-black gap-3"
               >
