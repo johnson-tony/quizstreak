@@ -37,33 +37,66 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isPublicPage = ["/", "/login"].includes(nextUrl.pathname);
-      const isProtectedRoute = ["/dashboard", "/challenge", "/rankings", "/pools"].some(path => 
-        nextUrl.pathname.startsWith(path)
-      );
+      const role = (auth?.user as any)?.role;
 
-      // 1. If it's a protected route and not logged in, redirect to login
-      if (isProtectedRoute && !isLoggedIn) {
-        return false; // NextAuth handles redirect to signIn page
+      const pathname = nextUrl.pathname;
+      const isAdmin = role === "admin";
+
+      // Public entry pages.
+      const isPublicPage = ["/", "/login", "/admin/login"].includes(pathname);
+
+      // All normal user application routes.
+      const isUserRoute = [
+        "/dashboard",
+        "/challenge",
+        "/rankings",
+        "/pools",
+      ].some((path) => pathname.startsWith(path));
+
+      // Every admin route, including future admin pages.
+      const isAdminRoute = pathname.startsWith("/admin") && pathname !== "/admin/login";
+
+      // 1. Admin routes: only an authenticated admin can enter.
+      if (isAdminRoute) {
+        if (!isLoggedIn || !isAdmin) {
+          return Response.redirect(new URL("/admin/login", nextUrl));
+        }
+        return true;
       }
 
-      // 2. If logged in and trying to access landing or login page, go to dashboard
+      // 2. User routes: only an authenticated normal user can enter.
+      if (isUserRoute) {
+        if (!isLoggedIn) {
+          return false;
+        }
+        if (isAdmin) {
+          return Response.redirect(new URL("/admin/dashboard", nextUrl));
+        }
+        return true;
+      }
+
+      // 3. Already-authenticated users should never see the wrong login area.
       if (isLoggedIn && isPublicPage) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
+        if (isAdmin) {
+          return Response.redirect(new URL("/admin/dashboard", nextUrl));
+        }
+        if (pathname === "/login" || pathname === "/") {
+          return Response.redirect(new URL("/dashboard", nextUrl));
+        }
+        if (pathname === "/admin/login") {
+          return Response.redirect(new URL("/dashboard", nextUrl));
+        }
       }
 
-      // 3. Otherwise, allow access
+      // 4. Unauthenticated users can access public pages, including admin login.
       return true;
     },
-    // Basic JWT logic that doesn't need DB
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role || "user";
       }
       return token;
     },
-    // We will define session and signIn callbacks in auth.ts 
-    // where DB access is allowed
   },
   pages: {
     signIn: "/login",
